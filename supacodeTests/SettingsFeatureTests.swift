@@ -877,4 +877,185 @@ struct SettingsFeatureTests {
     }
     await store.receive(\.delegate.cliInstallCompleted)
   }
+
+  @Test(.dependencies) func settingsLoadedSetsAppLanguageButKeepsLaunchSnapshot() async {
+    var loaded = GlobalSettings.default
+    loaded.appLanguage = .english
+
+    let store = TestStore(
+      initialState: SettingsFeature.State(effectiveLanguageAtLaunch: .zhHans)
+    ) {
+      SettingsFeature()
+    }
+
+    await store.send(.settingsLoaded(loaded)) {
+      $0.appLanguage = .english
+    }
+    await store.receive(\.delegate.settingsChanged)
+
+    // The launch snapshot is immutable for this process; a later settings
+    // load must never rewrite it.
+    #expect(store.state.effectiveLanguageAtLaunch == .zhHans)
+  }
+
+  @Test(.dependencies) func settingsLoadedRepairsBridgeFromLoadedConfig() async {
+    let synced = LockIsolated<[AppLanguage]>([])
+    var loaded = GlobalSettings.default
+    loaded.appLanguage = .zhHans
+
+    let store = TestStore(initialState: SettingsFeature.State()) {
+      SettingsFeature()
+    } withDependencies: {
+      $0.appLanguageBridge.synchronize = { preference in
+        synced.withValue { $0.append(preference) }
+      }
+    }
+
+    await store.send(.settingsLoaded(loaded)) {
+      $0.appLanguage = .zhHans
+    }
+    await store.receive(\.delegate.settingsChanged)
+    await store.finish()
+
+    // Cold start repairs the derived bridge from the decoded config, the
+    // source of truth.
+    #expect(synced.value == [.zhHans])
+  }
+
+  @Test(.dependencies) func setAppLanguagePersistsAndSyncsBridgeAfterSuccessfulSave() async {
+    let storage = SettingsTestStorage()
+    let settingsFileURL = URL(fileURLWithPath: "/tmp/prowl-settings-\(UUID().uuidString).json")
+    let synced = LockIsolated<[AppLanguage]>([])
+
+    let store = TestStore(initialState: SettingsFeature.State(effectiveLanguageAtLaunch: .english)) {
+      SettingsFeature()
+    } withDependencies: {
+      $0.settingsFileStorage = storage.storage
+      $0.settingsFileURL = settingsFileURL
+      $0.analyticsClient.capture = { _, _ in }
+      $0.appLanguageBridge.synchronize = { preference in
+        synced.withValue { $0.append(preference) }
+      }
+    }
+
+    await store.send(.setAppLanguage(.zhHans)) {
+      $0.appLanguage = .zhHans
+    }
+    await store.receive(\.delegate.settingsChanged)
+
+    // The derived bridge only updates after the config save succeeded.
+    #expect(synced.value == [.zhHans])
+
+    let persisted: SettingsFile = withDependencies {
+      $0.settingsFileStorage = storage.storage
+      $0.settingsFileURL = settingsFileURL
+    } operation: {
+      @Shared(.settingsFile) var settings: SettingsFile
+      return settings
+    }
+    #expect(persisted.global.appLanguage == .zhHans)
+    // Saving the language must not reset unrelated settings.
+    #expect(persisted.global.appearanceMode == GlobalSettings.default.appearanceMode)
+    #expect(persisted.global.keybindingUserOverrides == .empty)
+  }
+
+  @Test(.dependencies) func setAppLanguageDoesNotSyncBridgeWhenSaveFails() async {
+    let synced = LockIsolated<[AppLanguage]>([])
+
+    let store = TestStore(initialState: SettingsFeature.State(effectiveLanguageAtLaunch: .english)) {
+      SettingsFeature()
+    } withDependencies: {
+      $0.settingsFileStorage = FailingSettingsStorage().storage
+      $0.settingsFileURL = URL(fileURLWithPath: "/tmp/prowl-settings-\(UUID().uuidString).json")
+      $0.analyticsClient.capture = { _, _ in }
+      $0.appLanguageBridge.synchronize = { preference in
+        synced.withValue { $0.append(preference) }
+      }
+    }
+
+    await store.send(.setAppLanguage(.zhHans)) {
+      $0.appLanguage = .zhHans
+    }
+    // The failed save must not leave the UI claiming a new language took
+    // effect: the in-memory preference reverts to the persisted one.
+    await store.receive(\.appLanguagePersistFailed) {
+      $0.appLanguage = .system
+    }
+
+    #expect(synced.value.isEmpty)
+  }
+
+  @Test(.dependencies) func systemToMatchingExplicitLanguageShowsNoPendingRelaunch() async {
+    // The system already resolved to Chinese this launch; picking explicit
+    // Chinese changes nothing next launch, so no restart hint.
+    var state = SettingsFeature.State(effectiveLanguageAtLaunch: .zhHans)
+    state.systemPreferredLanguages = ["zh-Hans"]
+    let synced = LockIsolated<[AppLanguage]>([])
+    let store = TestStore(initialState: state) {
+      SettingsFeature()
+    } withDependencies: {
+      $0.analyticsClient.capture = { _, _ in }
+      $0.appLanguageBridge.synchronize = { preference in
+        synced.withValue { $0.append(preference) }
+      }
+    }
+
+    #expect(!store.state.languageChangePending)
+    await store.send(.setAppLanguage(.zhHans)) {
+      $0.appLanguage = .zhHans
+    }
+    await store.receive(\.delegate.settingsChanged)
+    #expect(!store.state.languageChangePending)
+  }
+
+  @Test(.dependencies) func differentResolvedLanguageShowsPendingRelaunch() async {
+    var state = SettingsFeature.State(effectiveLanguageAtLaunch: .english)
+    state.systemPreferredLanguages = ["en"]
+    let store = TestStore(initialState: state) {
+      SettingsFeature()
+    } withDependencies: {
+      $0.analyticsClient.capture = { _, _ in }
+    }
+
+    #expect(!store.state.languageChangePending)
+    await store.send(.setAppLanguage(.zhHans)) {
+      $0.appLanguage = .zhHans
+    }
+    await store.receive(\.delegate.settingsChanged)
+    #expect(store.state.languageChangePending)
+  }
+
+  @Test(.dependencies) func refreshingSystemPreferencesUpdatesPendingPrediction() async {
+    var state = SettingsFeature.State(effectiveLanguageAtLaunch: .english)
+    state.systemPreferredLanguages = ["en"]
+    let store = TestStore(initialState: state) {
+      SettingsFeature()
+    }
+
+    #expect(!store.state.languageChangePending)
+    await store.send(.updateSystemPreferredLanguages(["zh-Hans"])) {
+      $0.systemPreferredLanguages = ["zh-Hans"]
+    }
+    #expect(store.state.languageChangePending)
+  }
+
+  @Test func pendingPredictionIgnoresAnyCommandLineOverride() {
+    // This launch ran in Chinese via a temporary `-AppleLanguages zh-Hans`
+    // override; the preference still resolves to English for the next
+    // normal launch, so the hint compares against that, not the override.
+    var state = SettingsFeature.State(effectiveLanguageAtLaunch: .zhHans)
+    state.systemPreferredLanguages = ["en"]
+    #expect(state.languageChangePending)
+  }
+}
+
+nonisolated private final class FailingSettingsStorage: @unchecked Sendable {
+  struct SaveFailed: Error {}
+
+  var storage: SettingsFileStorage {
+    SettingsFileStorage(
+      load: { _ in throw SettingsTestStorageError.missing },
+      save: { _, _ in throw SaveFailed() }
+    )
+  }
 }
