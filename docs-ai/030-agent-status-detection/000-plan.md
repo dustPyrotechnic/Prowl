@@ -9,6 +9,9 @@
 | **Sources** | `doc-onevcat/plans/2026-05-09-active-agents-panel-plan.md` (detection design absorbed here, panel/UI design in [029](../029-active-agents-panel/000-plan.md); original removed in the docs-ai migration), change-list 2026-05-09 Ghostty fork-patch entry (ledger: [upstream-ledger.md](../017-upstream-sync-process/upstream-ledger.md)), PR descriptions |
 | **Related** | [029-active-agents-panel](../029-active-agents-panel/000-plan.md), [045-native-agent-session-detection](../045-native-agent-session-detection/000-plan.md) (successor wave), [013-prowl-cli](../013-prowl-cli/000-plan.md) (`prowl agents`), [035-protected-terminal-close](../035-protected-terminal-close/000-plan.md), [ghostty-fork-sync.md](../007-ghostty-embedding-integration/ghostty-fork-sync.md), `docs/components/agent-detection.md` |
 
+Current state-provider architecture and per-runtime migration plans are maintained in
+[068 — Agent State Providers](../068-agent-state-providers/000-plan.md). This entry retains its original scope and history.
+
 ## Background
 
 The Active Agents panel ([029](../029-active-agents-panel/000-plan.md)) needs to know, per
