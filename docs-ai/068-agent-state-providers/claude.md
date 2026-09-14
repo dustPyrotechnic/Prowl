@@ -1,7 +1,8 @@
-# Claude state provider — spike and proposed plan
+# Claude state provider — implementation and spike
 
 Status: native aggregate provider implemented after the 2026-09-15 contract extension;
-see [002 implementation and acceptance](002-native-runtime-implementation.md).
+required acceptance is complete; see [001 action log](001-action.md) and
+[002 implementation and acceptance](002-native-runtime-implementation.md).
 The 2026-09-14 findings and original proposal below remain the research baseline.
 The implementation uses native snapshots; JSONL corroborates the contract without
 adding a duplicate production work ledger.

@@ -1,6 +1,6 @@
 # 068.002 — Native runtime state implementation
 
-Status: implemented; desktop mouse-wheel acceptance pending. Authorized on 2026-09-15 after #806 merged.
+Status: implemented; acceptance complete with the fullscreen case excluded by onevcat. Authorized on 2026-09-15 after #806 merged.
 
 ## Sequence and acceptance
 
@@ -9,7 +9,7 @@ Status: implemented; desktop mouse-wheel acceptance pending. Authorized on 2026-
 | A | Native generation/config-root contract; assigned children; failure and session boundaries | Verified with the limits below |
 | B/C | Bounded acquisition and decoding, red/green parser/provider tests | Complete |
 | D | Shared arbitration, ordering, ownership, and readiness regressions | Complete |
-| E | Debug pane E2E matrix and final regression checks | Native terminal/CLI cases verified; desktop wheel blocked |
+| E | Debug pane E2E matrix and final regression checks | Native terminal/CLI and standard wheel cases verified; fullscreen case excluded |
 
 Acceptance records distinguish intermediate states from final Idle. Runtime traces
 stay in the ignored capture directory; the contract and scoped results are below.
@@ -68,7 +68,7 @@ not prove synchronous foreground-child execution. Unsupported daemon/remote kind
 and shell-only custom roots retain screen fallback. Older runtime versions were not
 installed or tested.
 
-### Remaining desktop gate
+### Initial desktop gate
 
 Computer Use failed with `cgWindowNotFound`, then its native connection closed.
 A physical mouse-wheel scroll and a desktop screenshot could not be verified. CLI
@@ -124,10 +124,20 @@ Screenshots and CLI samples are retained locally under
 The isolated launch initially omitted user settings, so this case exercised normal
 terminal scrollback. A second pane explicitly enabled `tui: fullscreen` to match
 the original overlay case. Computer Use wheel calls did not move that viewer in
-either direction. The fullscreen overlay acceptance gate remains open pending an
-observed scroll; successful wheel calls alone are not evidence of viewer movement.
+either direction. At this retry, the fullscreen overlay case remained unverified; successful wheel
+calls alone are not evidence of viewer movement.
 
 The retry passed `make check` (158 script tests) and `make build-app` (zero errors
 or warnings). No implementation changes were needed. The fullscreen test pane was
 left open for the requested manual scroll; the original cleanup statement above
 applies to the earlier run.
+
+
+### Acceptance decision on 2026-09-15
+
+After the desktop retry, onevcat explicitly removed the separate fullscreen case
+from required acceptance. The standard scrollback result closes the requested
+wheel check. Fullscreen overlay scrolling was not verified; this decision does not
+establish equivalent behavior experimentally. The implementation requires no change.
+At closeout, the owned Debug PID had exited, its dedicated socket was absent, and
+no test-cwd native registry files remained. See [001 action log](001-action.md).

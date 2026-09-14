@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | In progress — native adapter implemented; desktop mouse-wheel acceptance pending |
+| **Status** | Implemented — acceptance complete; awaiting merge and release |
 | **Anchor date** | 2026-09-14 |
 | **Baseline** | `e54b1e19`; #800 shipped in v2026.9.12 |
 | **Related** | [030 detection history](../030-agent-status-detection/000-plan.md), [064 completion signals](../064-agent-completion-signals/000-plan.md) |
@@ -30,7 +30,7 @@ and the plan for extending them to other runtimes.
 | --- | --- |
 | [architecture.md](architecture.md) | Released shared architecture, arbitration, and extension invariants |
 | [codex.md](codex.md) | Released provider, acquisition/decoding contract, and known limits |
-| [claude.md](claude.md) | Interactive spike findings and proposed implementation slices |
+| [claude.md](claude.md) | Implemented native adapter, spike findings, and original proposal |
 
 Add future agents as sibling living documents. Each must distinguish observed
 runtime behavior from implemented Prowl behavior. Update these references with
@@ -57,8 +57,9 @@ Implementation was authorized after #806 merged. The original stages in
 are recorded in [002](002-native-runtime-implementation.md). Native state already
 aggregates assigned children and shell work, so production JSONL reconstruction was
 removed from scope. The adapter and native terminal/CLI acceptance are complete;
-desktop mouse-wheel acceptance remains pending because Computer Use could not access
-the window. Write `001-action.md` when that gate is completed or the plan is superseded.
+standard terminal mouse-wheel acceptance passed. On 2026-09-15, onevcat removed
+the separate fullscreen overlay case from required acceptance. It remains unverified,
+not a passing test. See [001 action log](001-action.md).
 
 ## Alternatives and decisions
 
@@ -75,3 +76,5 @@ the window. Write `001-action.md` when that gate is completed or the plan is sup
 ## Amendments
 
 - Updated 2026-09-15: Implementation authorized after #806 merged; staged acceptance is tracked in [002](002-native-runtime-implementation.md).
+
+- Updated 2026-09-15: Acceptance completed with the fullscreen case excluded by onevcat — see [001 action log](001-action.md).
