@@ -13,6 +13,9 @@ concurrency:
 jobs:
   build:
     runs-on: macos-26
+    # A green run takes about 15 minutes; a slow runner has taken 2.5x that.
+    # Without this the default is 6 hours, so a stuck run had to be cancelled by hand.
+    timeout-minutes: 45
     permissions:
       contents: read
     env:
@@ -45,7 +48,11 @@ jobs:
             # condition is false and there is no else), which silently masked
             # failures and let the step pass on a failing build.
             local status=0
-            "$@" >"$log" 2>&1 || status=$?
+            # stdout is buffered into the log and printed as one group when the
+            # task ends. stderr streams straight to the console with a task
+            # prefix so progress (the `make test-app` heartbeat, `swift test`
+            # results, make errors) shows while the task is still running.
+            "$@" >"$log" 2> >(tee -a "build/ci-logs/${name}.stderr.log" | while IFS= read -r line; do printf '[%s] %s\n' "$name" "$line"; done) || status=$?
             printf '| %s | %s | %s |\n' "$name" "$((SECONDS - started))" "$status" >"build/ci-logs/${name}.timing"
             cat "$log"
             echo "::endgroup::"
