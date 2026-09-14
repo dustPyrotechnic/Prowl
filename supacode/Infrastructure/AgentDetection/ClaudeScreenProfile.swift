@@ -257,14 +257,15 @@ private struct ClaudeScreenRegions: Sendable {
     self.bottomViewerLines = Array(nonEmptyLines.suffix(5))
     self.hasIdleComposer = Self.hasIdleComposer(screenLines: lines, promptIndex: promptIndex)
     // Claude scrolls its transcript inside the active screen and keeps the composer
-    // fixed. The overlaid jump control marks history, not a live idle prompt.
+    // fixed. The jump control can cover the middle of a transcript row and show
+    // an unread-message count. Text on either side is not part of the control.
     self.hasScrollOverlay =
       ClaudeScreenProfile.composerContents(in: snapshot) != nil
       && Self.contentAbovePrompt(screenLines: lines, promptIndex: promptIndex)
         .split(separator: "\n")
         .last(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty })?
         .trimmingCharacters(in: .whitespaces)
-        .hasSuffix("Jump to bottom (click) ↓") == true
+        .range(of: #"(Jump to bottom|[1-9][0-9]* new messages?) \(click\) ↓"#, options: .regularExpression) != nil
   }
 
   nonisolated private static func liveStatusBlock(_ rows: [String]) -> ArraySlice<String> {

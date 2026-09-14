@@ -30,16 +30,35 @@ struct ClaudeScreenProfileTests {
     }
   }
 
-  @Test func jumpToBottomTextOutsideTheScrollOverlayIsNotAViewer() {
-    for text in [
-      "⏺ Jump to bottom (click) ↓\n  More response text\n\n────────────────────\n❯ \n────────────────────",
-      "────────────────────\n❯ Jump to bottom (click) ↓\n────────────────────",
-      "────────────────────\n❯ \n────────────────────\nJump to bottom (click) ↓",
-      "⏺ Jump to bottom (click) ↓",
-    ] {
+  @Test func scrollOverlayCanCoverTheMiddleOfTranscriptText() {
+    for label in ["Jump to bottom", "1 new message", "2 new messages"] {
+      let text = """
+        ⏺ Earlier output
+          Left transcript text \(label) (click) ↓ right transcript text
+
+        ────────────────────
+        ❯
+        ────────────────────
+        status
+        """
       let detection = ClaudeScreenProfile.detect(in: AgentScreenSnapshot(text: text))
-      #expect(detection.state == .idle)
-      #expect(detection.reason != .matched(ClaudeScreenProfile.RuleID.viewer))
+      #expect(detection.state == .unknown)
+      #expect(detection.reason == .matched(ClaudeScreenProfile.RuleID.viewer))
+    }
+  }
+
+  @Test func jumpToBottomTextOutsideTheScrollOverlayIsNotAViewer() {
+    for label in ["Jump to bottom", "1 new message", "2 new messages"] {
+      for text in [
+        "⏺ \(label) (click) ↓\n  More response text\n\n────────────────────\n❯ \n────────────────────",
+        "────────────────────\n❯ \(label) (click) ↓\n────────────────────",
+        "────────────────────\n❯ \n────────────────────\n\(label) (click) ↓",
+        "⏺ \(label) (click) ↓",
+      ] {
+        let detection = ClaudeScreenProfile.detect(in: AgentScreenSnapshot(text: text))
+        #expect(detection.state == .idle)
+        #expect(detection.reason != .matched(ClaudeScreenProfile.RuleID.viewer))
+      }
     }
   }
 
