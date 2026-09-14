@@ -109,3 +109,25 @@ The final blocker refinement received a fresh Debug question/answer regression.
 Its first harness attempt opened a pane before workspace restore completed; that
 pane disappeared. Retrying after restore completed passed. This was not counted
 as a passing first attempt or a detector failure.
+
+
+### Desktop retry on 2026-09-15
+
+Desktop access recovered. The retry used the same implementation with Claude Code
+2.1.271. In the standard terminal mode, an actual Computer Use wheel action moved
+into scrollback during a 250-line response. The pane retained `native.working`
+while raw screen evidence was Idle. It then reached native Idle while the viewport
+still showed the beginning of the response; the heuristic Idle wait resolved.
+Screenshots and CLI samples are retained locally under
+`.local/agent-screen-captures/claude-provider-wheel-20260915/`.
+
+The isolated launch initially omitted user settings, so this case exercised normal
+terminal scrollback. A second pane explicitly enabled `tui: fullscreen` to match
+the original overlay case. Computer Use wheel calls did not move that viewer in
+either direction. The fullscreen overlay acceptance gate remains open pending an
+observed scroll; successful wheel calls alone are not evidence of viewer movement.
+
+The retry passed `make check` (158 script tests) and `make build-app` (zero errors
+or warnings). No implementation changes were needed. The fullscreen test pane was
+left open for the requested manual scroll; the original cleanup statement above
+applies to the earlier run.
