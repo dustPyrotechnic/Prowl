@@ -7,6 +7,9 @@
 | **Primary PRs** | #715 (S1); #718 (S2); #721, #723 (S3a); #725 (S3b); #728 (S3c); #732 (012); #736 (013); #741 (re-dispatch); #739 (T0); #767 (runtime contracts, merged) |
 | **Related** | [063 agent-workflows](../063-agent-workflows/000-plan.md) (consumer; defines the `ObservedAgentState` observer this entry feeds), [030 agent-status-detection](../030-agent-status-detection/000-plan.md), [045 native-agent-session-detection](../045-native-agent-session-detection/000-plan.md), [055 agent-profile-runtimes](../055-agent-profile-runtimes/000-plan.md), [059 agent-transcript-snapshots](../059-agent-transcript-snapshots/000-plan.md), [060 cli-targeting-and-contract-governance](../060-prowl-cli-targeting-and-contract-governance/000-plan.md), [#473](https://github.com/onevcat/Prowl/issues/473), [#676](https://github.com/onevcat/Prowl/issues/676), `docs/components/agent-detection.md`, `docs/components/cli.md` |
 
+Current state-provider architecture and per-runtime migration plans are maintained in
+[068 — Agent State Providers](../068-agent-state-providers/000-plan.md). This entry retains its original scope and history.
+
 ## Background
 
 Prowl's per-pane agent status (`working` / `blocked` / `idle` / `done`) comes from

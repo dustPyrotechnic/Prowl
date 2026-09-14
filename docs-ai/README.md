@@ -45,6 +45,7 @@ Living documents hosted here:
 - `063-agent-workflows/release-plan.md` — release/order plan shared by 063 and 064
 - `064-agent-completion-signals/research-agent-completion-signals.md` — per-runtime completion-signal matrix
 - `064-agent-completion-signals/agent-contracts-runbook.md` — runtime contract inventory, low-cost model routes, implemented inventory/preflight and eight-runtime headless checks, plus remaining interactive acceptance
+- [068 agent state providers](068-agent-state-providers/000-plan.md) — shared architecture and one living contract/plan per runtime
 
 Some entries also host verbatim historical attachments migrated from doc-onevcat (e.g.
 `023-shelf-mode/jank-investigation.md`, `017-.../batch-2026-07-06-post-v0.10.5.md`,
@@ -125,3 +126,4 @@ agent-facing manual for that).
 | 065 | [bundled-agent-skills](065-bundled-agent-skills/000-plan.md) | 2026-08-22 | Bundle Prowl's official agent skills into the app, `prowl skills` install/uninstall via symlinks into agent skill folders, Agent Skills section on Settings › CLI & Skills, shared registry for 063 |
 | 066 | [agent-island](066-agent-island/000-plan.md) | 2026-09-01 | Notch-aware Active Agents island, global keyboard entry, Agents Display settings, and hover-revealed floating placement |
 | 067 | [remote-mirror](067-remote-mirror/000-plan.md) | 2026-09-09 | App-owned Host and native remote terminal mirrors; [macOS UX and viewport](067-remote-mirror/006-macos-ux.md) |
+| 068 | [agent-state-providers](068-agent-state-providers/000-plan.md) | 2026-09-14 | Shared [architecture](068-agent-state-providers/architecture.md), released [Codex provider](068-agent-state-providers/codex.md), and [Claude spike and migration plan](068-agent-state-providers/claude.md); implementation awaiting review |
