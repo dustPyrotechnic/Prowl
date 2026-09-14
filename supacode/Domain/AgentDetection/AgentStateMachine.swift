@@ -129,8 +129,10 @@ nonisolated struct AgentStateMachine: Sendable {
       return
     }
     let changed = native != snapshot
-    // First attachment has no observed transition that can dismiss an existing blocker.
-    let canFence = native != nil || screen.state != .blocked
+    // Busy can acknowledge a retained prompt, but cannot dismiss a newly changed blocker.
+    let canFence =
+      screen.state != .blocked || snapshot.state == .blocked
+      || (snapshot.state == .idle && native != nil) || suppressedScreen == screen
     native = snapshot
     nativeAvailable = true
     hasLogProvider = true

@@ -39,7 +39,7 @@ Manual shell-only relocation and daemon/remote session kinds retain screen fallb
 
 Claude Code 2.1.270 ran without hooks in disposable panes on a separate Debug socket.
 The capture harness retained 1,384 native CLI observations, including 290 where the
-screen was Idle while the final decision was `native.working`. Twenty-four trace
+screen was Idle while the final decision was `native.working`. Twenty-five trace
 assertions passed. This is sampled evidence, not proof of all possible interleavings.
 
 | Case | Observed result |
@@ -85,21 +85,27 @@ here before marking the chapter complete.
 
 Red runs established missing provider facts, the suspended-completion regression,
 native Idle readiness on an unmatched screen, and first attachment preserving an
-existing blocker. Only a subsequent native transition can fence that blocker. Tests cover schema/size bounds,
+existing blocker. A Busy transition also preserves a newly changed blocker; it only acknowledges
+a blocker retained from the preceding observation. Tests cover schema/size bounds,
 process generation before/after reads, old atomic replacement, recovery without
 log writes, same-session independence, capture ordering, completion fences, and
 readiness vetoes. Codex decoder/provider and shared policy suites remain covered.
 
 Local captures and replay assertions are in
 `.local/agent-screen-captures/claude-provider-20260915/`; raw runtime/session data is
-not published. `native-verification.json` records the 24 evidence checks and the
-explicit desktop limitation. Final verification: 91 selected app tests passed with zero errors or warnings;
+not published. `native-verification.json` records the 25 evidence checks and the
+explicit desktop limitation. Final verification: 92 selected app tests passed with zero errors;
 `make check` passed, including 158 script tests; standard `make build-app` passed
 with zero errors or warnings. CLI build, smoke, unit (219 XCTest plus 78 Swift
-Testing), and integration (105 tests) passed. An earlier test rebuild emitted five
-third-party Dependencies scan warnings; the final test/build runs did not.
+Testing), and integration (105 tests) passed. The final test rebuild emitted five
+third-party Dependencies scan warnings; the standard app build had none.
 
-Both owned Debug instances, disposable runtime processes, and local HTTP error
+All owned Debug instances, disposable runtime processes, and local HTTP error
 servers were stopped. No test runtime PID registry files remained after cleanup.
 The API test pane's close prompt could not be answered through the unavailable
 desktop channel, so its owned Debug instance was terminated during cleanup.
+
+The final blocker refinement received a fresh Debug question/answer regression.
+Its first harness attempt opened a pane before workspace restore completed; that
+pane disappeared. Retrying after restore completed passed. This was not counted
+as a passing first attempt or a detector failure.

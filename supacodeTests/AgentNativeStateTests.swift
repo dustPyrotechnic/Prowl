@@ -29,6 +29,16 @@ struct AgentNativeStateTests {
     }
   }
 
+  @Test func busyTransitionDoesNotDismissANewBlocker() {
+    for previous in [AgentRawState.idle, .blocked] {
+      var machine = AgentStateMachine()
+      _ = machine.receive(screen(previous), now: 0)
+      _ = machine.receive(snapshot(previous), now: 0)
+      _ = machine.receive(screen(.blocked, content: 2), now: 1)
+      #expect(machine.receive(snapshot(.working, revision: 2), now: 2).state == .blocked)
+    }
+  }
+
   @Test func completionFencesRetainedScreenButFreshBlockerWins() {
     var machine = AgentStateMachine()
     _ = machine.receive(screen(.working), now: 0)
