@@ -373,7 +373,7 @@ test-app: ensure-ghostty # Run app/unit tests via xcodebuild
 			set -- -derivedDataPath "$$PROWL_DERIVED_DATA_PATH" "$$@"; \
 		fi; \
 		set +e; \
-		xcodebuild "$$action" -project supacode.xcodeproj -scheme supacode -destination "platform=macOS" -resultBundlePath "$$result_bundle" $(TEST_SIGNING_ARGS) -skipMacroValidation -clonedSourcePackagesDirPath $(SPM_CACHE_DIR) -showBuildTimingSummary SWIFT_COMPILATION_MODE=incremental "$$@" 2>&1 | tee "$$result_bundle.log" | tee >(awk -f "$(CURRENT_MAKEFILE_DIR)/scripts/test-progress.awk" >&2) | mise exec -- xcsift -w --format toon; \
+		xcodebuild "$$action" -project supacode.xcodeproj -scheme supacode -destination "platform=macOS" -resultBundlePath "$$result_bundle" $(TEST_SIGNING_ARGS) -skipMacroValidation -clonedSourcePackagesDirPath $(SPM_CACHE_DIR) -showBuildTimingSummary SWIFT_COMPILATION_MODE=incremental "$$@" 2>&1 | tee "$$result_bundle.log" | tee >(PROWL_TEST_PROGRESS_LABEL="$${result_bundle##*/}" awk -f "$(CURRENT_MAKEFILE_DIR)/scripts/test-progress.awk" >&2) | mise exec -- xcsift -w --format toon; \
 		local xcodebuild_status=$${PIPESTATUS[0]}; \
 		set -e; \
 		if [ "$$action" = "test" ] && [ -d "$$result_bundle" ]; then \
@@ -439,7 +439,9 @@ test-cli-unit: # Run CLI unit tests via SwiftPM
 		exit 1; \
 	fi; \
 	echo "CLI unit filter matched $$matching_test_count test(s)."; \
-	swift test --skip-build --skip '$(CLI_INTEGRATION_TEST_FILTER)' 2>&1 | mise exec -- xcsift -w --format toon
+	swift test --skip-build --skip '$(CLI_INTEGRATION_TEST_FILTER)' 2>&1 \
+		| tee >(PROWL_TEST_PROGRESS_LABEL=cli-unit awk -f "$(CURRENT_MAKEFILE_DIR)/scripts/test-progress.awk" >&2) \
+		| mise exec -- xcsift -w --format toon
 
 test-cli-integration: # Run CLI integration tests via SwiftPM
 	@test_list="$$(swift test list)"; \
@@ -449,7 +451,9 @@ test-cli-integration: # Run CLI integration tests via SwiftPM
 		exit 1; \
 	fi; \
 	echo "CLI integration filter matched $$matching_test_count test(s)."; \
-	swift test --skip-build --filter '$(CLI_INTEGRATION_TEST_FILTER)' 2>&1 | mise exec -- xcsift -w --format toon
+	swift test --skip-build --filter '$(CLI_INTEGRATION_TEST_FILTER)' 2>&1 \
+		| tee >(PROWL_TEST_PROGRESS_LABEL=cli-integration awk -f "$(CURRENT_MAKEFILE_DIR)/scripts/test-progress.awk" >&2) \
+		| mise exec -- xcsift -w --format toon
 
 benchmark-build: ensure-ghostty embed-cli-debug embed-docs embed-skills # Benchmark clean and compilation-cache build/test time
 	@BUILD_BENCHMARK_ROOT="$(CURRENT_MAKEFILE_DIR)/.build-benchmark/build-time" \
