@@ -11,7 +11,9 @@ extension AppFeature {
     guard let worktree = actionTargetWorktree(repositories: state.repositories) else { return .none }
     let source = terminalClient.handoffSourceContext(worktree.id)
     guard let hudState = HandoffHudFeature.State.make(worktree: worktree, source: source) else {
-      return .send(.repositories(.showToast(.warning("No agent detected in the current pane"))))
+      return .send(
+        .repositories(.showToast(.warning(String(localized: "No agent detected in the current pane"))))
+      )
     }
     state.handoffHud = hudState
     return .none
@@ -28,7 +30,9 @@ extension AppFeature {
     else { return .none }
     let source = terminalClient.handoffSourceContextForSurface(entry.worktreeID, entry.surfaceID)
     guard let hudState = HandoffHudFeature.State.make(worktree: worktree, source: source) else {
-      return .send(.repositories(.showToast(.warning("No agent detected in this pane"))))
+      return .send(
+        .repositories(.showToast(.warning(String(localized: "No agent detected in this pane"))))
+      )
     }
     state.handoffHud = hudState
     return .none

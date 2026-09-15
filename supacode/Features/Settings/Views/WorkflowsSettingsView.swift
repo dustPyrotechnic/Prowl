@@ -1,13 +1,14 @@
 import ComposableArchitecture
+import Foundation
 import SwiftUI
 
 /// Settings → Agents → Workflows. The root is intentionally a compact index; every control
 /// whose effect is scoped to one workflow lives on the pushed detail page.
 struct WorkflowsSettingsView: View {
+  let appLocale: Locale
   @State private var showsHistory = false
   @State private var historyStore = Store(initialState: WorkflowHistoryFeature.State()) { WorkflowHistoryFeature() }
   @Bindable var store: StoreOf<WorkflowsSettingsFeature>
-
   var body: some View {
     NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
       Form {
@@ -27,7 +28,11 @@ struct WorkflowsSettingsView: View {
       .alert($store.scope(state: \.alert, action: \.alert))
       .sheet(isPresented: $store.isAuthoringPromptPresented.sending(\.setAuthoringPromptPresented)) {
         AskAgentHelpView(
-          strings: workflowAuthoringPromptStrings(directory: store.workflowDirectory)
+          strings: workflowAuthoringPromptStrings(
+            directory: store.workflowDirectory,
+            appLocale: appLocale,
+            systemLocale: AskAgentHelpPrompt.systemPreferredLocale()
+          )
         ) {
           store.send(.setAuthoringPromptPresented(false))
         }
@@ -288,7 +293,11 @@ struct WorkflowStatusLabel: View {
   }
 }
 
-func workflowAuthoringPromptStrings(directory: URL) -> AskAgentHelpStrings {
+func workflowAuthoringPromptStrings(
+  directory: URL,
+  appLocale: Locale,
+  systemLocale: Locale
+) -> AskAgentHelpStrings {
   let resources = SupacodePaths.bundledDocsURL?.deletingLastPathComponent()
   let skill =
     resources?.appending(path: "skills/prowl-workflow/SKILL.md", directoryHint: .notDirectory)
@@ -303,5 +312,7 @@ func workflowAuthoringPromptStrings(directory: URL) -> AskAgentHelpStrings {
   return WorkflowAuthoringPrompt.strings(
     skillPath: skill,
     manualPath: manual,
-    workflowsDirectory: directory.path(percentEncoded: false))
+    workflowsDirectory: directory.path(percentEncoded: false),
+    appLocale: appLocale,
+    systemLocale: systemLocale)
 }

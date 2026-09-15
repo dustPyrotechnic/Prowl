@@ -36,6 +36,36 @@ struct CommandPaletteFeatureTests {
     expectNoDifference(items.map(\.id), expectedIDs)
   }
 
+  @Test func installCommandLineToolSearchKeepsStableIDAcrossEnglishAndChineseTerms() {
+    let items = CommandPaletteFeature.commandPaletteItems(from: RepositoriesFeature.State())
+    let expectedID = CommandPaletteItemID.globalInstallCLI
+
+    let englishResults = CommandPaletteFeature.filterItems(
+      items: items,
+      query: "Install Command Line Tool"
+    )
+    let chineseResults = CommandPaletteFeature.filterItems(items: items, query: "命令行")
+
+    #expect(englishResults.contains { $0.id == expectedID })
+    #expect(chineseResults.contains { $0.id == expectedID })
+  }
+
+  @Test func revealInFinderSearchKeepsStableIDAcrossEnglishAndChineseTerms() {
+    let rootPath = "/tmp/repo-reveal-search"
+    let worktree = makeWorktree(id: rootPath, name: "repo", repoRoot: rootPath)
+    let repository = makeRepository(rootPath: rootPath, name: "Repo", worktrees: [worktree])
+    var state = RepositoriesFeature.State(repositories: [repository])
+    state.selection = .worktree(worktree.id)
+    let items = CommandPaletteFeature.commandPaletteItems(from: state)
+    let expectedID = CommandPaletteItemID.globalRevealInFinder
+
+    let englishResults = CommandPaletteFeature.filterItems(items: items, query: "Reveal in Finder")
+    let chineseResults = CommandPaletteFeature.filterItems(items: items, query: "访达")
+
+    #expect(englishResults.contains { $0.id == expectedID })
+    #expect(chineseResults.contains { $0.id == expectedID })
+  }
+
   @Test func commandPaletteItems_includesShowDiffWhenWorktreeSelected() {
     let rootPath = "/tmp/repo-diff"
     let worktree = makeWorktree(id: "\(rootPath)/wt-1", name: "wt-1", repoRoot: rootPath)
@@ -410,6 +440,7 @@ struct CommandPaletteFeatureTests {
 
     #expect(ghosttyItem?.title == "Focus Split Right")
     #expect(ghosttyItem?.subtitle == "Focus the split to the right.")
+    #expect(ghosttyItem?.id == "ghostty.goto_split:right|Focus Split Right")
   }
 
   @Test func commandPaletteItems_includeGhosttyCommandsForCanvasActionTarget() {
