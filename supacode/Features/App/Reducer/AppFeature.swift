@@ -581,11 +581,17 @@ struct AppFeature {
       case .settings(.delegate(.cliInstallCompleted(let result))):
         switch result {
         case .installed(let path):
-          return .send(.repositories(.showToast(.success("prowl installed at \(path)"))))
+          return .send(
+            .repositories(.showToast(.success(String(localized: "prowl installed at \(path)"))))
+          )
         case .uninstalled:
-          return .send(.repositories(.showToast(.success("prowl command line tool removed"))))
+          return .send(
+            .repositories(.showToast(.success(String(localized: "prowl command line tool removed"))))
+          )
         case .failed(let message):
-          return .send(.repositories(.showToast(.warning("CLI install failed: \(message)"))))
+          return .send(
+            .repositories(.showToast(.warning(String(localized: "CLI install failed: \(message)"))))
+          )
         }
 
       case .settings(.workflows(.delegate(.openProfiles))),
@@ -611,9 +617,11 @@ struct AppFeature {
         .settings(.repositorySettings(.workflows(.delegate(.notice(let notice))))):
         switch notice {
         case .workflowCreated(let path):
-          return .send(.repositories(.showToast(.success("Workflow created at \(path)"))))
+          return .send(.repositories(.showToast(.success(String(localized: "Workflow created at \(path)")))))
         case .cliInstalled(let path):
-          return .send(.repositories(.showToast(.success("prowl installed at \(path)"))))
+          return .send(
+            .repositories(.showToast(.success(String(localized: "prowl installed at \(path)"))))
+          )
         case .failed(let message):
           return .send(.repositories(.showToast(.warning(message))))
         }
@@ -621,24 +629,30 @@ struct AppFeature {
       case .settings(.agentSkills(.delegate(.linkChanged(let result)))):
         switch result {
         case .installed(let skill, let target):
-          return .send(.repositories(.showToast(.success("\(skill) skill linked for \(target)"))))
+          return .send(
+            .repositories(.showToast(.success(String(localized: "\(skill) skill linked for \(target)"))))
+          )
         case .removed(let skill, let target):
           return .send(
-            .repositories(.showToast(.success("\(skill) skill link removed for \(target)"))))
+            .repositories(
+              .showToast(.success(String(localized: "\(skill) skill link removed for \(target)"))))
+          )
         case .failed(let message):
-          return .send(.repositories(.showToast(.warning("Skill link failed: \(message)"))))
+          return .send(
+            .repositories(.showToast(.warning(String(localized: "Skill link failed: \(message)"))))
+          )
         }
 
       case .settings(.delegate(.terminalLayoutSnapshotCleared(let success))):
         if success {
           state.suppressLayoutSaveUntilRelaunch = true
-          return .send(.repositories(.showToast(.success("Saved terminal layout cleared"))))
+          return .send(.repositories(.showToast(.success(String(localized: "Saved terminal layout cleared")))))
         }
         return .send(
           .repositories(
             .presentAlert(
-              title: "Unable to clear saved terminal layout",
-              message: "Please check file permissions and try again."
+              title: String(localized: "Unable to clear saved terminal layout"),
+              message: String(localized: "Please check file permissions and try again.")
             )
           )
         )
@@ -716,7 +730,7 @@ struct AppFeature {
           TextState(error.title)
         } actions: {
           ButtonState(role: .cancel, action: .dismiss) {
-            TextState("OK")
+            TextState(String(localized: "OK"))
           }
         } message: {
           TextState(error.message)
@@ -732,16 +746,16 @@ struct AppFeature {
         }
         _ = appLifecycleClient.surfaceMainWindow()
         state.alert = AlertState {
-          TextState("Quit Prowl?")
+          TextState(String(localized: "Quit Prowl?"))
         } actions: {
           ButtonState(action: .confirmQuit) {
-            TextState("Quit")
+            TextState(String(localized: "Quit"))
           }
           ButtonState(role: .cancel, action: .dismiss) {
-            TextState("Cancel")
+            TextState(String(localized: "Cancel"))
           }
         } message: {
-          TextState("This will close all terminal sessions.")
+          TextState(String(localized: "This will close all terminal sessions."))
         }
         return .none
 
@@ -1180,7 +1194,7 @@ struct AppFeature {
           switch notice.kind {
           case .completed:
             effects.append(
-              .send(.repositories(.showToast(.success("\(notice.workflowName) completed"))))
+              .send(.repositories(.showToast(.success(String(localized: "\(notice.workflowName) completed")))))
             )
           case .skipped, .iterationLimitReached:
             effects.append(.send(.repositories(.showToast(.warning(notice.title)))))

@@ -552,19 +552,19 @@ struct SettingsFeature {
         if state.cliInstallShowAlert {
           if path.isEmpty {
             state.alert = AlertState {
-              TextState("Command Line Tool Uninstalled")
+              TextState(String(localized: "Command Line Tool Uninstalled"))
             } actions: {
-              ButtonState(action: .dismiss) { TextState("OK") }
+              ButtonState(action: .dismiss) { TextState(String(localized: "OK")) }
             } message: {
-              TextState("The prowl command line tool has been removed.")
+              TextState(String(localized: "The prowl command line tool has been removed."))
             }
           } else {
             state.alert = AlertState {
-              TextState("Command Line Tool Installed")
+              TextState(String(localized: "Command Line Tool Installed"))
             } actions: {
-              ButtonState(action: .dismiss) { TextState("OK") }
+              ButtonState(action: .dismiss) { TextState(String(localized: "OK")) }
             } message: {
-              TextState("The prowl command is now available at \(path).")
+              TextState(String(localized: "The prowl command is now available at \(path)."))
             }
           }
         }
@@ -575,9 +575,9 @@ struct SettingsFeature {
       case .cliInstallCompleted(.failure(let error)):
         if state.cliInstallShowAlert {
           state.alert = AlertState {
-            TextState("Command Line Tool Error")
+            TextState(String(localized: "Command Line Tool Error"))
           } actions: {
-            ButtonState(action: .dismiss) { TextState("OK") }
+            ButtonState(action: .dismiss) { TextState(String(localized: "OK")) }
           } message: {
             TextState(error.message)
           }
@@ -604,17 +604,19 @@ struct SettingsFeature {
 
       case .showNotificationPermissionAlert:
         state.alert = AlertState {
-          TextState("Prowl cannot send system notifications")
+          TextState(String(localized: "Prowl cannot send system notifications"))
         } actions: {
           ButtonState(action: .openSystemNotificationSettings) {
-            TextState("Open System Settings")
+            TextState(String(localized: "Open System Settings"))
           }
           ButtonState(role: .cancel, action: .dismiss) {
-            TextState("Cancel")
+            TextState(String(localized: "Cancel"))
           }
         } message: {
           TextState(
-            "Notification permission is turned off. Open System Settings to allow Prowl to send notifications."
+            String(
+              localized:
+                "Notification permission is turned off. Open System Settings to allow Prowl to send notifications.")
           )
         }
         return .none

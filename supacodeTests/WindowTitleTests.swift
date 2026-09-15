@@ -32,10 +32,12 @@ struct WindowTitleTests {
     var state = RepositoriesFeature.State()
 
     state.selection = .canvas
-    #expect(WindowTitle.compute(repositories: state, terminalManager: manager) == "Canvas")
+    #expect(WindowTitle.compute(repositories: state, terminalManager: manager) == String(localized: "Canvas"))
 
     state.selection = .archivedWorktrees
-    #expect(WindowTitle.compute(repositories: state, terminalManager: manager) == "Archived Worktrees")
+    #expect(
+      WindowTitle.compute(repositories: state, terminalManager: manager) == String(localized: "Archived Worktrees")
+    )
   }
 
   @Test func computeFallsBackToAppNameWhenWorktreeHasNoActiveTab() {

@@ -51,6 +51,66 @@
         }
       }
     },
+    "%@ completed": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已完成"
+          }
+        }
+      }
+    },
+    "%@ custom command · %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 自定义命令 · %@"
+          }
+        }
+      }
+    },
+    "%@ not found": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到 %@"
+          }
+        }
+      }
+    },
+    "%@ skill link removed for %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已为 %2$@ 移除 %1$@ 技能链接"
+          }
+        }
+      }
+    },
+    "%@ skill linked for %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已为 %2$@ 链接 %1$@ 技能"
+          }
+        }
+      }
+    },
+    "%@ succeeded in %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已在 %@ 中成功完成"
+          }
+        }
+      }
+    },
     "%@ suggestions": {
       "localizations": {
         "zh-Hans": {
@@ -257,6 +317,16 @@
         }
       }
     },
+    "%lld successful checks": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 项检查成功"
+          }
+        }
+      }
+    },
     "%lld worktrees selected": {
       "localizations": {
         "zh-Hans": {
@@ -346,12 +416,12 @@
     "/": {
       "shouldTranslate": false
     },
-    "`%@`": {
+    "1 successful check": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "`%@`"
+            "value": "1 项检查成功"
           }
         }
       }
@@ -372,16 +442,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 处存在一个不同的版本"
-          }
-        }
-      }
-    },
-    "a Git repository or any folder — opens one project root": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Git 仓库或任意文件夹 — 打开一个项目根目录"
           }
         }
       }
@@ -456,36 +516,6 @@
         }
       }
     },
-    "Add a new agent profile": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加新的 Agent 配置档案"
-          }
-        }
-      }
-    },
-    "Add an environment variable override for this profile's launches": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "为此配置档案的启动添加环境变量覆盖"
-          }
-        }
-      }
-    },
-    "Add command": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加命令"
-          }
-        }
-      }
-    },
     "Add Local": {
       "localizations": {
         "zh-Hans": {
@@ -556,22 +586,22 @@
         }
       }
     },
+    "Add Repository": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加仓库"
+          }
+        }
+      }
+    },
     "Add Repository or Workspace": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "添加仓库或工作区"
-          }
-        }
-      }
-    },
-    "Add to Prowl": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加到 Prowl"
           }
         }
       }
@@ -596,6 +626,46 @@
         }
       }
     },
+    "Add a new agent profile": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加新的 Agent 配置档案"
+          }
+        }
+      }
+    },
+    "Add an environment variable override for this profile's launches": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为此配置档案的启动添加环境变量覆盖"
+          }
+        }
+      }
+    },
+    "Add command": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加命令"
+          }
+        }
+      }
+    },
+    "Add to Prowl": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加到 Prowl"
+          }
+        }
+      }
+    },
     "Add...": {
       "localizations": {
         "zh-Hans": {
@@ -616,42 +686,62 @@
         }
       }
     },
+    "After 1 day": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 天后"
+          }
+        }
+      }
+    },
+    "After 14 days": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "14 天后"
+          }
+        }
+      }
+    },
+    "After 3 days": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 天后"
+          }
+        }
+      }
+    },
+    "After 30 days": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 天后"
+          }
+        }
+      }
+    },
+    "After 7 days": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 天后"
+          }
+        }
+      }
+    },
     "Agent": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "Agent"
-          }
-        }
-      }
-    },
-    "Agent display settings": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agent 显示设置"
-          }
-        }
-      }
-    },
-    "Agent icon picker": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agent 图标选择器"
-          }
-        }
-      }
-    },
-    "Agent is waiting for your input": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agent 正在等待你的输入"
           }
         }
       }
@@ -702,6 +792,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Agent 技能错误"
+          }
+        }
+      }
+    },
+    "Agent display settings": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent 显示设置"
+          }
+        }
+      }
+    },
+    "Agent icon picker": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent 图标选择器"
+          }
+        }
+      }
+    },
+    "Agent is waiting for your input": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent 正在等待你的输入"
           }
         }
       }
@@ -836,16 +956,6 @@
         }
       }
     },
-    "Approve this source and content version; this does not start the workflow": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "批准此来源和内容版本；这不会启动工作流"
-          }
-        }
-      }
-    },
     "Approve This Version": {
       "localizations": {
         "zh-Hans": {
@@ -856,12 +966,32 @@
         }
       }
     },
+    "Approve this source and content version; this does not start the workflow": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "批准此来源和内容版本；这不会启动工作流"
+          }
+        }
+      }
+    },
     "Approved. Start the workflow when you are ready.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "已批准。准备就绪后即可启动工作流。"
+          }
+        }
+      }
+    },
+    "Archive": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "归档"
           }
         }
       }
@@ -906,6 +1036,26 @@
         }
       }
     },
+    "Archive Worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "归档工作树"
+          }
+        }
+      }
+    },
+    "Archive script failed": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "归档脚本失败"
+          }
+        }
+      }
+    },
     "Archive script that runs before a worktree is archived": {
       "localizations": {
         "zh-Hans": {
@@ -922,16 +1072,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "归档所选"
-          }
-        }
-      }
-    },
-    "Archive Worktree": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "归档工作树"
           }
         }
       }
@@ -992,6 +1132,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "排列"
+          }
+        }
+      }
+    },
+    "Arrange Canvas Cards": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "排列画布卡片"
+          }
+        }
+      }
+    },
+    "Arrange cards preserving sizes": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "排列卡片并保留大小"
           }
         }
       }
@@ -1146,6 +1306,16 @@
         }
       }
     },
+    "Blue": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "蓝色"
+          }
+        }
+      }
+    },
     "Bounce dock icon": {
       "localizations": {
         "zh-Hans": {
@@ -1202,6 +1372,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "分支名称"
+          }
+        }
+      }
+    },
+    "Branch name unavailable": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分支名称不可用"
           }
         }
       }
@@ -1266,6 +1446,16 @@
         }
       }
     },
+    "Built-in": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内建"
+          }
+        }
+      }
+    },
     "Built-in · Read Only": {
       "localizations": {
         "zh-Hans": {
@@ -1286,6 +1476,36 @@
         }
       }
     },
+    "CI failure logs copied": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已复制 CI 失败日志"
+          }
+        }
+      }
+    },
+    "CLI & Skills": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLI 与技能"
+          }
+        }
+      }
+    },
+    "CLI install failed: %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLI 安装失败：%@"
+          }
+        }
+      }
+    },
     "Cancel": {
       "localizations": {
         "zh-Hans": {
@@ -1302,6 +1522,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消 (Esc)"
+          }
+        }
+      }
+    },
+    "Cancel Run": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消运行"
           }
         }
       }
@@ -1336,16 +1566,6 @@
         }
       }
     },
-    "Cancel Run": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取消运行"
-          }
-        }
-      }
-    },
     "Cannot Review Bundle": {
       "localizations": {
         "zh-Hans": {
@@ -1376,22 +1596,32 @@
         }
       }
     },
-    "Canvas layout": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "画布布局"
-          }
-        }
-      }
-    },
     "Canvas Navigation": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "画布导航"
+          }
+        }
+      }
+    },
+    "Canvas View": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Canvas 视图"
+          }
+        }
+      }
+    },
+    "Canvas layout": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画布布局"
           }
         }
       }
@@ -1416,6 +1646,26 @@
         }
       }
     },
+    "Cards open at the same size.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卡片以相同大小打开。"
+          }
+        }
+      }
+    },
+    "Cards resize to fill the screen, smaller as you add more.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卡片会调整大小以填满屏幕；添加更多卡片时会变小。"
+          }
+        }
+      }
+    },
     "Centers Agent Island on displays without a notch.": {
       "localizations": {
         "zh-Hans": {
@@ -1436,27 +1686,37 @@
         }
       }
     },
-    "Check for updates automatically": {
+    "Change Tab Title": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "自动检查更新"
+            "value": "更改标签页标题"
+          }
+        }
+      }
+    },
+    "Change Title...": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改标题…"
+          }
+        }
+      }
+    },
+    "Check for Updates": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查更新"
           }
         }
       }
     },
     "Check for Updates Now": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "立即检查更新"
-          }
-        }
-      }
-    },
-    "Check for updates now": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -1476,6 +1736,26 @@
         }
       }
     },
+    "Check for updates automatically": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动检查更新"
+          }
+        }
+      }
+    },
+    "Check for updates now": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即检查更新"
+          }
+        }
+      }
+    },
     "Checking GitHub CLI...": {
       "localizations": {
         "zh-Hans": {
@@ -1486,52 +1766,22 @@
         }
       }
     },
+    "Choose": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择"
+          }
+        }
+      }
+    },
     "Choose %@": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "选择 %@"
-          }
-        }
-      }
-    },
-    "Choose a file from the sidebar to view changes": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "从边栏中选择一个文件以查看更改"
-          }
-        }
-      }
-    },
-    "Choose a pane…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择窗格…"
-          }
-        }
-      }
-    },
-    "Choose a profile…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择配置档案…"
-          }
-        }
-      }
-    },
-    "Choose another worktree or review options before running": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "运行前先选择其他工作树或查看选项"
           }
         }
       }
@@ -1552,16 +1802,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择分支操作"
-          }
-        }
-      }
-    },
-    "Choose clone destination": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择克隆目标位置"
           }
         }
       }
@@ -1606,6 +1846,86 @@
         }
       }
     },
+    "Choose Workspace Folder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作区文件夹"
+          }
+        }
+      }
+    },
+    "Choose a file from the sidebar to view changes": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从边栏中选择一个文件以查看更改"
+          }
+        }
+      }
+    },
+    "Choose a pane…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择窗格…"
+          }
+        }
+      }
+    },
+    "Choose a profile…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择配置档案…"
+          }
+        }
+      }
+    },
+    "Choose an agent to take over this task": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择接管此任务的 Agent"
+          }
+        }
+      }
+    },
+    "Choose an image to use as this repository's icon.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择要用作此仓库图标的图像。"
+          }
+        }
+      }
+    },
+    "Choose another worktree or review options before running": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行前先选择其他工作树或查看选项"
+          }
+        }
+      }
+    },
+    "Choose clone destination": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择克隆目标位置"
+          }
+        }
+      }
+    },
     "Choose the app language. The change applies the next time Prowl starts.": {
       "localizations": {
         "zh-Hans": {
@@ -1642,16 +1962,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择点击差异标记或运行“显示差异”时打开的内容。"
-          }
-        }
-      }
-    },
-    "Choose Workspace Folder": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择工作区文件夹"
           }
         }
       }
@@ -1696,22 +2006,22 @@
         }
       }
     },
-    "Clear saved terminal layout": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "清除已保存的终端布局"
-          }
-        }
-      }
-    },
     "Clear Shortcut": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "清除快捷键"
+          }
+        }
+      }
+    },
+    "Clear saved terminal layout": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除已保存的终端布局"
           }
         }
       }
@@ -1732,16 +2042,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "在不切换到该 Agent 的情况下清除其未读通知"
-          }
-        }
-      }
-    },
-    "CLI & Skills": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CLI 与技能"
           }
         }
       }
@@ -1886,42 +2186,12 @@
         }
       }
     },
-    "Close all terminal tabs in this worktree; the worktree itself stays": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭此工作树中的所有终端标签页；工作树本身会保留"
-          }
-        }
-      }
-    },
-    "Close card": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭卡片"
-          }
-        }
-      }
-    },
     "Close Find Bar (Esc)": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "关闭查找栏（Esc）"
-          }
-        }
-      }
-    },
-    "Close on success": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "成功时关闭"
           }
         }
       }
@@ -1946,7 +2216,37 @@
         }
       }
     },
+    "Close PR": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭 PR"
+          }
+        }
+      }
+    },
+    "Close Pane": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭窗格"
+          }
+        }
+      }
+    },
     "Close Tab": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭标签页"
+          }
+        }
+      }
+    },
+    "Close Tabs": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -1966,6 +2266,16 @@
         }
       }
     },
+    "Close Terminal Pane?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭终端窗格？"
+          }
+        }
+      }
+    },
     "Close Terminal Tab": {
       "localizations": {
         "zh-Hans": {
@@ -1976,12 +2286,22 @@
         }
       }
     },
-    "Close this review (Escape)": {
+    "Close Terminal Tab?": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "关闭此审查（Escape）"
+            "value": "关闭终端标签页？"
+          }
+        }
+      }
+    },
+    "Close Terminal Tabs?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭终端标签页？"
           }
         }
       }
@@ -1992,6 +2312,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "关闭窗口"
+          }
+        }
+      }
+    },
+    "Close all terminal tabs in this worktree; the worktree itself stays": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭此工作树中的所有终端标签页；工作树本身会保留"
+          }
+        }
+      }
+    },
+    "Close card": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭卡片"
+          }
+        }
+      }
+    },
+    "Close on success": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "成功时关闭"
+          }
+        }
+      }
+    },
+    "Close this review (Escape)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭此审查（Escape）"
           }
         }
       }
@@ -2022,6 +2382,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "关闭工作流历史记录（Esc）"
+          }
+        }
+      }
+    },
+    "Closing pull request…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在关闭拉取请求…"
           }
         }
       }
@@ -2166,16 +2536,6 @@
         }
       }
     },
-    "Confirm before quitting": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出前确认"
-          }
-        }
-      }
-    },
     "Confirm Workflow Action": {
       "localizations": {
         "zh-Hans": {
@@ -2206,6 +2566,16 @@
         }
       }
     },
+    "Confirm before quitting": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出前确认"
+          }
+        }
+      }
+    },
     "Connection": {
       "localizations": {
         "zh-Hans": {
@@ -2222,6 +2592,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "仅上下文"
+          }
+        }
+      }
+    },
+    "Continuously": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持续"
           }
         }
       }
@@ -2246,6 +2626,76 @@
         }
       }
     },
+    "Copy": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制"
+          }
+        }
+      }
+    },
+    "Copy Branch Name": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制分支名"
+          }
+        }
+      }
+    },
+    "Copy CI Failure Logs": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制 CI 失败日志"
+          }
+        }
+      }
+    },
+    "Copy Defaults": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制默认值"
+          }
+        }
+      }
+    },
+    "Copy Full Output": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制完整输出"
+          }
+        }
+      }
+    },
+    "Copy Path": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制路径"
+          }
+        }
+      }
+    },
+    "Copy Session Path": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制会话路径"
+          }
+        }
+      }
+    },
     "Copy a prompt that asks your coding agent to write a workflow": {
       "localizations": {
         "zh-Hans": {
@@ -2266,22 +2716,12 @@
         }
       }
     },
-    "Copy Branch Name": {
+    "Copy failing job URL": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "复制分支名"
-          }
-        }
-      }
-    },
-    "Copy Defaults": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制默认值"
+            "value": "复制失败任务 URL"
           }
         }
       }
@@ -2296,32 +2736,12 @@
         }
       }
     },
-    "Copy Full Output": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制完整输出"
-          }
-        }
-      }
-    },
     "Copy ignored files to new worktrees": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "将忽略的文件复制到新工作树"
-          }
-        }
-      }
-    },
-    "Copy Path": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制路径"
           }
         }
       }
@@ -2336,16 +2756,6 @@
         }
       }
     },
-    "Copy Session Path": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制会话路径"
-          }
-        }
-      }
-    },
     "Copy the agent's working directory path": {
       "localizations": {
         "zh-Hans": {
@@ -2356,22 +2766,22 @@
         }
       }
     },
-    "Copy the complete delivery": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制完整交付内容"
-          }
-        }
-      }
-    },
     "Copy the complete JSON output": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "复制完整的 JSON 输出"
+          }
+        }
+      }
+    },
+    "Copy the complete delivery": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制完整交付内容"
           }
         }
       }
@@ -2416,6 +2826,26 @@
         }
       }
     },
+    "Couldn't launch “%@”": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法启动“%@”"
+          }
+        }
+      }
+    },
+    "Couldn't unregister worktrees for %@. Deleting the workspace folder now would leave those worktrees registered in their source repositories. Delete it anyway?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法为 %@ 取消注册工作树。现在删除工作区文件夹会使这些工作树仍注册在其源仓库中。仍要删除吗？"
+          }
+        }
+      }
+    },
     "Create": {
       "localizations": {
         "zh-Hans": {
@@ -2432,6 +2862,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "创建 (↩)"
+          }
+        }
+      }
+    },
+    "Create Branch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建分支"
+          }
+        }
+      }
+    },
+    "Create Workspace (↩)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建工作区 (↩)"
           }
         }
       }
@@ -2466,16 +2916,6 @@
         }
       }
     },
-    "Create Branch": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建分支"
-          }
-        }
-      }
-    },
     "Create profile from suggestion…": {
       "localizations": {
         "zh-Hans": {
@@ -2492,16 +2932,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "创建此配置档案并将其用于该角色。之后可在设置中管理。"
-          }
-        }
-      }
-    },
-    "Create Workspace (↩)": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "创建工作区 (↩)"
           }
         }
       }
@@ -2526,7 +2956,17 @@
         }
       }
     },
-    "Custom color": {
+    "Custom": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义"
+          }
+        }
+      }
+    },
+    "Custom Color": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -2536,12 +2976,12 @@
         }
       }
     },
-    "Custom color — pick any color": {
+    "Custom Command": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "自定义颜色 — 选择任意颜色"
+            "value": "自定义命令"
           }
         }
       }
@@ -2566,6 +3006,36 @@
         }
       }
     },
+    "Custom Value": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义值"
+          }
+        }
+      }
+    },
+    "Custom color": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义颜色"
+          }
+        }
+      }
+    },
+    "Custom color — pick any color": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义颜色 — 选择任意颜色"
+          }
+        }
+      }
+    },
     "Custom tint color": {
       "localizations": {
         "zh-Hans": {
@@ -2576,12 +3046,22 @@
         }
       }
     },
-    "Custom Value": {
+    "Cyan": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "自定义值"
+            "value": "青色"
+          }
+        }
+      }
+    },
+    "Dark": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深色"
           }
         }
       }
@@ -2636,22 +3116,32 @@
         }
       }
     },
-    "Default directory for new worktrees across repositories. Leave empty to keep current behavior.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "各仓库新建工作树的默认目录。留空则保持当前行为。"
-          }
-        }
-      }
-    },
     "Default Editor": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "默认编辑器"
+          }
+        }
+      }
+    },
+    "Default Views": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认视图"
+          }
+        }
+      }
+    },
+    "Default directory for new worktrees across repositories. Leave empty to keep current behavior.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各仓库新建工作树的默认目录。留空则保持当前行为。"
           }
         }
       }
@@ -2676,22 +3166,22 @@
         }
       }
     },
-    "Default Views": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "默认视图"
-          }
-        }
-      }
-    },
     "Default: current behavior": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "默认：当前行为"
+          }
+        }
+      }
+    },
+    "Defined as a global command": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "定义为全局命令"
           }
         }
       }
@@ -2706,12 +3196,32 @@
         }
       }
     },
-    "Delete branch": {
+    "Delete %@? The worktree directory will be removed.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "删除分支"
+            "value": "删除 %@？工作树目录将被移除。"
+          }
+        }
+      }
+    },
+    "Delete %lld worktrees?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %lld 个工作树？"
+          }
+        }
+      }
+    },
+    "Delete %lld worktrees? Their worktree directories will be removed.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %lld 个工作树？其工作树目录将被移除。"
           }
         }
       }
@@ -2722,16 +3232,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "仍然删除文件夹"
-          }
-        }
-      }
-    },
-    "Delete local branch during automatic cleanup": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "自动清理时删除本地分支"
           }
         }
       }
@@ -2766,6 +3266,76 @@
         }
       }
     },
+    "Delete Workflow?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除工作流？"
+          }
+        }
+      }
+    },
+    "Delete Workflow…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除工作流…"
+          }
+        }
+      }
+    },
+    "Delete Worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除工作树"
+          }
+        }
+      }
+    },
+    "Delete Worktree (%@)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除工作树（%@）"
+          }
+        }
+      }
+    },
+    "Delete branch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除分支"
+          }
+        }
+      }
+    },
+    "Delete local branch during automatic cleanup": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动清理时删除本地分支"
+          }
+        }
+      }
+    },
+    "Delete not allowed": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不允许删除"
+          }
+        }
+      }
+    },
     "Delete selected (%@)": {
       "localizations": {
         "zh-Hans": {
@@ -2796,26 +3366,6 @@
         }
       }
     },
-    "Delete Workflow?": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除工作流？"
-          }
-        }
-      }
-    },
-    "Delete Workflow…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除工作流…"
-          }
-        }
-      }
-    },
     "Delete worktree": {
       "localizations": {
         "zh-Hans": {
@@ -2826,22 +3376,12 @@
         }
       }
     },
-    "Delete Worktree": {
+    "Delete worktree?": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "删除工作树"
-          }
-        }
-      }
-    },
-    "Delete Worktree (%@)": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "删除工作树（%@）"
+            "value": "删除工作树？"
           }
         }
       }
@@ -2862,6 +3402,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "当其拉取请求被合并时删除工作树。 %@"
+          }
+        }
+      }
+    },
+    "Deleting the main worktree is not allowed.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不允许删除主工作树。"
           }
         }
       }
@@ -2986,16 +3536,6 @@
         }
       }
     },
-    "Dismiss all notifications": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关闭所有通知"
-          }
-        }
-      }
-    },
     "Dismiss Command Palette": {
       "localizations": {
         "zh-Hans": {
@@ -3022,6 +3562,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "关闭工作流启动界面"
+          }
+        }
+      }
+    },
+    "Dismiss all notifications": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭所有通知"
           }
         }
       }
@@ -3082,6 +3632,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "完成"
+          }
+        }
+      }
+    },
+    "Down": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下方"
           }
         }
       }
@@ -3202,6 +3762,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "启用 GitHub 集成并安装 gh CLI 以使用拉取请求检查。"
+          }
+        }
+      }
+    },
+    "Enable GitHub integration to close a pull request.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用 GitHub 集成以关闭拉取请求。"
+          }
+        }
+      }
+    },
+    "Enable GitHub integration to copy CI failure logs.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用 GitHub 集成以复制 CI 失败日志。"
+          }
+        }
+      }
+    },
+    "Enable GitHub integration to mark a pull request as ready.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用 GitHub 集成以将拉取请求标记为准备审核。"
+          }
+        }
+      }
+    },
+    "Enable GitHub integration to merge a pull request.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用 GitHub 集成以合并拉取请求。"
+          }
+        }
+      }
+    },
+    "Enable GitHub integration to re-run failed jobs.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用 GitHub 集成以重新运行失败任务。"
           }
         }
       }
@@ -3346,6 +3956,16 @@
         }
       }
     },
+    "Expand / Restore Canvas Card": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "展开/恢复画布卡片"
+          }
+        }
+      }
+    },
     "Expand card": {
       "localizations": {
         "zh-Hans": {
@@ -3416,6 +4036,86 @@
         }
       }
     },
+    "Failed jobs re-run started": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已开始重新运行失败任务"
+          }
+        }
+      }
+    },
+    "Failed to close pull request": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法关闭拉取请求"
+          }
+        }
+      }
+    },
+    "Failed to copy CI failure logs": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法复制 CI 失败日志"
+          }
+        }
+      }
+    },
+    "Failed to mark pull request ready": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法将拉取请求标记为准备审核"
+          }
+        }
+      }
+    },
+    "Failed to merge pull request": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法合并拉取请求"
+          }
+        }
+      }
+    },
+    "Failed to re-run failed jobs": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法重新运行失败任务"
+          }
+        }
+      }
+    },
+    "Failing check not found": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到失败检查"
+          }
+        }
+      }
+    },
+    "Failing job URL copied": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已复制失败任务 URL"
+          }
+        }
+      }
+    },
     "Failure": {
       "localizations": {
         "zh-Hans": {
@@ -3442,6 +4142,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "创建工作树前获取远程"
+          }
+        }
+      }
+    },
+    "Fetching CI logs…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在获取 CI 日志…"
           }
         }
       }
@@ -3486,6 +4196,26 @@
         }
       }
     },
+    "Find": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查找"
+          }
+        }
+      }
+    },
+    "Find %@ later in Menu Bar > Worktrees > Archived Worktrees (%@).": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后可在菜单栏 > 工作树 > 已归档工作树（%2$@）中找到 %1$@。"
+          }
+        }
+      }
+    },
     "Find Next": {
       "localizations": {
         "zh-Hans": {
@@ -3502,6 +4232,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "查找上一个"
+          }
+        }
+      }
+    },
+    "Find them later in Menu Bar > Worktrees > Archived Worktrees (%@).": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后可在菜单栏 > 工作树 > 已归档工作树（%@）中找到它们。"
           }
         }
       }
@@ -3626,22 +4366,22 @@
         }
       }
     },
+    "Forces the Dock notification badge on for visual testing": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为视觉测试强制显示 Dock 通知徽标"
+          }
+        }
+      }
+    },
     "Forward in Worktree History": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "在工作树历史中前进"
-          }
-        }
-      }
-    },
-    "fresh session": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新会话"
           }
         }
       }
@@ -3682,16 +4422,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Git 仓库 URL"
-          }
-        }
-      }
-    },
-    "git@github.com:owner/repo.git": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "git@github.com:owner/repo.git"
           }
         }
       }
@@ -3756,6 +4486,16 @@
         }
       }
     },
+    "GitHub repository not resolved": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未解析 GitHub 仓库"
+          }
+        }
+      }
+    },
     "Global": {
       "localizations": {
         "zh-Hans": {
@@ -3776,22 +4516,32 @@
         }
       }
     },
-    "Global command. Edit it in Settings → Commands.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全局命令。可在“设置 → 命令”中编辑。"
-          }
-        }
-      }
-    },
     "Global Commands": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "全局命令"
+          }
+        }
+      }
+    },
+    "Global Custom Commands": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全局自定义命令"
+          }
+        }
+      }
+    },
+    "Global command. Edit it in Settings → Commands.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全局命令。可在“设置 → 命令”中编辑。"
           }
         }
       }
@@ -3806,12 +4556,22 @@
         }
       }
     },
-    "Global Custom Commands": {
+    "Gray": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "全局自定义命令"
+            "value": "灰色"
+          }
+        }
+      }
+    },
+    "Green": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "绿色"
           }
         }
       }
@@ -3936,6 +4696,16 @@
         }
       }
     },
+    "ID": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID"
+          }
+        }
+      }
+    },
     "Icon": {
       "localizations": {
         "zh-Hans": {
@@ -3966,22 +4736,12 @@
         }
       }
     },
-    "ID": {
+    "Immediately (debug)": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ID"
-          }
-        }
-      }
-    },
-    "in %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 %@ 中"
+            "value": "立即（调试）"
           }
         }
       }
@@ -4056,12 +4816,42 @@
         }
       }
     },
+    "Install %@ to open this worktree.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装 %@ 以打开此工作树。"
+          }
+        }
+      }
+    },
     "Install Command Line Tool": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "安装命令行工具"
+          }
+        }
+      }
+    },
+    "Install Update and Relaunch?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装更新并重新启动？"
+          }
+        }
+      }
+    },
+    "Install and Relaunch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装并重新启动"
           }
         }
       }
@@ -4166,16 +4956,6 @@
         }
       }
     },
-    "Keep a separate login, usage, and configuration for this profile": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "为此配置档案保留独立的登录、用量和配置"
-          }
-        }
-      }
-    },
     "Keep Agent Island visible without running agents when this is off": {
       "localizations": {
         "zh-Hans": {
@@ -4216,12 +4996,32 @@
         }
       }
     },
+    "Keep a separate login, usage, and configuration for this profile": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为此配置档案保留独立的登录、用量和配置"
+          }
+        }
+      }
+    },
     "Keeps remote-tracking base branches current. Fetch failures are logged and creation continues.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "保持远程跟踪的基础分支为最新。拉取失败会被记录，创建过程仍会继续。"
+          }
+        }
+      }
+    },
+    "Later": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后"
           }
         }
       }
@@ -4246,12 +5046,52 @@
         }
       }
     },
+    "Launch Agent: %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启动 Agent：%@"
+          }
+        }
+      }
+    },
     "Launch Preview": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "启动预览"
+          }
+        }
+      }
+    },
+    "Leave blank to restore the default.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留空以恢复默认值。"
+          }
+        }
+      }
+    },
+    "Left": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左侧"
+          }
+        }
+      }
+    },
+    "Light": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "浅色"
           }
         }
       }
@@ -4336,6 +5176,16 @@
         }
       }
     },
+    "Local": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地"
+          }
+        }
+      }
+    },
     "Local branch “%@”": {
       "localizations": {
         "zh-Hans": {
@@ -4386,12 +5236,42 @@
         }
       }
     },
+    "Mark PR Ready for Review": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将 PR 标记为准备审核"
+          }
+        }
+      }
+    },
     "Mark as Read": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "标记为已读"
+          }
+        }
+      }
+    },
+    "Marking PR ready…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在将 PR 标记为准备审核…"
+          }
+        }
+      }
+    },
+    "Merge": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并"
           }
         }
       }
@@ -4406,6 +5286,26 @@
         }
       }
     },
+    "Merge PR": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并 PR"
+          }
+        }
+      }
+    },
+    "Merge Ready - %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可合并 - %@"
+          }
+        }
+      }
+    },
     "Merge strategy": {
       "localizations": {
         "zh-Hans": {
@@ -4416,12 +5316,32 @@
         }
       }
     },
+    "Merging pull request…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在合并拉取请求…"
+          }
+        }
+      }
+    },
     "Minimum command duration in seconds before a notification is shown": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "显示通知前命令的最短持续时间（秒）"
+          }
+        }
+      }
+    },
+    "Mint": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "薄荷色"
           }
         }
       }
@@ -4496,6 +5416,16 @@
         }
       }
     },
+    "Move Up": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上移"
+          }
+        }
+      }
+    },
     "Move notified worktree to top": {
       "localizations": {
         "zh-Hans": {
@@ -4516,42 +5446,12 @@
         }
       }
     },
-    "Move Up": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "上移"
-          }
-        }
-      }
-    },
     "Mute notifications for the active pane": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "静音活动窗格的通知"
-          }
-        }
-      }
-    },
-    "my-diff {leftPath} {rightPath}": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "my-diff {leftPath} {rightPath}"
-          }
-        }
-      }
-    },
-    "Name": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "名称"
           }
         }
       }
@@ -4566,6 +5466,26 @@
         }
       }
     },
+    "Name": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名称"
+          }
+        }
+      }
+    },
+    "Neutral": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中性"
+          }
+        }
+      }
+    },
     "Never": {
       "localizations": {
         "zh-Hans": {
@@ -4576,22 +5496,12 @@
         }
       }
     },
-    "New agent in this worktree": {
+    "New %@ in %@": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在此工作树中新建 Agent"
-          }
-        }
-      }
-    },
-    "New agents will appear here": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新建的 Agent 将显示在这里"
+            "value": "在 %2$@ 中新建 %1$@"
           }
         }
       }
@@ -4686,6 +5596,26 @@
         }
       }
     },
+    "New agent in this worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在此工作树中新建 Agent"
+          }
+        }
+      }
+    },
+    "New agents will appear here": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新建的 Agent 将显示在这里"
+          }
+        }
+      }
+    },
     "Next page": {
       "localizations": {
         "zh-Hans": {
@@ -4702,6 +5632,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "否"
+          }
+        }
+      }
+    },
+    "No CI logs available": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可用的 CI 日志"
+          }
+        }
+      }
+    },
+    "No Run Selected": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未选择运行"
+          }
+        }
+      }
+    },
+    "No Workflow History": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无工作流历史"
+          }
+        }
+      }
+    },
+    "No agent detected in the current pane": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前窗格中未检测到 Agent"
+          }
+        }
+      }
+    },
+    "No agent detected in this pane": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此窗格中未检测到 Agent"
           }
         }
       }
@@ -4732,6 +5712,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "没有执行记录。"
+          }
+        }
+      }
+    },
+    "No failing workflow run": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有失败的工作流运行"
           }
         }
       }
@@ -4776,16 +5766,6 @@
         }
       }
     },
-    "No Run Selected": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未选择运行"
-          }
-        }
-      }
-    },
     "No running agents": {
       "localizations": {
         "zh-Hans": {
@@ -4816,6 +5796,16 @@
         }
       }
     },
+    "No tint. The nav and toolbar use the neutral system chrome.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无色调。导航栏和工具栏使用中性的系统外观。"
+          }
+        }
+      }
+    },
     "No validation issues": {
       "localizations": {
         "zh-Hans": {
@@ -4826,12 +5816,12 @@
         }
       }
     },
-    "No Workflow History": {
+    "No workflow runs found": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "无工作流历史"
+            "value": "未找到工作流运行"
           }
         }
       }
@@ -4852,6 +5842,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "无"
+          }
+        }
+      }
+    },
+    "Normal View": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "普通视图"
           }
         }
       }
@@ -4936,6 +5936,26 @@
         }
       }
     },
+    "OK": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好"
+          }
+        }
+      }
+    },
+    "OR": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "或"
+          }
+        }
+      }
+    },
     "Observe line diffs automatically": {
       "localizations": {
         "zh-Hans": {
@@ -4956,22 +5976,22 @@
         }
       }
     },
-    "OK": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "好"
-          }
-        }
-      }
-    },
     "On": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "开启"
+          }
+        }
+      }
+    },
+    "Once": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次"
           }
         }
       }
@@ -4996,42 +6016,12 @@
         }
       }
     },
-    "Open a new terminal tab at this worktree's root": {
+    "Open Command Palette": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在此工作树的根目录打开新的终端标签页"
-          }
-        }
-      }
-    },
-    "Open a repository or folder": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开仓库或文件夹"
-          }
-        }
-      }
-    },
-    "Open a worktree to run this workflow.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开一个工作树以运行此工作流。"
-          }
-        }
-      }
-    },
-    "Open check details on GitHub": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 GitHub 上打开检查详情"
+            "value": "打开命令面板"
           }
         }
       }
@@ -5046,12 +6036,22 @@
         }
       }
     },
-    "Open diff with": {
+    "Open Failing Check Details": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "用以下应用打开差异"
+            "value": "打开失败检查详情"
+          }
+        }
+      }
+    },
+    "Open Finder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开访达"
           }
         }
       }
@@ -5096,46 +6096,6 @@
         }
       }
     },
-    "Open in menu": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在菜单中打开"
-          }
-        }
-      }
-    },
-    "Open in Prowl": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 Prowl 中打开"
-          }
-        }
-      }
-    },
-    "Open in...": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在…中打开"
-          }
-        }
-      }
-    },
-    "Open on GitHub": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 GitHub 上打开"
-          }
-        }
-      }
-    },
     "Open Output File": {
       "localizations": {
         "zh-Hans": {
@@ -5176,12 +6136,32 @@
         }
       }
     },
-    "Open pull request on GitHub": {
+    "Open Pull Request on %@": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 GitHub 上打开拉取请求"
+            "value": "在 %@ 上打开拉取请求"
+          }
+        }
+      }
+    },
+    "Open Repository": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开仓库"
+          }
+        }
+      }
+    },
+    "Open Repository on %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 %@ 上打开仓库"
           }
         }
       }
@@ -5192,6 +6172,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "打开仓库…"
+          }
+        }
+      }
+    },
+    "Open SF Symbols": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 SF Symbols"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开设置"
           }
         }
       }
@@ -5216,22 +6216,142 @@
         }
       }
     },
-    "Open SF Symbols": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开 SF Symbols"
-          }
-        }
-      }
-    },
     "Open System Settings": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "打开系统设置"
+          }
+        }
+      }
+    },
+    "Open Workflow": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开工作流"
+          }
+        }
+      }
+    },
+    "Open Worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开工作树"
+          }
+        }
+      }
+    },
+    "Open a new terminal tab at this worktree's root": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在此工作树的根目录打开新的终端标签页"
+          }
+        }
+      }
+    },
+    "Open a repository or folder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开仓库或文件夹"
+          }
+        }
+      }
+    },
+    "Open a worktree to run this workflow.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开一个工作树以运行此工作流。"
+          }
+        }
+      }
+    },
+    "Open check details on GitHub": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 GitHub 上打开检查详情"
+          }
+        }
+      }
+    },
+    "Open diff with": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用以下应用打开差异"
+          }
+        }
+      }
+    },
+    "Open in Prowl": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Prowl 中打开"
+          }
+        }
+      }
+    },
+    "Open in menu": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在菜单中打开"
+          }
+        }
+      }
+    },
+    "Open in...": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在…中打开"
+          }
+        }
+      }
+    },
+    "Open on Code Host": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在代码托管平台打开"
+          }
+        }
+      }
+    },
+    "Open on GitHub": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 GitHub 上打开"
+          }
+        }
+      }
+    },
+    "Open pull request on GitHub": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 GitHub 上打开拉取请求"
           }
         }
       }
@@ -5246,22 +6366,22 @@
         }
       }
     },
-    "Open the action's recorded output file": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开该操作记录的输出文件"
-          }
-        }
-      }
-    },
     "Open the Active Agents panel when an agent is detected.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "检测到 Agent 时打开“活跃 Agent”面板。"
+          }
+        }
+      }
+    },
+    "Open the action's recorded output file": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开该操作记录的输出文件"
           }
         }
       }
@@ -5356,26 +6476,6 @@
         }
       }
     },
-    "Open Workflow": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开工作流"
-          }
-        }
-      }
-    },
-    "Open Worktree": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开工作树"
-          }
-        }
-      }
-    },
     "Open your Ghostty config file in the default text editor.": {
       "localizations": {
         "zh-Hans": {
@@ -5386,12 +6486,32 @@
         }
       }
     },
-    "OR": {
+    "Opens in a new split (%@)": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "或"
+            "value": "在新的分屏中打开（%@）"
+          }
+        }
+      }
+    },
+    "Opens in a new tab": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在新标签页中打开"
+          }
+        }
+      }
+    },
+    "Orange": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橙色"
           }
         }
       }
@@ -5402,6 +6522,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "整理"
+          }
+        }
+      }
+    },
+    "Organize Canvas Cards": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "整理画布卡片"
+          }
+        }
+      }
+    },
+    "Organize cards in a uniform grid": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将卡片整理为规则网格"
           }
         }
       }
@@ -5456,6 +6596,16 @@
         }
       }
     },
+    "Paste": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粘贴"
+          }
+        }
+      }
+    },
     "Permanently delete only the eligible runs shown above": {
       "localizations": {
         "zh-Hans": {
@@ -5506,6 +6656,16 @@
         }
       }
     },
+    "Pin Worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "固定工作树"
+          }
+        }
+      }
+    },
     "Pin to top": {
       "localizations": {
         "zh-Hans": {
@@ -5526,12 +6686,32 @@
         }
       }
     },
+    "Pink": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粉色"
+          }
+        }
+      }
+    },
     "Play notification sound": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "播放通知提示音"
+          }
+        }
+      }
+    },
+    "Please check file permissions and try again.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请检查文件权限后重试。"
           }
         }
       }
@@ -5676,12 +6856,122 @@
         }
       }
     },
+    "Prowl Classic": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 经典音效"
+          }
+        }
+      }
+    },
     "Prowl cannot send system notifications": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "Prowl 无法发送系统通知"
+          }
+        }
+      }
+    },
+    "Prowl could not determine a code host URL for this repository.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 无法确定此仓库的代码托管 URL。"
+          }
+        }
+      }
+    },
+    "Prowl could not determine the pull request branch.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 无法确定拉取请求分支。"
+          }
+        }
+      }
+    },
+    "Prowl could not determine which GitHub repository owns this pull request. Check the repository remote and try again.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 无法确定哪个 GitHub 仓库拥有此拉取请求。请检查仓库远程地址后重试。"
+          }
+        }
+      }
+    },
+    "Prowl could not find a failing check URL.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到失败检查 URL。"
+          }
+        }
+      }
+    },
+    "Prowl could not find a failing check with details.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到包含详情的失败检查。"
+          }
+        }
+      }
+    },
+    "Prowl could not find a failing workflow run to copy logs from.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到可复制日志的失败工作流运行。"
+          }
+        }
+      }
+    },
+    "Prowl could not find a failing workflow run to re-run.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到可重新运行的失败工作流运行。"
+          }
+        }
+      }
+    },
+    "Prowl could not find a pull request for this worktree.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到此工作树的拉取请求。"
+          }
+        }
+      }
+    },
+    "Prowl could not find any workflow runs for this branch.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到此分支的任何工作流运行。"
+          }
+        }
+      }
+    },
+    "Prowl could not find the selected repository.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 未找到所选仓库。"
           }
         }
       }
@@ -5706,6 +6996,16 @@
         }
       }
     },
+    "Prowl will quit and relaunch to finish installing the update.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prowl 将退出并重新启动，以完成更新安装。"
+          }
+        }
+      }
+    },
     "Pull Requests": {
       "localizations": {
         "zh-Hans": {
@@ -5716,12 +7016,72 @@
         }
       }
     },
+    "Pull request closed": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取请求已关闭"
+          }
+        }
+      }
+    },
+    "Pull request marked ready": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取请求已标记为准备审核"
+          }
+        }
+      }
+    },
+    "Pull request merged": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取请求已合并"
+          }
+        }
+      }
+    },
+    "Pull request not available": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拉取请求不可用"
+          }
+        }
+      }
+    },
+    "Purple": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紫色"
+          }
+        }
+      }
+    },
     "Quit": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "退出"
+          }
+        }
+      }
+    },
+    "Quit Application": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出应用"
           }
         }
       }
@@ -5756,12 +7116,72 @@
         }
       }
     },
+    "Re-run Failed Jobs": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新运行失败任务"
+          }
+        }
+      }
+    },
+    "Re-running failed jobs…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在重新运行失败任务…"
+          }
+        }
+      }
+    },
+    "Rebase": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "变基"
+          }
+        }
+      }
+    },
+    "Recent": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近"
+          }
+        }
+      }
+    },
+    "Recommended · ": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推荐 · "
+          }
+        }
+      }
+    },
     "Recording shortcut. Press Esc to cancel.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "正在录制快捷键。按 Esc 取消。"
+          }
+        }
+      }
+    },
+    "Red": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "红色"
           }
         }
       }
@@ -5776,22 +7196,22 @@
         }
       }
     },
-    "Refresh history and storage usage": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "刷新历史记录和存储用量"
-          }
-        }
-      }
-    },
     "Refresh Worktrees": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "刷新工作树"
+          }
+        }
+      }
+    },
+    "Refresh history and storage usage": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新历史记录和存储用量"
           }
         }
       }
@@ -5866,16 +7286,6 @@
         }
       }
     },
-    "Remove and Trash Files": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "移除并将文件放入废纸篓"
-          }
-        }
-      }
-    },
     "Remove Profile": {
       "localizations": {
         "zh-Hans": {
@@ -5896,22 +7306,42 @@
         }
       }
     },
-    "Remove prowl command line tool from /usr/local/bin": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "从 /usr/local/bin 移除 prowl 命令行工具"
-          }
-        }
-      }
-    },
     "Remove Repository": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "移除仓库"
+          }
+        }
+      }
+    },
+    "Remove Variable": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除变量"
+          }
+        }
+      }
+    },
+    "Remove and Trash Files": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除并将文件放入废纸篓"
+          }
+        }
+      }
+    },
+    "Remove prowl command line tool from /usr/local/bin": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从 /usr/local/bin 移除 prowl 命令行工具"
           }
         }
       }
@@ -5992,16 +7422,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "移除该配置档案"
-          }
-        }
-      }
-    },
-    "Remove Variable": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "移除变量"
           }
         }
       }
@@ -6096,6 +7516,16 @@
         }
       }
     },
+    "Rename branch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重命名分支"
+          }
+        }
+      }
+    },
     "Rename tab": {
       "localizations": {
         "zh-Hans": {
@@ -6166,16 +7596,6 @@
         }
       }
     },
-    "Repo color: %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仓库颜色：%@"
-          }
-        }
-      }
-    },
     "Repo Settings": {
       "localizations": {
         "zh-Hans": {
@@ -6192,6 +7612,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "仓库设置…"
+          }
+        }
+      }
+    },
+    "Repo color: %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库颜色：%@"
           }
         }
       }
@@ -6216,6 +7646,26 @@
         }
       }
     },
+    "Repository": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库"
+          }
+        }
+      }
+    },
+    "Repository Color": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库颜色"
+          }
+        }
+      }
+    },
     "Repository Icons": {
       "localizations": {
         "zh-Hans": {
@@ -6226,12 +7676,32 @@
         }
       }
     },
+    "Repository URL not available": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库 URL 不可用"
+          }
+        }
+      }
+    },
     "Repository name": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "仓库名称"
+          }
+        }
+      }
+    },
+    "Repository not available": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库不可用"
           }
         }
       }
@@ -6346,6 +7816,16 @@
         }
       }
     },
+    "Reset Terminal": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重置终端"
+          }
+        }
+      }
+    },
     "Reset shortcut to default": {
       "localizations": {
         "zh-Hans": {
@@ -6366,7 +7846,7 @@
         }
       }
     },
-    "Reset to default": {
+    "Reset to Default": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -6376,7 +7856,7 @@
         }
       }
     },
-    "Reset to Default": {
+    "Reset to default": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -6436,26 +7916,6 @@
         }
       }
     },
-    "Reveal in Finder": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在访达中显示"
-          }
-        }
-      }
-    },
-    "Reveal in Sidebar": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在边栏中显示"
-          }
-        }
-      }
-    },
     "Reveal Profile Files": {
       "localizations": {
         "zh-Hans": {
@@ -6472,6 +7932,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "在访达中显示会话"
+          }
+        }
+      }
+    },
+    "Reveal Workflow in Finder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在访达中显示工作流"
+          }
+        }
+      }
+    },
+    "Reveal in Finder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在访达中显示"
+          }
+        }
+      }
+    },
+    "Reveal in Sidebar": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在边栏中显示"
           }
         }
       }
@@ -6506,16 +7996,6 @@
         }
       }
     },
-    "Reveal Workflow in Finder": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在访达中显示工作流"
-          }
-        }
-      }
-    },
     "Review %@": {
       "localizations": {
         "zh-Hans": {
@@ -6532,6 +8012,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "审阅 Bundle…"
+          }
+        }
+      }
+    },
+    "Review Workflow Bundle": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "审阅工作流 Bundle"
           }
         }
       }
@@ -6566,12 +8056,12 @@
         }
       }
     },
-    "Review Workflow Bundle": {
+    "Right": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "审阅工作流 Bundle"
+            "value": "右侧"
           }
         }
       }
@@ -6616,26 +8106,6 @@
         }
       }
     },
-    "Run `gh auth login` in terminal to authenticate.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在终端中运行 `gh auth login` 以进行身份验证。"
-          }
-        }
-      }
-    },
-    "Run a workflow": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "运行工作流"
-          }
-        }
-      }
-    },
     "Run Directly When Possible": {
       "localizations": {
         "zh-Hans": {
@@ -6666,22 +8136,72 @@
         }
       }
     },
-    "Run in %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在 %@ 中运行"
-          }
-        }
-      }
-    },
     "Run Script": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "运行脚本"
+          }
+        }
+      }
+    },
+    "Run Setup": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行安装设置"
+          }
+        }
+      }
+    },
+    "Run Workflow": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行工作流"
+          }
+        }
+      }
+    },
+    "Run Workflow: %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行工作流：%@"
+          }
+        }
+      }
+    },
+    "Run `gh auth login` in terminal to authenticate.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在终端中运行 `gh auth login` 以进行身份验证。"
+          }
+        }
+      }
+    },
+    "Run a workflow": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行工作流"
+          }
+        }
+      }
+    },
+    "Run in %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 %@ 中运行"
           }
         }
       }
@@ -6706,32 +8226,12 @@
         }
       }
     },
-    "Run Setup": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "运行安装设置"
-          }
-        }
-      }
-    },
     "Run with Options…": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "使用选项运行…"
-          }
-        }
-      }
-    },
-    "Run Workflow": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "运行工作流"
           }
         }
       }
@@ -6756,12 +8256,32 @@
         }
       }
     },
+    "Runs in the focused terminal": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在聚焦的终端中运行"
+          }
+        }
+      }
+    },
     "Runtime Default": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "运行时默认值"
+          }
+        }
+      }
+    },
+    "SF Symbol name": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SF Symbol 名称"
           }
         }
       }
@@ -6792,6 +8312,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "保存此 Agent 的进度并将任务移交给另一个 Agent"
+          }
+        }
+      }
+    },
+    "Saved terminal layout cleared": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清除保存的终端布局"
           }
         }
       }
@@ -6836,42 +8366,112 @@
         }
       }
     },
-    "seconds": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "秒"
-          }
-        }
-      }
-    },
-    "Select a File": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择文件"
-          }
-        }
-      }
-    },
-    "Select a run to inspect its steps and outputs.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择一次运行以查看其步骤和输出。"
-          }
-        }
-      }
-    },
     "Select All": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "全选"
+          }
+        }
+      }
+    },
+    "Select All Canvas Cards": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全选画布卡片"
+          }
+        }
+      }
+    },
+    "Select Book 1": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 1"
+          }
+        }
+      }
+    },
+    "Select Book 2": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 2"
+          }
+        }
+      }
+    },
+    "Select Book 3": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 3"
+          }
+        }
+      }
+    },
+    "Select Book 4": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 4"
+          }
+        }
+      }
+    },
+    "Select Book 5": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 5"
+          }
+        }
+      }
+    },
+    "Select Book 6": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 6"
+          }
+        }
+      }
+    },
+    "Select Book 7": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 7"
+          }
+        }
+      }
+    },
+    "Select Book 8": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 8"
+          }
+        }
+      }
+    },
+    "Select Book 9": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择书籍 9"
           }
         }
       }
@@ -6926,6 +8526,16 @@
         }
       }
     },
+    "Select Next Worktree (Tab in Shelf View)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择下一个工作树（Shelf 视图中的 Tab）"
+          }
+        }
+      }
+    },
     "Select Pane": {
       "localizations": {
         "zh-Hans": {
@@ -6956,6 +8566,16 @@
         }
       }
     },
+    "Select Pane Down": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择下方窗格"
+          }
+        }
+      }
+    },
     "Select Pane Left": {
       "localizations": {
         "zh-Hans": {
@@ -6972,6 +8592,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择右侧窗格"
+          }
+        }
+      }
+    },
+    "Select Pane Up": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择上方窗格"
           }
         }
       }
@@ -7022,6 +8652,226 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择上一个工作树"
+          }
+        }
+      }
+    },
+    "Select Previous Worktree (Tab in Shelf View)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择上一个工作树（Shelf 视图中的 Tab）"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 1": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 1"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 2": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 2"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 3": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 3"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 4": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 4"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 5": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 5"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 6": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 6"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 7": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 7"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 8": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 8"
+          }
+        }
+      }
+    },
+    "Select Terminal Tab 9": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择终端标签页 9"
+          }
+        }
+      }
+    },
+    "Select Worktree 1": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 1"
+          }
+        }
+      }
+    },
+    "Select Worktree 2": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 2"
+          }
+        }
+      }
+    },
+    "Select Worktree 3": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 3"
+          }
+        }
+      }
+    },
+    "Select Worktree 4": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 4"
+          }
+        }
+      }
+    },
+    "Select Worktree 5": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 5"
+          }
+        }
+      }
+    },
+    "Select Worktree 6": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 6"
+          }
+        }
+      }
+    },
+    "Select Worktree 7": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 7"
+          }
+        }
+      }
+    },
+    "Select Worktree 8": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 8"
+          }
+        }
+      }
+    },
+    "Select Worktree 9": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择工作树 9"
+          }
+        }
+      }
+    },
+    "Select a File": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择文件"
+          }
+        }
+      }
+    },
+    "Select a run to inspect its steps and outputs.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一次运行以查看其步骤和输出。"
+          }
+        }
+      }
+    },
+    "Select all cards for broadcast": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择所有卡片进行广播"
           }
         }
       }
@@ -7106,16 +8956,6 @@
         }
       }
     },
-    "SF Symbol name": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SF Symbol 名称"
-          }
-        }
-      }
-    },
     "Share analytics with Prowl": {
       "localizations": {
         "zh-Hans": {
@@ -7162,6 +9002,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Shelf"
+          }
+        }
+      }
+    },
+    "Shelf View": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf 视图"
           }
         }
       }
@@ -7216,26 +9066,6 @@
         }
       }
     },
-    "Show a notification when a command exceeds the duration threshold": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当命令超过时长阈值时显示通知"
-          }
-        }
-      }
-    },
-    "Show active agent status at the top of the selected display": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在所选显示器顶部显示活跃 Agent 状态"
-          }
-        }
-      }
-    },
     "Show Active Agents": {
       "localizations": {
         "zh-Hans": {
@@ -7262,6 +9092,76 @@
           "stringUnit": {
             "state": "translated",
             "value": "显示 Agent 岛"
+          }
+        }
+      }
+    },
+    "Show Conflict": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示冲突"
+          }
+        }
+      }
+    },
+    "Show Details in Settings…": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在设置中显示详细信息…"
+          }
+        }
+      }
+    },
+    "Show Diff": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示差异"
+          }
+        }
+      }
+    },
+    "Show Outgoing Changes": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示传出更改"
+          }
+        }
+      }
+    },
+    "Show Workflows Folder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示工作流文件夹"
+          }
+        }
+      }
+    },
+    "Show a notification when a command exceeds the duration threshold": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当命令超过时长阈值时显示通知"
+          }
+        }
+      }
+    },
+    "Show active agent status at the top of the selected display": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在所选显示器顶部显示活跃 Agent 状态"
           }
         }
       }
@@ -7302,36 +9202,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "相对于此工作树的基准显示已提交的更改"
-          }
-        }
-      }
-    },
-    "Show Conflict": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示冲突"
-          }
-        }
-      }
-    },
-    "Show Details in Settings…": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在设置中显示详细信息…"
-          }
-        }
-      }
-    },
-    "Show Diff": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示差异"
           }
         }
       }
@@ -7396,7 +9266,7 @@
         }
       }
     },
-    "Show Outgoing Changes": {
+    "Show outgoing changes": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
@@ -7436,16 +9306,6 @@
         }
       }
     },
-    "Show the bundled %@ skill folder in Finder": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在访达中显示内置的 %@ 技能文件夹"
-          }
-        }
-      }
-    },
     "Show the Open in Editor button in the worktree toolbar.": {
       "localizations": {
         "zh-Hans": {
@@ -7462,6 +9322,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "在工作树工具栏中显示“运行”按钮。"
+          }
+        }
+      }
+    },
+    "Show the bundled %@ skill folder in Finder": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在访达中显示内置的 %@ 技能文件夹"
           }
         }
       }
@@ -7486,6 +9356,16 @@
         }
       }
     },
+    "Show uncommitted changes": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示未提交的更改"
+          }
+        }
+      }
+    },
     "Show uncommitted changes for this worktree": {
       "localizations": {
         "zh-Hans": {
@@ -7506,12 +9386,12 @@
         }
       }
     },
-    "Show Workflows Folder": {
+    "Shows the toolbar update badge without querying Sparkle": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "显示工作流文件夹"
+            "value": "显示工具栏更新徽标而不查询 Sparkle"
           }
         }
       }
@@ -7536,6 +9416,16 @@
         }
       }
     },
+    "Silent Opacity": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "静默不透明度"
+          }
+        }
+      }
+    },
     "Silent opacity": {
       "localizations": {
         "zh-Hans": {
@@ -7546,12 +9436,32 @@
         }
       }
     },
-    "Silent Opacity": {
+    "Simulates a success toast": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "静默不透明度"
+            "value": "模拟成功 Toast"
+          }
+        }
+      }
+    },
+    "Simulates an in-progress toast": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模拟进行中的 Toast"
+          }
+        }
+      }
+    },
+    "Skill link failed: %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "技能链接失败：%@"
           }
         }
       }
@@ -7582,6 +9492,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "超过 10,000 条记录后，部分控制历史已被省略。已记录的输出仍然可用。"
+          }
+        }
+      }
+    },
+    "Some folders couldn't be opened": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "部分文件夹无法打开"
           }
         }
       }
@@ -7646,12 +9566,52 @@
         }
       }
     },
+    "Split Down": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向下拆分"
+          }
+        }
+      }
+    },
     "Split Horizontally": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "水平拆分"
+          }
+        }
+      }
+    },
+    "Split Left": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向左拆分"
+          }
+        }
+      }
+    },
+    "Split Right": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向右拆分"
+          }
+        }
+      }
+    },
+    "Split Up": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向上拆分"
           }
         }
       }
@@ -7676,6 +9636,16 @@
         }
       }
     },
+    "Squash": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "压缩合并"
+          }
+        }
+      }
+    },
     "Start the run without this step.": {
       "localizations": {
         "zh-Hans": {
@@ -7692,6 +9662,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "开始工作流（回车）。"
+          }
+        }
+      }
+    },
+    "Start this workflow in %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 %@ 中启动此工作流"
           }
         }
       }
@@ -7736,16 +9716,6 @@
         }
       }
     },
-    "Stop run script": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "停止运行脚本"
-          }
-        }
-      }
-    },
     "Stop Running Script": {
       "localizations": {
         "zh-Hans": {
@@ -7762,6 +9732,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "停止脚本"
+          }
+        }
+      }
+    },
+    "Stop run script": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止运行脚本"
           }
         }
       }
@@ -7826,6 +9806,16 @@
         }
       }
     },
+    "Suggested": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建议"
+          }
+        }
+      }
+    },
     "Suggested for this repository": {
       "localizations": {
         "zh-Hans": {
@@ -7872,6 +9862,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "系统"
+          }
+        }
+      }
+    },
+    "System Tint": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "系统色调"
           }
         }
       }
@@ -7936,6 +9936,16 @@
         }
       }
     },
+    "The agent will use the runtime's least-restricted mode. It may execute commands and modify files without prompting; managed or user-defined runtime policies can still apply.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent 将使用运行时限制最少的模式。它可能会在不提示的情况下执行命令和修改文件；受管理或用户定义的运行时策略仍可能适用。"
+          }
+        }
+      }
+    },
     "The pane this workflow runs from — the CLI's [source] argument.": {
       "localizations": {
         "zh-Hans": {
@@ -7966,12 +9976,32 @@
         }
       }
     },
+    "The selected worktree is no longer available.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所选工作树已不可用。"
+          }
+        }
+      }
+    },
     "The workflow file was moved or deleted. Go back to choose another workflow.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "工作流文件已被移动或删除。请返回以选择其他工作流。"
+          }
+        }
+      }
+    },
+    "The workflow run failed but produced no logs.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流运行失败，但未生成日志。"
           }
         }
       }
@@ -7985,9 +10015,6 @@
           }
         }
       }
-    },
-    "theme = light:Monokai Pro Light Sun,dark:Dimmed Monokai": {
-      "shouldTranslate": false
     },
     "This app bundles no installable skills.": {
       "localizations": {
@@ -8029,6 +10056,16 @@
         }
       }
     },
+    "This removes the repository from Prowl. Worktrees and the main repository folder stay on disk.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会从 Prowl 移除仓库。工作树和主仓库文件夹仍保留在磁盘上。"
+          }
+        }
+      }
+    },
     "This role has no pane": {
       "localizations": {
         "zh-Hans": {
@@ -8049,6 +10086,16 @@
         }
       }
     },
+    "This workflow cannot start — check its file with `prowl workflow validate`": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此工作流无法启动——请使用 `prowl workflow validate` 检查其文件。"
+          }
+        }
+      }
+    },
     "This workflow was started from the Active Agents row, so its pane is the source.": {
       "localizations": {
         "zh-Hans": {
@@ -8065,6 +10112,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "平铺"
+          }
+        }
+      }
+    },
+    "Tile Canvas Cards": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平铺画布卡片"
+          }
+        }
+      }
+    },
+    "Tile cards to fill the canvas": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平铺卡片以填满画布"
           }
         }
       }
@@ -8119,6 +10186,36 @@
         }
       }
     },
+    "Toggle Active Agents Panel": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换活动 Agent 面板"
+          }
+        }
+      }
+    },
+    "Toggle Agent Island": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换 Agent 岛"
+          }
+        }
+      }
+    },
+    "Toggle Canvas": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换画布"
+          }
+        }
+      }
+    },
     "Toggle Left Sidebar": {
       "localizations": {
         "zh-Hans": {
@@ -8129,12 +10226,32 @@
         }
       }
     },
+    "Toggle Shelf": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换书架"
+          }
+        }
+      }
+    },
     "Toggle Sidebar": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "切换边栏"
+          }
+        }
+      }
+    },
+    "Toggle Split Zoom": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换分屏缩放"
           }
         }
       }
@@ -8159,12 +10276,72 @@
         }
       }
     },
+    "URL:": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL:"
+          }
+        }
+      }
+    },
     "Unable to Load Changes": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "无法载入更改"
+          }
+        }
+      }
+    },
+    "Unable to clear saved terminal layout": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法清除保存的终端布局"
+          }
+        }
+      }
+    },
+    "Unable to create workspace": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法创建工作区"
+          }
+        }
+      }
+    },
+    "Unable to delete branch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法删除分支"
+          }
+        }
+      }
+    },
+    "Unable to delete worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法删除工作树"
+          }
+        }
+      }
+    },
+    "Unable to open in %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法在 %@ 中打开"
           }
         }
       }
@@ -8185,6 +10362,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "不可用"
+          }
+        }
+      }
+    },
+    "Uncolored repositories use a neutral spine. Repositories with a custom color still use that color.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未设颜色的仓库使用中性书脊。设有自定义颜色的仓库仍使用该颜色。"
+          }
+        }
+      }
+    },
+    "Uncolored repositories use a neutral spine. Repository colors are ignored for Shelf spines.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未设颜色的仓库使用中性书脊。Shelf 书脊会忽略仓库颜色。"
+          }
+        }
+      }
+    },
+    "Uncolored repositories use the system tint color. Repositories with a custom color still use that color.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未设颜色的仓库使用系统色调。设有自定义颜色的仓库仍使用该颜色。"
+          }
+        }
+      }
+    },
+    "Uncolored repositories use the system tint color. Repository colors are ignored for Shelf spines.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未设颜色的仓库使用系统色调。Shelf 书脊会忽略仓库颜色。"
           }
         }
       }
@@ -8219,6 +10436,16 @@
         }
       }
     },
+    "Uniform": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "统一大小"
+          }
+        }
+      }
+    },
     "Uninstall": {
       "localizations": {
         "zh-Hans": {
@@ -8235,6 +10462,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消固定"
+          }
+        }
+      }
+    },
+    "Unpin Worktree": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消固定工作树"
           }
         }
       }
@@ -8269,6 +10506,16 @@
         }
       }
     },
+    "Up": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上方"
+          }
+        }
+      }
+    },
     "Update GitHub CLI": {
       "localizations": {
         "zh-Hans": {
@@ -8299,32 +10546,12 @@
         }
       }
     },
-    "URL:": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "URL:"
-          }
-        }
-      }
-    },
     "Use": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "使用"
-          }
-        }
-      }
-    },
-    "Use a project's own app icon or logo as the repository icon when adding it.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加仓库时，使用项目自身的应用图标或标识作为仓库图标。"
           }
         }
       }
@@ -8349,22 +10576,32 @@
         }
       }
     },
-    "Use local branch": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用本地分支"
-          }
-        }
-      }
-    },
     "Use Selection for Find": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "用所选内容查找"
+          }
+        }
+      }
+    },
+    "Use a project's own app icon or logo as the repository icon when adding it.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加仓库时，使用项目自身的应用图标或标识作为仓库图标。"
+          }
+        }
+      }
+    },
+    "Use local branch": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用本地分支"
           }
         }
       }
@@ -8399,6 +10636,16 @@
         }
       }
     },
+    "Uses the active repository's color. Uncolored repositories get a neutral surface.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用当前仓库的颜色。未设颜色的仓库使用中性表面。"
+          }
+        }
+      }
+    },
     "Uses this project's README to propose fitting symbols. Everything runs on-device.": {
       "localizations": {
         "zh-Hans": {
@@ -8409,22 +10656,22 @@
         }
       }
     },
+    "Uses your chosen color everywhere, regardless of per-repository colors.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在所有位置使用你选择的颜色，不受各仓库颜色影响。"
+          }
+        }
+      }
+    },
     "Validation": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "验证"
-          }
-        }
-      }
-    },
-    "value": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "值"
           }
         }
       }
@@ -8459,6 +10706,16 @@
         }
       }
     },
+    "View Archived Worktrees": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看已归档工作树"
+          }
+        }
+      }
+    },
     "View Prowl starts in on launch. Shelf and Canvas require at least one worktree or folder.": {
       "localizations": {
         "zh-Hans": {
@@ -8475,16 +10732,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "查看发行说明"
-          }
-        }
-      }
-    },
-    "vs %@ · %@": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "对比 %@ · %@"
           }
         }
       }
@@ -8589,22 +10836,32 @@
         }
       }
     },
-    "Workflow status. Hover to preview or click to keep the run panel open.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "工作流状态。悬停可预览，点击可保持运行面板打开。"
-          }
-        }
-      }
-    },
     "Workflow Unavailable": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "工作流不可用"
+          }
+        }
+      }
+    },
+    "Workflow created at %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流已创建于 %@"
+          }
+        }
+      }
+    },
+    "Workflow status. Hover to preview or click to keep the run panel open.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流状态。悬停可预览，点击可保持运行面板打开。"
           }
         }
       }
@@ -8619,22 +10876,22 @@
         }
       }
     },
-    "Workflows coordinate agents for repeatable tasks. Select one to review its setup or run it.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "工作流可协调 Agent 完成可重复的任务。选择一个即可查看其设置或运行它。"
-          }
-        }
-      }
-    },
     "Workflows Error": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "工作流错误"
+          }
+        }
+      }
+    },
+    "Workflows coordinate agents for repeatable tasks. Select one to review its setup or run it.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流可协调 Agent 完成可重复的任务。选择一个即可查看其设置或运行它。"
           }
         }
       }
@@ -8669,6 +10926,26 @@
         }
       }
     },
+    "Workspace created": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作区已创建"
+          }
+        }
+      }
+    },
+    "Workspace creation canceled": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消创建工作区"
+          }
+        }
+      }
+    },
     "Workspace folder": {
       "localizations": {
         "zh-Hans": {
@@ -8699,16 +10976,6 @@
         }
       }
     },
-    "Worktree name": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "工作树名称"
-          }
-        }
-      }
-    },
     "Worktree Toolbar": {
       "localizations": {
         "zh-Hans": {
@@ -8719,12 +10986,32 @@
         }
       }
     },
+    "Worktree name": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作树名称"
+          }
+        }
+      }
+    },
     "Worktrees": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "工作树"
+          }
+        }
+      }
+    },
+    "Yellow": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "黄色"
           }
         }
       }
@@ -8759,6 +11046,159 @@
         }
       }
     },
+    "[Debug] Light Dock Notification Dot": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[调试] 浅色 Dock 通知点"
+          }
+        }
+      }
+    },
+    "[Debug] Simulate Update Found": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[调试] 模拟发现更新"
+          }
+        }
+      }
+    },
+    "[Debug] Toast: In Progress": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[调试] Toast：进行中"
+          }
+        }
+      }
+    },
+    "[Debug] Toast: Success": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[调试] Toast：成功"
+          }
+        }
+      }
+    },
+    "`%@`": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "`%@`"
+          }
+        }
+      }
+    },
+    "a Git repository or any folder — opens one project root": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git 仓库或任意文件夹 — 打开一个项目根目录"
+          }
+        }
+      }
+    },
+    "fresh session": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新会话"
+          }
+        }
+      }
+    },
+    "git@github.com:owner/repo.git": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "git@github.com:owner/repo.git"
+          }
+        }
+      }
+    },
+    "in %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 %@ 中"
+          }
+        }
+      }
+    },
+    "my-diff {leftPath} {rightPath}": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "my-diff {leftPath} {rightPath}"
+          }
+        }
+      }
+    },
+    "prowl command line tool removed": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prowl 命令行工具已移除"
+          }
+        }
+      }
+    },
+    "prowl installed at %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prowl 已安装到 %@"
+          }
+        }
+      }
+    },
+    "seconds": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "秒"
+          }
+        }
+      }
+    },
+    "theme = light:Monokai Pro Light Sun,dark:Dimmed Monokai": {
+      "shouldTranslate": false
+    },
+    "value": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "值"
+          }
+        }
+      }
+    },
+    "vs %@ · %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对比 %@ · %@"
+          }
+        }
+      }
+    },
     "·": {
       "shouldTranslate": false
     },
@@ -8768,6 +11208,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "“%@” (%@) 将移至废纸篓。你可以在访达中恢复它。"
+          }
+        }
+      }
+    },
+    "“%@” launched without managed signals. %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”已启动，但未启用受管理的信号。%@"
           }
         }
       }

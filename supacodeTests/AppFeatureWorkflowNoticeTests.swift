@@ -34,7 +34,7 @@ struct AppFeatureWorkflowNoticeTests {
     #expect(delivered.value.map(\.0) == [worktree.id])
     #expect(delivered.value.first?.1.title == "Review completed")
     #expect(delivered.value.first?.1.targetSurfaceID == notice.targetSurfaceID)
-    #expect(store.state.repositories.statusToast == .success("Review completed"))
+    #expect(store.state.repositories.statusToast == .success(String(localized: "Review completed")))
   }
 
   @Test func backgroundAttentionNotifiesWithoutTakingOverTheSelectedToolbar() async {
@@ -100,7 +100,7 @@ struct AppFeatureWorkflowNoticeTests {
     await store.finish()
 
     #expect(delivered.value.isEmpty)
-    #expect(store.state.repositories.statusToast == .success("Review completed"))
+    #expect(store.state.repositories.statusToast == .success(String(localized: "Review completed")))
   }
 
   @Test(arguments: [WorkflowRunNotice.Kind.skipped, .iterationLimitReached])
@@ -155,9 +155,9 @@ struct AppFeatureWorkflowNoticeTests {
         forceSheet: false))
     await store.receive(
       \.repositories.showToast,
-      .warning("The selected worktree is no longer available.")
+      .warning(String(localized: "The selected worktree is no longer available."))
     ) {
-      $0.repositories.statusToast = .warning("The selected worktree is no longer available.")
+      $0.repositories.statusToast = .warning(String(localized: "The selected worktree is no longer available."))
     }
     #expect(contextRequests.value == 0)
   }
