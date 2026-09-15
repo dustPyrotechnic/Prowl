@@ -10,11 +10,6 @@ struct AppearanceSettingsView: View {
     let externalDiffToolOptions = ExternalDiffTool.settingsMenuCases
     VStack(alignment: .leading) {
       Form {
-#if DEBUG
-        Section {
-          Text(String(localized: "G1a SwiftUI probe"))
-        }
-#endif
         Section {
           Picker(
             "语言 / Language",

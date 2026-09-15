@@ -96,9 +96,6 @@ struct CloneRepositoryView: View {
 
   private func pickLocation() {
     let panel = NSOpenPanel()
-    #if DEBUG
-    panel.message = String(localized: "G1a file panel probe")
-    #endif
     panel.canChooseFiles = false
     panel.canChooseDirectories = true
     panel.allowsMultipleSelection = false
