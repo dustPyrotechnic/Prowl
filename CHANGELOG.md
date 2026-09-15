@@ -1,5 +1,12 @@
 # Changelog
 
+
+## Unreleased
+
+### New
+
+- Prowl now supports System Default, 简体中文, and English application languages in Settings → General. The selection takes effect on the next launch; Prowl-owned menus, alerts, toasts, settings options, command palette titles, and shortcut help localize to Simplified Chinese while CLI output, command IDs, user data, and third-party output remain unchanged.
+
 ## [2026.9.6](https://github.com/onevcat/Prowl/releases/tag/v2026.9.6)
 
 Meet **Agent Island**: all your agents' status at your Mac's notch, with a new way to navigate built for speed and muscle memory. See who is working, waiting for you, finished, or idle at a glance, then jump straight to any agent—even from another app.
