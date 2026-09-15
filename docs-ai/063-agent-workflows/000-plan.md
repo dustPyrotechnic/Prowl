@@ -7,9 +7,9 @@
 
 | | |
 | --- | --- |
-| **Status** | In progress — R1 shipped in v2026.8.29; R2a shipped in v2026.8.31: B1 (#740, [006](006-b1-definitions.md)), #733 (#741), #726 T0 (#739), B2 (#743, [007](007-b2-runner-core.md)), B3 (#744, [008](008-b3-runner-wiring.md)), and C1 (#747, [010](010-c1-workflow-status-center.md)); R2b in progress: C2 (#752, [011](011-c2-start-sheet.md)) and D1 (#754/#761, [013](013-d1-workflows-settings.md)) merged; D1's post-merge Settings UI refinement merged in #763 ([014](014-workflow-settings-ui-refinement.md)); #726 T1a inventory/configuration preflight is implemented in [064.016](../064-agent-completion-signals/016-t1-contract-test-plan.md); eight-runtime headless checks verified; T1 verification and scoped publication merged (#769); D3 handoff and first built-in E2E next for R2b; D2 deferred to R3 |
+| **Status** | In progress — R1 shipped in v2026.8.29; R2a shipped in v2026.8.31: B1 (#740, [006](006-b1-definitions.md)), #733 (#741), #726 T0 (#739), B2 (#743, [007](007-b2-runner-core.md)), B3 (#744, [008](008-b3-runner-wiring.md)), and C1 (#747, [010](010-c1-workflow-status-center.md)); R2b in progress: C2 (#752, [011](011-c2-start-sheet.md)) and D1 (#754/#761, [013](013-d1-workflows-settings.md)) merged; D1's post-merge Settings UI refinement merged in #763 ([014](014-workflow-settings-ui-refinement.md)); #726 T1a inventory/configuration preflight is implemented in [064.016](../064-agent-completion-signals/016-t1-contract-test-plan.md); eight-runtime headless checks verified; T1 verification and scoped publication merged (#769); D3 handoff, first built-in E2E, and legacy execution retirement complete with a one-release HANDOFF_RETIRED CLI stub; D2 deferred to R3 |
 | **Anchor date** | 2026-08-21 |
-| **Primary PRs** | R1: #709 (C0), #710 (A1), #713 (A1b), #714 (A2) — shipped in v2026.8.29; R2a: #740 (B1), #743 (B2, [007](007-b2-runner-core.md)); #744 (B3, [008](008-b3-runner-wiring.md)); #747 (C1, [010](010-c1-workflow-status-center.md)); R2b: #752 (C2, [011](011-c2-start-sheet.md)), #754 (D1 skill), #761 (D1 rest, [013](013-d1-workflows-settings.md)), D1 Settings UI refinement (#763, [014](014-workflow-settings-ui-refinement.md)); D2–D3 TBD |
+| **Primary PRs** | R1: #709 (C0), #710 (A1), #713 (A1b), #714 (A2) — shipped in v2026.8.29; R2a: #740 (B1), #743 (B2, [007](007-b2-runner-core.md)); #744 (B3, [008](008-b3-runner-wiring.md)); #747 (C1, [010](010-c1-workflow-status-center.md)); R2b: #752 (C2, [011](011-c2-start-sheet.md)), #754 (D1 skill), #761 (D1 rest, [013](013-d1-workflows-settings.md)), D1 Settings UI refinement (#763, [014](014-workflow-settings-ui-refinement.md)); D3 #786 plus workflow-only retirement; D2 TBD |
 | **Related** | [047 cross-agent-handoff](../047-cross-agent-handoff/000-plan.md), [049 agents-toolbar-entry](../049-agents-toolbar-entry/000-plan.md), [053 agent-profiles](../053-agent-profiles/000-plan.md), [055 agent-profile-runtimes](../055-agent-profile-runtimes/000-plan.md), [059 agent-transcript-snapshots](../059-agent-transcript-snapshots/000-plan.md), [060 cli-targeting-and-contract-governance](../060-prowl-cli-targeting-and-contract-governance/000-plan.md), [061 native-toolbar-controls](../061-native-toolbar-controls/toolbar-controls.md), [064 agent-completion-signals](../064-agent-completion-signals/000-plan.md) (signal bus, `agents signal` / `agents wait`), [#699 `prowl create pane`](https://github.com/onevcat/Prowl/issues/699), [PR #651 (direction reference, not merged)](https://github.com/onevcat/Prowl/pull/651), [DSL spec (living)](dsl-spec.md), [release plan (living)](release-plan.md), `docs/components/handoff.md`, `docs/components/agent-profiles.md`, `docs/components/cli.md` |
 
 > Current implementation scope: [015](015-action-bundles-and-control-flow.md) and
@@ -138,10 +138,10 @@ that advances one step at a time through existing terminal boundaries:
   command is the only spelling agents ever see**: one completion-command renderer produces
   the initial hint, every nudge, and every re-delivery (token always present; for verdict
   steps one complete executable command per allowed value on every transport — typed
-  line, materialized instruction, and `prowl workflow status` — never a placeholder);
+  line, scoped-read response, and `prowl workflow status` — never a placeholder);
   built-ins and examples say
   "finish with the generated completion command"; the validator warns when
-  `text`/`instruction` spells out `prowl workflow deliver`. `expect` is valid only on
+  `prompt` spells out `prowl workflow deliver`. `expect` is valid only on
   `message` and `launch` (their target role delivers); native actions return typed
   outputs synchronously. Skipping a step whose expected output is referenced by a later
   template ends the run as `skipped` (the panel says which step depends on it) — V1 has
@@ -152,11 +152,11 @@ that advances one step at a time through existing terminal boundaries:
 - `action` → native or bundle-local actions (`builtin:collect-worktree-context`, `local:<verb-object>`).
 - `notify`/`close` → the existing bell pipeline and protected close path.
 
-**Data channels.** Inbound to an agent is always *file + short pointer*: long
-`instruction` text is materialized (one file per invocation, named by the run-global
-invocation ordinal — the DSL spec §§5/8 are normative for run-directory layout) and one
-line is typed (or passed as the kickoff prompt); short `text` is typed verbatim (single
-line).
+**Data channels.** Both `message` and `launch` author their task as `prompt`.
+The runner saves a task-only body for each invocation. After rendering, short safe
+messages are typed directly; multiline or longer messages use pane-scoped read.
+Launch uses its kickoff carrier. The DSL spec §§4/5/8 define transport and storage.
+Completion guidance is generated separately from the saved task body.
 Outbound is `prowl workflow deliver [--verdict v] -` (stdin): the caller pane identifies the
 run/role, the delivery token identifies the awaited step — the YAML itself carries nothing
 machine-specific. Transcript observation (`agents read`) and headless adapter capture are
@@ -199,7 +199,7 @@ schedules cancellable grace deadlines on the injected clock; it never relies on 
 event alone.
 
 **Data bus.** `<root>/.prowl/workflow-runs/<run-id>/` holds `run.json`, `log.md`,
-`instructions/` and `deliveries/` (both versioned by the run-global invocation ordinal, latest
+`prompts/` and `deliveries/` (both versioned by the run-global invocation ordinal, latest
 output view replaced atomically — layout normative in the DSL spec §8), `skills/`
 (materialized from the embedded skill registry only — `skill:` ids are safe slugs that must
 resolve to a bundled skill).
@@ -569,7 +569,7 @@ attaches hooks through A2's launch boundary.
 - **Review round 4 (2026-08-22; verified item by item before adopting)** — the renderer
   now emits one complete executable command per verdict value on every transport (no
   placeholders); run-global monotonic activation ordinals make `deliveries/<name>.<ordinal>.md`
-  and `instructions/<step>.<ordinal>.md` collision-free, with atomic "latest" replacement;
+  and `prompts/<step>.<ordinal>.md` collision-free, with atomic "latest" replacement;
   native actions declare typed input/output schemas and `actions.<step>.<key>` is validated
   like `deliveries.*` (known action, declared key, producer dominates consumer); `repeat.max`
   is a positive integer literal or exactly one integer-input template, resolved at start,

@@ -413,6 +413,12 @@ struct RepositorySettingsView: View {
           workflowsStore.send(.setAuthoringPromptPresented(false))
         }
       }
+      .sheet(
+        isPresented: Binding(
+          get: { workflowsStore.newWorkflow != nil }, set: { if !$0 { workflowsStore.send(.dismissNewWorkflow) } })
+      ) {
+        NewWorkflowSheet(store: workflowsStore)
+      }
     } destination: { detailStore in
       if featureFlags.workflowUI {
         WorkflowSettingsDetailView(store: detailStore)

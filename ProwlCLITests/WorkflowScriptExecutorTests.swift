@@ -39,9 +39,10 @@ struct WorkflowScriptExecutorTests {
         request: Data())
     }
     defer { task.cancel() }
-    let deadline = ContinuousClock.now.advanced(by: .seconds(5))
+    // The shell must fork twice and write the marker; on a loaded CI runner that has exceeded 5 seconds.
+    let spawnDeadline = ContinuousClock.now.advanced(by: .seconds(30))
     var child: Int32?
-    while child == nil, ContinuousClock.now < deadline {
+    while child == nil, ContinuousClock.now < spawnDeadline {
       child = (try? String(contentsOf: marker, encoding: .utf8)).flatMap(Int32.init)
       await Task.yield()
     }
@@ -52,7 +53,8 @@ struct WorkflowScriptExecutorTests {
       _ = try await task.value
       Issue.record("Cancelled script succeeded")
     } catch let error as WorkflowScriptExecutionError { #expect(error.code == "cancelled") }
-    while kill(pid, 0) == 0, ContinuousClock.now < deadline { await Task.yield() }
+    let exitDeadline = ContinuousClock.now.advanced(by: .seconds(5))
+    while kill(pid, 0) == 0, ContinuousClock.now < exitDeadline { await Task.yield() }
     #expect(kill(pid, 0) == -1)
     #expect(errno == ESRCH)
   }

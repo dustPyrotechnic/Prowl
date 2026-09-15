@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A79300000000000000000001 /* prowl-mirror-relay in Copy Files */ = {isa = PBXBuildFile; fileRef = A79300000000000000000002; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		A906AC710000000000000003 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A906AC710000000000000004 /* OrderedCollections */; };
 		A906AC710000000000000001 /* workflows in Resources */ = {isa = PBXBuildFile; fileRef = A906AC710000000000000002 /* workflows */; };
 		A77100000000000000000003 /* ProwlCLIShared in Frameworks */ = {isa = PBXBuildFile; productRef = A77100000000000000000002 /* ProwlCLIShared */; };
@@ -43,7 +44,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A79300000000000000000003 /* Embed mirror relay */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "prowl-mirror-relay";
+			dstSubfolderSpec = 7;
+			files = (A79300000000000000000001, );
+			name = "Embed mirror relay";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		A79300000000000000000002 /* prowl-mirror-relay */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = "Resources/prowl-mirror-relay/prowl-mirror-relay"; sourceTree = SOURCE_ROOT; };
 		A906AC710000000000000002 /* workflows */ = {isa = PBXFileReference; lastKnownFileType = folder; name = workflows; path = Resources/workflows; sourceTree = "<group>"; };
 		D64162AD2F23CAF100260CA3 /* ghostty */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ghostty; path = Resources/ghostty; sourceTree = "<group>"; };
 		D64162AE2F23CAF100260CA3 /* terminfo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terminfo; path = Resources/terminfo; sourceTree = "<group>"; };
@@ -174,6 +188,7 @@
 				D6CLI0032F99000200000001 /* Verify prowl-cli binary */,
 				D69CE0472F1F378200584C57 /* Frameworks */,
 				D69CE0482F1F378200584C57 /* Resources */,
+				A79300000000000000000003 /* Embed mirror relay */,
 			);
 			buildRules = (
 			);
@@ -337,7 +352,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "CLI_BIN=\"${PROJECT_DIR}/Resources/prowl-cli/prowl\"\nif [ ! -f \"$CLI_BIN\" ]; then\n  echo \"error: Missing $CLI_BIN. Run: make embed-cli\" >&2\n  exit 1\nfi\nif [ ! -x \"$CLI_BIN\" ]; then\n  echo \"error: $CLI_BIN is not executable. Run: make embed-cli\" >&2\n  exit 1\nfi\n";
+			shellScript = "for TOOL in prowl-cli/prowl prowl-mirror-relay/prowl-mirror-relay; do\n  BIN=\"${PROJECT_DIR}/Resources/$TOOL\"\n  if [ ! -x \"$BIN\" ]; then\n    echo \"error: Missing executable $BIN. Run: make embed-cli-debug\" >&2\n    exit 1\n  fi\ndone\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -509,7 +524,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COMPILATION_CACHE_ENABLE_CACHING = YES;
-				CURRENT_PROJECT_VERSION = 20260906;
+				CURRENT_PROJECT_VERSION = 20260912;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
@@ -534,7 +549,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2026.9.6;
+				MARKETING_VERSION = 2026.9.12;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -569,7 +584,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COMPILATION_CACHE_ENABLE_CACHING = NO;
-				CURRENT_PROJECT_VERSION = 20260906;
+				CURRENT_PROJECT_VERSION = 20260912;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
@@ -592,7 +607,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2026.9.6;
+				MARKETING_VERSION = 2026.9.12;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -622,12 +637,12 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20260906;
+				CURRENT_PROJECT_VERSION = 20260912;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 2026.9.6;
+				MARKETING_VERSION = 2026.9.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.prowlTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -644,12 +659,12 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20260906;
+				CURRENT_PROJECT_VERSION = 20260912;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 2026.9.6;
+				MARKETING_VERSION = 2026.9.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.prowlTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

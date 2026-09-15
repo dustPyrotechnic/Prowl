@@ -37,12 +37,17 @@ struct WorkflowStepHistoryView: View {
             onOutput: {
               onInteraction()
               store.send(.output($0))
-            }, onInteraction: onInteraction
+            },
+            onDelete: {
+              onInteraction()
+              store.send(.deleteRun(detail.run.id))
+            },
+            onInteraction: onInteraction
           )
           .id(detail.run.id)
         } else {
           ContentUnavailableView(
-            "No Run Selected", systemImage: "clock.arrow.circlepath",
+            "No Run Selected", systemImage: "checklist",
             description: Text("Select a run to inspect its steps and outputs.")
           )
           .frame(maxWidth: .infinity)
@@ -70,16 +75,10 @@ struct WorkflowStepHistoryView: View {
             onInteraction()
             store.send(.select(entry.id))
           } label: {
-            HStack(alignment: .top, spacing: 8) {
-              Image(systemName: WorkflowHistoryStatus.symbol(entry.state))
-                .accessibilityHidden(true)
-                .foregroundStyle(entry.state == "needs_attention" ? .orange : .secondary)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+              WorkflowHistoryStatusIcon(state: entry.state)
               VStack(alignment: .leading, spacing: 3) {
                 Text(entry.name).lineLimit(2)
-                Text(WorkflowHistoryStatus.label(entry.state))
-                  .font(.caption).foregroundStyle(.secondary)
-                Text(entry.finishedAt ?? entry.startedAt, style: .relative)
-                  .font(.caption).foregroundStyle(.secondary)
                 if store.selectedScope == .all {
                   Text(URL(filePath: entry.root).lastPathComponent)
                     .font(.caption).foregroundStyle(.secondary).lineLimit(1)
@@ -90,6 +89,7 @@ struct WorkflowStepHistoryView: View {
               }
               Spacer(minLength: 0)
             }
+            .font(.body)
             .padding(8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(

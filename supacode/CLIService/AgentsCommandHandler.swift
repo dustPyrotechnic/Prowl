@@ -8,18 +8,21 @@ struct AgentsRuntimeSnapshot {
   /// raw-state-only changes to avoid invalidating the sidebar, so CLI snapshots
   /// must source state and reason from terminal state instead.
   let screenDetectionsBySurfaceID: [UUID: AgentScreenDetection]
+  let decisionsBySurfaceID: [UUID: AgentStateDecision]
   let signalsBySurfaceID: [UUID: AgentSignalsPayload]
 
   init(
     repositoriesState: RepositoriesFeature.State,
     listSnapshot: ListRuntimeSnapshot,
     screenDetectionsBySurfaceID: [UUID: AgentScreenDetection],
-    signalsBySurfaceID: [UUID: AgentSignalsPayload] = [:]
+    signalsBySurfaceID: [UUID: AgentSignalsPayload] = [:],
+    decisionsBySurfaceID: [UUID: AgentStateDecision] = [:]
   ) {
     self.repositoriesState = repositoriesState
     self.listSnapshot = listSnapshot
     self.screenDetectionsBySurfaceID = screenDetectionsBySurfaceID
     self.signalsBySurfaceID = signalsBySurfaceID
+    self.decisionsBySurfaceID = decisionsBySurfaceID
   }
 }
 
@@ -97,13 +100,15 @@ final class AgentsCommandHandler: CommandHandler {
         for: entry, repositoriesState: repositoriesState, worktreeContexts: worktreeContexts)
 
       let screenDetection = snapshot.screenDetectionsBySurfaceID[entry.surfaceID]
+      let decision = snapshot.decisionsBySurfaceID[entry.surfaceID] ?? entry.stateDecision
       return AgentsCommandAgent(
         id: entry.surfaceID.uuidString,
         type: entry.agent.rawValue,
         name: entry.displayName,
         status: AgentsCommandStatus(rawValue: entry.displayState.rawValue) ?? .idle,
         rawState: (screenDetection?.state ?? entry.rawState).rawValue,
-        detectionReason: screenDetection?.reason.identifier,
+        detectionReason: decision?.reason.identifier ?? screenDetection?.reason.identifier,
+        screenReason: screenDetection?.reason.identifier ?? decision?.screenReason?.identifier,
         lastChangedAt: dateFormatter.string(from: entry.lastChangedAt),
         project: AgentsCommandProject(
           name: display.repositoryName,
@@ -145,7 +150,9 @@ final class AgentsCommandHandler: CommandHandler {
     return AgentsCommandPayload(count: agents.count, agents: agents)
   }
 
-  private func makeTerminalContexts(from snapshot: ListRuntimeSnapshot) -> [UUID: TerminalAgentContext] {
+  private func makeTerminalContexts(from snapshot: ListRuntimeSnapshot) -> [UUID:
+    TerminalAgentContext]
+  {
     var contexts: [UUID: TerminalAgentContext] = [:]
     for worktree in snapshot.worktrees {
       for tab in worktree.tabs {
@@ -154,7 +161,8 @@ final class AgentsCommandHandler: CommandHandler {
             worktree: worktree,
             tab: tab,
             pane: pane,
-            focused: worktree.id == snapshot.focusedWorktreeID && tab.selected && tab.focusedPaneID == pane.id
+            focused: worktree.id == snapshot.focusedWorktreeID && tab.selected
+              && tab.focusedPaneID == pane.id
           )
         }
       }

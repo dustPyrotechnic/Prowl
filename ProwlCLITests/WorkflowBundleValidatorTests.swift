@@ -24,7 +24,7 @@ struct WorkflowBundleValidatorTests {
         then: [{id: strict, launch: helper, prompt: Review strictly.}]
         else: [{id: normal, launch: helper, prompt: Review normally.}]
       """
-    #expect(codes(choice + "\n- id: work\n  message: helper\n  text: Review.", state: header).isEmpty)
+    #expect(codes(choice + "\n- id: work\n  message: helper\n  prompt: Review.", state: header).isEmpty)
     #expect(codes(choice + "\n- id: again\n  launch: helper\n  prompt: Review.", state: header)
       .contains("launch_twice"))
     let partial = """
@@ -32,7 +32,7 @@ struct WorkflowBundleValidatorTests {
         if: 'true'
         then: [{id: strict, launch: helper, prompt: Review strictly.}]
       """
-    #expect(codes(partial + "\n- id: work\n  message: helper\n  text: Review.", state: header)
+    #expect(codes(partial + "\n- id: work\n  message: helper\n  prompt: Review.", state: header)
       .contains("message_before_launch"))
     #expect(codes(partial + "\n- id: again\n  launch: helper\n  prompt: Review.", state: header)
       .contains("launch_twice"))
@@ -130,20 +130,20 @@ struct WorkflowBundleValidatorTests {
 
   @Test func builtinInputTypesAndRemovedActionsAreRejected() {
     #expect(codes("  - id: snapshot\n    action: builtin:collect-worktree-context\n    with: {root: 3}") == ["action_input_type"])
-    #expect(codes("  - id: old\n    action: handoff.checkpoint") == ["unknown_action"])
+    #expect(codes("  - id: old\n    action: removed.action") == ["unknown_action"])
   }
   @Test func aBranchCannotOverwriteAnOuterOutputBinding() {
     let diagnostics = codes("""
       - id: outer
         message: author
-        text: Write.
+        prompt: Write.
         expect: {delivery: report}
       - id: branch
         if: 'true'
         then:
           - id: inner
             message: author
-            text: Write again.
+            prompt: Write again.
             expect: {delivery: report}
       - id: after
         notify: '{{ deliveries.report.path }}'

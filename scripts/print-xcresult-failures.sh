@@ -20,8 +20,9 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 summary_json="$(mktemp)"
+legacy_json="$(mktemp)"
 cleanup() {
-  rm -f "$summary_json"
+  rm -f "$summary_json" "$legacy_json"
 }
 trap cleanup EXIT
 
@@ -40,6 +41,20 @@ failed_tests="$(
 )"
 
 if [ "$failed_tests" -eq 0 ]; then
+  # The summary can omit a failed first iteration when a retry passes.
+  if xcrun xcresulttool get object --legacy --format json --path "$result_bundle" >"$legacy_json" 2>/dev/null \
+    && jq -e '(.issues.testFailureSummaries._values // []) | length > 0' "$legacy_json" >/dev/null; then
+    echo
+    echo "================ xcresult recorded failures ================"
+    jq -r '
+      .issues.testFailureSummaries._values[]
+      | "test: \(.testCaseName._value // "unknown")",
+        "failure: \(.message._value // "n/a")",
+        ""
+    ' "$legacy_json"
+    echo "============================================================"
+    exit 0
+  fi
   echo "No failed tests found in xcresult summary."
   exit 0
 fi

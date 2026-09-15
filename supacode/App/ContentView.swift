@@ -10,6 +10,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ContentView: View {
+  @Environment(RemoteMirrorStore.self) private var mirrors
   @Dependency(FeatureFlags.self) private var featureFlags
   @Bindable var store: StoreOf<AppFeature>
   @Bindable var repositoriesStore: StoreOf<RepositoriesFeature>
@@ -58,6 +59,11 @@ struct ContentView: View {
       }
     }
     .environment(\.surfaceBackgroundOpacity, terminalManager.surfaceBackgroundOpacity())
+    .onChange(of: mirrors.selectedID) { _, selectedID in
+      if selectedID != nil {
+        repositoriesStore.send(.selectWorktree(nil))
+      }
+    }
     .task {
       store.send(.scenePhaseChanged(scenePhase))
     }
@@ -174,11 +180,6 @@ struct ContentView: View {
       )
     }
     .overlay {
-      if let handoffHudStore = store.scope(state: \.handoffHud, action: \.handoffHud.presented) {
-        HandoffHudOverlayView(store: handoffHudStore)
-      }
-    }
-    .overlay {
       if featureFlags.workflowUI, !store.workflowStartFromSettings,
         let workflowStartStore = store.scope(state: \.workflowStart, action: \.workflowStart.presented)
       {
@@ -221,7 +222,11 @@ struct ContentView: View {
       SidebarView(store: repositoriesStore, terminalManager: terminalManager)
         .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
     } detail: {
-      WorktreeDetailView(store: store, terminalManager: terminalManager)
+      if let client = mirrors.selected {
+        RemoteMirrorPaneView(client: client)
+      } else {
+        WorktreeDetailView(store: store, terminalManager: terminalManager)
+      }
     }
     .navigationSplitViewStyle(.automatic)
     .animation(.easeOut(duration: 0.2), value: store.leftSidebarVisibility)

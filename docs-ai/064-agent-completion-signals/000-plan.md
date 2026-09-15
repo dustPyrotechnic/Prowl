@@ -7,6 +7,9 @@
 | **Primary PRs** | #715 (S1); #718 (S2); #721, #723 (S3a); #725 (S3b); #728 (S3c); #732 (012); #736 (013); #741 (re-dispatch); #739 (T0); #767 (runtime contracts, merged) |
 | **Related** | [063 agent-workflows](../063-agent-workflows/000-plan.md) (consumer; defines the `ObservedAgentState` observer this entry feeds), [030 agent-status-detection](../030-agent-status-detection/000-plan.md), [045 native-agent-session-detection](../045-native-agent-session-detection/000-plan.md), [055 agent-profile-runtimes](../055-agent-profile-runtimes/000-plan.md), [059 agent-transcript-snapshots](../059-agent-transcript-snapshots/000-plan.md), [060 cli-targeting-and-contract-governance](../060-prowl-cli-targeting-and-contract-governance/000-plan.md), [#473](https://github.com/onevcat/Prowl/issues/473), [#676](https://github.com/onevcat/Prowl/issues/676), `docs/components/agent-detection.md`, `docs/components/cli.md` |
 
+Current state-provider architecture and per-runtime migration plans are maintained in
+[068 — Agent State Providers](../068-agent-state-providers/000-plan.md). This entry retains its original scope and history.
+
 ## Background
 
 Prowl's per-pane agent status (`working` / `blocked` / `idle` / `done`) comes from
@@ -100,6 +103,11 @@ observer) see identical events. Registration and snapshot capture stay one main-
 Each subscriber is independently bounded. If it falls behind, state churn is recovered from
 a new snapshot; signal or lifecycle overflow is explicit and S2's waiter re-subscribes before
 surfacing an error. Critical events are never silently discarded.
+
+The planned log/screen extension separates signal production from final state decisions:
+providers supply evidence and one state machine owns precedence and transitions. See
+[017 — Unified state decision](017-agent-state-decision.md) for the agreed architecture
+and the unresolved foreground-identity and history-baseline gates.
 
 ### `prowl agents wait`
 
@@ -357,3 +365,27 @@ opencode; partial for qodercli/qwen/amp; docs/bundle for the rest). Key conclusi
 - Updated 2026-09-05 (T1 closure): Full eight-runtime verification and explicit scoped publication passed; the baseline and matrix were advanced while preserving interactive history. Release guidance now uses `verify` then `publish`. See [064.016](016-t1-contract-test-plan.md). Merge this closure, then proceed to D2; GUI E2E is outside #726 T1.
 
 - Updated 2026-09-05 (release order): T1 #769 merged. R2b now proceeds to 063-D3 handoff/checkpoint and first built-in E2E, with 063-D2 adversarial review deferred to R3. T1 remains prerequisite to both; S4 scheduling/dependencies are unchanged.
+
+- Updated 2026-09-12: Agreed independent log/screen providers and one state decision component;
+  recorded local identity findings and open implementation gates in
+  [017-agent-state-decision.md](017-agent-state-decision.md). Implementation remains planned.
+
+- Updated 2026-09-12: Verified same-PID resume without log changes and background writes
+  defeating mtime selection; recorded direct-child lifecycle events and the requirement
+  to retain Working after parent completion while children run in
+  [018-foreground-and-subagent-findings.md](018-foreground-and-subagent-findings.md).
+- Updated 2026-09-12: Defined selected main-session identity as the log attachment
+  gate and audited current self-report and resolver limits in
+  [019-foreground-identity-contract.md](019-foreground-identity-contract.md).
+- Updated 2026-09-12: Completed public-source and real-TUI selection research;
+  verified configured title/footer identity and specified screen fallback gates in
+  [020-selection-channel-research.md](020-selection-channel-research.md).
+- Updated 2026-09-12: Ended selection research and accepted main-turn activity-window
+  attribution with screen fallback; designed all-agent provider migration and pure
+  state-machine testing in [021-provider-state-machine-design.md](021-provider-state-machine-design.md).
+
+- Updated 2026-09-12: Implemented shared state decisions and the first optional log provider — see [022 implementation](022-provider-implementation.md).
+
+- Updated 2026-09-12: Hardened observation ordering, recovery, completion fences, and decision diagnostics — see [023 continuity](023-provider-continuity-hardening.md).
+
+- Updated 2026-09-12: Corrected capture ordering, diagnostic emission, suspended completion, and CLI contracts — see [024 follow-up](024-observation-order-and-emission.md).

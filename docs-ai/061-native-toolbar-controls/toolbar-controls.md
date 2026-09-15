@@ -37,21 +37,28 @@ exposes `ToolbarContent.sharedBackgroundVisibility(_:)` only on macOS 26+. The a
 | Sidebar | `supacode/Features/Repositories/Views/SidebarListView.swift` | Automatic Add Repository/Workspace item. | Correct single action. |
 | Archived Worktrees | `supacode/Features/Repositories/Views/ArchivedWorktreesDetailView.swift` | Automatic destructive Delete Selected item. | Correct single action. |
 
-`HandoffHudOverlayView`, `CommandPaletteOverlayView`, and terminal tab backgrounds use
-`glassEffect`, but are not window-toolbar content and are deliberately outside this guide.
+`CommandPaletteOverlayView` and terminal tab backgrounds use `glassEffect`, but are not
+window-toolbar content and are deliberately outside this guide. The legacy Handoff HUD and
+dedicated Agents-popover Hand Off action were removed; Handoff now uses the workflow entry.
 
 ## 3. The leading notification/update exception
 
 ### Required visible result
 
 ```
-[ Agents | Quick Launch ]    [ Bell | Workflow History | Update ]
+[ Agents | Quick Launch ]    [ Bell | Workflow History | Remote Mirror | Update ]
 ```
 
 - Agents and Quick Launch remain one native shared-glass group.
 - Bell and update form a second capsule immediately after it.
 - The two capsules are separate.
 - Bell retains its `.orange` unread state and `.secondary` idle state.
+- Workflow History uses `checklist` with the same `.secondary` idle tint.
+- Bell and History share a window-local `ToolbarPopoverCoordinator`. Only one owns
+  presentation; late hover/dismiss callbacks from a replaced panel are ignored.
+- Remote Mirror uses `.secondary` while stopped, muted system blue while listening,
+  and muted system green while at least one pane is mirrored. Its accessible label
+  exposes the same Host status. It shares the window-local hover coordinator.
 - Update retains `Color("ProwlAccent")`.
 
 ### Why it is an exception
@@ -64,7 +71,7 @@ system surface. Therefore `AgentNotificationsToolbarContent` uses exactly one is
 
 1. `.sharedBackgroundVisibility(.hidden)` on that `ToolbarItem`;
 2. an `HStack(spacing: 0)` containing `ToolbarNotificationsPopoverButton`, conditional
-   `WorkflowHistoryPopoverButton`, and conditional `ToolbarUpdateButton`;
+   `WorkflowHistoryPopoverButton`, experimental `MirrorHostButton`, and conditional `ToolbarUpdateButton`;
 3. one outer `.glassEffect(.regular.interactive(), in: Capsule())`.
 
 This is an ownership boundary, not a new style system. Do not add a divider, child glass,

@@ -1,7 +1,7 @@
 import Foundation
 import ProwlCLIShared
 
-/// The copyable prompt behind Settings › Agents › Workflows › "Ask an Agent…" (docs-ai 063
+/// The copyable prompt behind Settings › Agents › Workflows › "Create with Agent…" (docs-ai 063
 /// D1): it points a coding agent at the bundled `prowl-workflow` skill and the workflows
 /// manual, and asks it to author, validate, and place a workflow bundle. Localized like
 /// `AskAgentHelpPrompt`; pure so it is unit-testable.
@@ -10,18 +10,37 @@ nonisolated enum WorkflowAuthoringPrompt {
     skillPath: String,
     manualPath: String,
     workflowsDirectory: String,
+    draft: WorkflowStarterTemplate.Request? = nil,
     appLocale: Locale,
     systemLocale: Locale
   ) -> AskAgentHelpStrings {
     let chrome = chrome(for: appLocale)
-    return chrome.strings(
-      prompt: prompt(
-        skillPath: skillPath,
-        manualPath: manualPath,
-        workflowsDirectory: workflowsDirectory,
-        locale: systemLocale
-      )
+    var prompt = prompt(
+      skillPath: skillPath,
+      manualPath: manualPath,
+      workflowsDirectory: workflowsDirectory,
+      locale: systemLocale
     )
+    if let draft {
+      let introduction: String
+      let language = AskAgentHelpPrompt.languageKey(for: systemLocale)
+      switch language {
+      case .english:
+        introduction =
+          "Use this draft as a starting point. Keep its name, ID, and icon unless I ask to change them. "
+          + "Ask what I want it to do, then replace the example steps."
+      case .simplifiedChinese:
+        introduction = "请以这份草稿为起点，保留名称、ID 和图标，除非我要求修改。先问我想实现什么，再替换示例步骤。"
+      case .traditionalChinese:
+        introduction = "請以這份草稿為起點，保留名稱、ID 和圖示，除非我要求修改。先問我想實現什麼，再替換範例步驟。"
+      case .japanese:
+        introduction =
+          "この下書きを出発点にしてください。変更を頼まない限り、名前、ID、アイコンを保持してください。"
+          + "目的を私に確認してから、サンプルのステップを置き換えてください。"
+      }
+      prompt += "\n\n\(introduction)\n\n```yaml\n\(WorkflowStarterTemplate.yaml(draft))```"
+    }
+    return chrome.strings(prompt: prompt)
   }
 
   private static func prompt(
@@ -32,13 +51,13 @@ nonisolated enum WorkflowAuthoringPrompt {
   ) -> String {
     switch AskAgentHelpPrompt.languageKey(for: locale) {
     case .english:
-      return english(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
+      return english(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
     case .simplifiedChinese:
-      return simplifiedChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
+      return simplifiedChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
     case .traditionalChinese:
-      return traditionalChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
+      return traditionalChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
     case .japanese:
-      return japanese(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
+      return japanese(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
     }
   }
 

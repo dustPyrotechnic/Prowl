@@ -5,6 +5,7 @@ import Sharing
 import SwiftUI
 
 struct WorktreeDetailView: View {
+  @Dependency(FeatureFlags.self) private var featureFlags
   private struct ToolbarSharedStateInput {
     let repositories: RepositoriesFeature.State
     let workflowRuns: WorkflowRunsFeature.State
@@ -29,6 +30,7 @@ struct WorktreeDetailView: View {
   /// True while a Canvas card is expanded in place, so the otherwise-transparent
   /// Canvas toolbar gets a matching material scrim instead of showing through.
   @State private var isCanvasCardExpanded = false
+  @State private var toolbarPopovers = ToolbarPopoverCoordinator()
   @State private var historyStore = Store(initialState: WorkflowStepHistoryFeature.State()) {
     WorkflowStepHistoryFeature()
   }
@@ -98,22 +100,12 @@ struct WorktreeDetailView: View {
     )
     .toolbar(removing: .title)
     .toolbar {
-      if repositories.isShowingCanvas {
-        canvasToolbarContent(state: sharedToolbarState)
-      } else if hasActiveTerminalTarget {
-        worktreeToolbarContent(
-          toolbarState: WorktreeToolbarState(
-            shared: sharedToolbarState,
-            openActionSelection: state.openActionSelection,
-            openActionIsAutomatic: state.openActionIsAutomatic,
-            showExtras: commandKeyObserver.isPressed,
-            showDefaultEditorInToolbar: settingsFile.global.showDefaultEditorInToolbar
-          ),
-          actionTargetWorktree: actionTargetWorktree
-        )
-      }
+      detailToolbarContent(
+        state: state, shared: sharedToolbarState,
+        actionTargetWorktree: actionTargetWorktree, hasActiveTerminalTarget: hasActiveTerminalTarget)
     }
     .environment(historyStore)
+    .environment(toolbarPopovers)
     .task { loadWorkflowHistory(context: historyContext, runs: state.workflowRuns.sessions.values.map(\.run)) }
     .onChange(of: historyContext) { _, context in historyStore.send(.context(context)) }
     .onChange(of: state.workflowRuns.sessions) { _, sessions in
@@ -136,6 +128,31 @@ struct WorktreeDetailView: View {
         ? terminalManager.canvasFocusedWorktreeID : nil
     )
     return applyFocusedActions(content: content, actions: actions, token: actionToken)
+  }
+
+  @ToolbarContentBuilder
+  private func detailToolbarContent(
+    state: AppFeature.State, shared: ToolbarSharedState,
+    actionTargetWorktree: Worktree?, hasActiveTerminalTarget: Bool
+  ) -> some ToolbarContent {
+    if state.repositories.isShowingCanvas {
+      canvasToolbarContent(state: shared)
+    } else if hasActiveTerminalTarget {
+      worktreeToolbarContent(
+        toolbarState: WorktreeToolbarState(
+          shared: shared,
+          openActionSelection: state.openActionSelection,
+          openActionIsAutomatic: state.openActionIsAutomatic,
+          showExtras: commandKeyObserver.isPressed,
+          showDefaultEditorInToolbar: settingsFile.global.showDefaultEditorInToolbar
+        ),
+        actionTargetWorktree: actionTargetWorktree
+      )
+    } else {
+      if featureFlags.remoteMirror {
+        ToolbarItem(placement: .navigation) { MirrorHostButton() }
+      }
+    }
   }
 
   @ToolbarContentBuilder
@@ -169,9 +186,9 @@ struct WorktreeDetailView: View {
         store.send(.runCustomCommand(index))
       },
       onActivateUpdateButton: { store.send(.updates(.activateUpdateButton)) },
-      onHandOff: { store.send(.openHandoffHud) },
       onLaunchProfile: { store.send(.launchAgentProfile($0)) },
       onManageProfiles: { store.send(.openAgentProfilesSettings) },
+      onManageWorkflows: { store.send(.openWorkflowSettings) },
       onRunWorkflow: { key in
         store.send(
           .openWorkflowStart(
@@ -209,7 +226,8 @@ struct WorktreeDetailView: View {
           currentSignal: terminalManager.currentAgentSignalEvidenceSnapshot(surfaceID: entry.surfaceID)
             .latestManagedHook)
       },
-      worktreeID: worktree?.id, livePaneIDs: Set(repositories.activeAgents.entries.map(\.surfaceID)))
+      worktreeID: worktree?.id,
+      livePaneIDs: Set(terminalManager.activeWorktreeStates.flatMap { $0.surfaces.keys }))
   }
 
   private func toolbarSharedState(
@@ -253,9 +271,9 @@ struct WorktreeDetailView: View {
       notificationGroups: state.notificationGroups,
       unseenNotificationWorktreeCount: state.unseenNotificationWorktreeCount,
       workflowsWorktreeID: state.actionTargetWorktreeID,
-      onHandOff: { store.send(.openHandoffHud) },
       onLaunchProfile: { store.send(.launchAgentProfile($0)) },
       onManageProfiles: { store.send(.openAgentProfilesSettings) },
+      onManageWorkflows: { store.send(.openWorkflowSettings) },
       onRunWorkflow: { key in
         store.send(
           .openWorkflowStart(
@@ -399,12 +417,7 @@ struct WorktreeDetailView: View {
         iconLookupToken: paneState.iconLookupToken ?? agent.iconLookupToken,
         agent: agent
       )
-    return AgentsCapsuleState(
-      displayName: displayName,
-      iconSource: iconSource,
-      infoLine: "Pass this task to another agent in a new tab. "
-        + "\(displayName) writes its own briefing first."
-    )
+    return AgentsCapsuleState(displayName: displayName, iconSource: iconSource)
   }
 
   /// Launchable profile rows for the Agents popover: the current worktree's
@@ -944,7 +957,7 @@ struct WorktreeDetailView: View {
   /// the trailing group that replaces the former branch item.
   struct AgentNotificationsToolbarContent: ToolbarContent {
     @Environment(StoreOf<WorkflowStepHistoryFeature>.self) private var historyStore
-    @Dependency(FeatureFlags.self) private var historyFlags
+    @Dependency(FeatureFlags.self) private var featureFlags
     let onHistoryIntent: (WorkflowRunPanelIntent) -> Void
 
     let agentsCapsule: AgentsCapsuleState?
@@ -952,9 +965,9 @@ struct WorktreeDetailView: View {
     let notificationGroups: [ToolbarNotificationRepositoryGroup]
     let unseenNotificationWorktreeCount: Int
     let workflowsWorktreeID: Worktree.ID?
-    let onHandOff: () -> Void
     let onLaunchProfile: (AgentProfile.ID) -> Void
     let onManageProfiles: () -> Void
+    let onManageWorkflows: () -> Void
     let onRunWorkflow: (String) -> Void
     let onRunWorkflowWithOptions: (String) -> Void
     let onShowWorkflowDetails: (WorkflowStartCatalogItem) -> Void
@@ -971,9 +984,9 @@ struct WorktreeDetailView: View {
           capsule: agentsCapsule,
           launcherItems: agentsLauncherItems,
           workflowsWorktreeID: workflowsWorktreeID,
-          onHandOff: onHandOff,
           onLaunchProfile: onLaunchProfile,
           onManageProfiles: onManageProfiles,
+          onManageWorkflows: onManageWorkflows,
           onRunWorkflow: onRunWorkflow,
           onRunWorkflowWithOptions: onRunWorkflowWithOptions,
           onShowWorkflowDetails: onShowWorkflowDetails
@@ -993,9 +1006,10 @@ struct WorktreeDetailView: View {
             onSelectNotification: onSelectNotification,
             onDismissAll: onDismissAllNotifications
           )
-          if historyFlags.workflowUI && !historyStore.entries.isEmpty {
+          if featureFlags.workflowUI && !historyStore.entries.isEmpty {
             WorkflowHistoryPopoverButton(store: historyStore, onIntent: onHistoryIntent)
           }
+          if featureFlags.remoteMirror { MirrorHostButton() }
           if isUpdateAvailable {
             ToolbarUpdateButton(
               availableVersion: availableUpdateVersion,
@@ -1022,9 +1036,9 @@ struct WorktreeDetailView: View {
     let onStopRunScript: () -> Void
     let onRunCustomCommand: (EffectiveCustomCommand.Identifier) -> Void
     let onActivateUpdateButton: () -> Void
-    let onHandOff: () -> Void
     let onLaunchProfile: (AgentProfile.ID) -> Void
     let onManageProfiles: () -> Void
+    let onManageWorkflows: () -> Void
     let onRunWorkflow: (String) -> Void
     let onRunWorkflowWithOptions: (String) -> Void
     let onShowWorkflowDetails: (WorkflowStartCatalogItem) -> Void
@@ -1039,9 +1053,9 @@ struct WorktreeDetailView: View {
         notificationGroups: toolbarState.shared.notificationGroups,
         unseenNotificationWorktreeCount: toolbarState.shared.unseenNotificationWorktreeCount,
         workflowsWorktreeID: toolbarState.shared.actionTargetWorktreeID,
-        onHandOff: onHandOff,
         onLaunchProfile: onLaunchProfile,
         onManageProfiles: onManageProfiles,
+        onManageWorkflows: onManageWorkflows,
         onRunWorkflow: onRunWorkflow,
         onRunWorkflowWithOptions: onRunWorkflowWithOptions,
         onShowWorkflowDetails: onShowWorkflowDetails,
