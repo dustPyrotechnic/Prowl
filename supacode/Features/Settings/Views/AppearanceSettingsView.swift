@@ -10,9 +10,40 @@ struct AppearanceSettingsView: View {
     let externalDiffToolOptions = ExternalDiffTool.settingsMenuCases
     VStack(alignment: .leading) {
       Form {
+#if DEBUG
+        Section {
+          Text(String(localized: "G1a SwiftUI probe"))
+        }
+#endif
+        Section {
+          Picker(
+            "语言 / Language",
+            selection: Binding(
+              get: { store.appLanguage },
+              set: { store.send(.setAppLanguage($0)) }
+            )
+          ) {
+            ForEach(AppLanguage.allCases) { language in
+              Text(language.title).tag(language)
+            }
+          }
+          Text("下次启动 Prowl 时生效；退出应用可能中断正在运行的终端任务")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+          if store.languageChangePending {
+            Text("将在下次启动时切换语言")
+              .font(.footnote)
+              .foregroundStyle(.secondary)
+          }
+        }
+        .help("Choose the app language. The change applies the next time Prowl starts.")
+        .onAppear {
+          store.send(.refreshSystemPreferredLanguages)
+        }
         Section("Appearance") {
           HStack {
             let appearanceMode: Binding<AppearanceMode> = $store.appearanceMode
+
             ForEach(AppearanceMode.allCases) { mode in
               AppearanceOptionCardView(
                 mode: mode,

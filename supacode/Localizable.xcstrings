@@ -1,0 +1,50 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "G1a AppKit menu probe" : {
+      "comment" : "Disposable G1a prototype. Delete after G1a.",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G1a AppKit 菜单探针"
+          }
+        }
+      }
+    },
+    "G1a SwiftUI probe" : {
+      "comment" : "Disposable G1a prototype. Delete after G1a.",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G1a SwiftUI 探针"
+          }
+        }
+      }
+    },
+    "G1a dynamic title probe" : {
+      "comment" : "Disposable G1a prototype. Delete after G1a.",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G1a 动态标题探针"
+          }
+        }
+      }
+    },
+    "G1a file panel probe" : {
+      "comment" : "Disposable G1a prototype. Delete after G1a.",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G1a 文件面板探针"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.3"
+}

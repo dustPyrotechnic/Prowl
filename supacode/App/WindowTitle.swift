@@ -37,7 +37,11 @@ enum WindowTitle {
     case .worktree(let worktreeID):
       return worktreeTitle(worktreeID: worktreeID, repositories: repositories, terminalState: terminalState)
     case nil:
-      return appName
+      #if DEBUG
+        return String(localized: "G1a dynamic title probe")
+      #else
+        return appName
+      #endif
     }
   }
 

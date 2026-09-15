@@ -92,12 +92,15 @@ struct SettingsFeature {
 
     init(
       settings: GlobalSettings = .default,
-      effectiveLanguageAtLaunch: ResolvedAppLanguage = .english
+      effectiveLanguageAtLaunch: ResolvedAppLanguage = .english,
+      systemPreferredLanguages: [String] = []
     ) {
       let normalizedDefaultEditorID = OpenWorktreeAction.normalizedDefaultEditorID(settings.defaultEditorID)
       appearanceMode = settings.appearanceMode
       appLanguage = settings.appLanguage
       self.effectiveLanguageAtLaunch = effectiveLanguageAtLaunch
+      self.systemPreferredLanguages = systemPreferredLanguages
+
       defaultEditorID = normalizedDefaultEditorID
       confirmBeforeQuit = settings.confirmBeforeQuit
       updatesAutomaticallyCheckForUpdates = settings.updatesAutomaticallyCheckForUpdates
@@ -226,6 +229,8 @@ struct SettingsFeature {
     case setAppLanguage(AppLanguage)
     case appLanguagePersistFailed(previous: AppLanguage)
     case updateSystemPreferredLanguages([String])
+    case refreshSystemPreferredLanguages
+
     case setSelection(SettingsSection?)
     case setSystemNotificationsEnabled(Bool)
     case setCommandFinishedNotificationThreshold(String)
@@ -404,6 +409,10 @@ struct SettingsFeature {
       case .updateSystemPreferredLanguages(let languages):
         state.systemPreferredLanguages = languages
         return .none
+
+      case .refreshSystemPreferredLanguages:
+        let languages = appLanguageBridge.platformLanguages()
+        return .send(.updateSystemPreferredLanguages(languages))
 
       case .binding(\.notificationSound):
         let sound = state.notificationSound

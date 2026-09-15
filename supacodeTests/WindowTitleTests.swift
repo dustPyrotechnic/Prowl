@@ -23,7 +23,12 @@ struct WindowTitleTests {
 
   @Test func computeUsesAppTitleWithoutSelection() {
     let manager = WorktreeTerminalManager(runtime: GhosttyRuntime())
-    #expect(WindowTitle.compute(repositories: RepositoriesFeature.State(), terminalManager: manager) == "Prowl")
+    let title = WindowTitle.compute(repositories: RepositoriesFeature.State(), terminalManager: manager)
+    #if DEBUG
+      #expect(title == String(localized: "G1a dynamic title probe"))
+    #else
+      #expect(title == "Prowl")
+    #endif
   }
 
   @Test func computeUsesViewTitlesForCanvasAndArchive() {

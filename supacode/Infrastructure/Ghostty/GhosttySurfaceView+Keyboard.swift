@@ -270,6 +270,16 @@ extension GhosttySurfaceView {
     }
 
     let menu = NSMenu()
+    #if DEBUG
+      menu.addItem(
+        NSMenuItem(
+          title: String(localized: "G1a AppKit menu probe"),
+          action: nil,
+          keyEquivalent: ""
+        )
+      )
+      menu.addItem(.separator())
+    #endif
     if ghostty_surface_has_selection(surface) {
       menu.addItem(NSMenuItem(title: "Copy", action: #selector(copy(_:)), keyEquivalent: ""))
     }

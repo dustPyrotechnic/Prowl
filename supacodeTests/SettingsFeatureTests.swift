@@ -1039,6 +1039,22 @@ struct SettingsFeatureTests {
     #expect(store.state.languageChangePending)
   }
 
+  @Test(.dependencies) func refreshSystemPreferredLanguagesReadsBridgeClient() async {
+    var state = SettingsFeature.State(effectiveLanguageAtLaunch: .english)
+    state.systemPreferredLanguages = ["en"]
+    let store = TestStore(initialState: state) {
+      SettingsFeature()
+    } withDependencies: {
+      $0.appLanguageBridge.platformLanguages = { ["zh-Hans", "en"] }
+    }
+
+    await store.send(.refreshSystemPreferredLanguages)
+    await store.receive(\.updateSystemPreferredLanguages) {
+      $0.systemPreferredLanguages = ["zh-Hans", "en"]
+    }
+    #expect(store.state.languageChangePending)
+  }
+
   @Test func pendingPredictionIgnoresAnyCommandLineOverride() {
     // This launch ran in Chinese via a temporary `-AppleLanguages zh-Hans`
     // override; the preference still resolves to English for the next

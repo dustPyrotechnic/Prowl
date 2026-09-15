@@ -25,6 +25,11 @@ struct AppLanguageTests {
     #expect(Set(ResolvedAppLanguage.allCases.map(\.rawValue)) == ["en", "zh-Hans"])
   }
 
+  @Test func bootstrapSnapshotIsASupportedLanguage() {
+    let snapshot = AppLanguageBootstrap.snapshotEffectiveLanguage()
+    #expect(ResolvedAppLanguage.allCases.contains(snapshot))
+  }
+
   // MARK: - Resolution
 
   @Test func explicitPreferenceWinsOverPlatformLanguages() {
@@ -210,6 +215,28 @@ struct AppLanguageTests {
     // become the restore target just because it is the current value.
     bridge.synchronize(preference: .system)
     #expect(bridge.currentAppleLanguages == nil)
+  }
+
+  @Test func predictionStripsProwlDerivedPrefixFromPreferredLanguages() {
+    let (defaults, suite) = makeIsolatedDefaults()
+    defer { UserDefaults().removePersistentDomain(forName: suite) }
+    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+    bridge.synchronize(preference: .zhHans)
+
+    #expect(
+      bridge.platformLanguagesForPrediction(preferredLanguages: ["zh-Hans", "en"]) == ["en"]
+    )
+  }
+
+  @Test func predictionKeepsExternalOverrideAsSystemInput() {
+    let (defaults, suite) = makeIsolatedDefaults()
+    defer { UserDefaults().removePersistentDomain(forName: suite) }
+    defaults.set(["fr"], forKey: "AppleLanguages")
+    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+
+    #expect(
+      bridge.platformLanguagesForPrediction(preferredLanguages: ["fr", "en"]) == ["fr", "en"]
+    )
   }
 
   private func makeIsolatedDefaults(

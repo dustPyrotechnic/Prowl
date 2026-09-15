@@ -46,6 +46,21 @@ nonisolated struct AppLanguageBridge {
     }
   }
 
+  /// Preferred languages for predicting the next normal launch, with any
+  /// Prowl-derived `AppleLanguages` prefix removed so it is not mistaken
+  /// for the user's system list.
+  func platformLanguagesForPrediction(
+    preferredLanguages: [String] = Locale.preferredLanguages
+  ) -> [String] {
+    var languages = preferredLanguages
+    if let derived = lastWritten, derived == currentAppleLanguages {
+      for code in derived where languages.first == code {
+        languages.removeFirst()
+      }
+    }
+    return languages
+  }
+
   private func applyDerivedLanguages(for language: AppLanguage) {
     let derived = [language.rawValue]
     let current = currentAppleLanguages
@@ -104,6 +119,7 @@ nonisolated struct AppLanguageBridge {
 
 nonisolated struct AppLanguageBridgeClient: Sendable {
   var synchronize: @Sendable (_ preference: AppLanguage) -> Void = { _ in }
+  var platformLanguages: @Sendable () -> [String] = { Locale.preferredLanguages }
 }
 
 extension AppLanguageBridgeClient: DependencyKey {
@@ -112,11 +128,19 @@ extension AppLanguageBridgeClient: DependencyKey {
       guard let domainName = Bundle.main.bundleIdentifier else { return }
       AppLanguageBridge(defaults: .standard, domainName: domainName)
         .synchronize(preference: preference)
+    },
+    platformLanguages: {
+      guard let domainName = Bundle.main.bundleIdentifier else {
+        return Locale.preferredLanguages
+      }
+      return AppLanguageBridge(defaults: .standard, domainName: domainName)
+        .platformLanguagesForPrediction()
     }
   )
 
   static let testValue = AppLanguageBridgeClient()
 }
+
 
 extension DependencyValues {
   var appLanguageBridge: AppLanguageBridgeClient {

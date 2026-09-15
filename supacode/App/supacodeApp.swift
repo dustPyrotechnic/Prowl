@@ -63,6 +63,7 @@ final class SupacodeAppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationDidBecomeActive(_ notification: Notification) {
+    appStore?.send(.settings(.refreshSystemPreferredLanguages))
     let app = NSApplication.shared
     let hasVisibleMainWindow = MainWindowSurface.hasVisibleMainWindow(in: app.windows)
     WindowLifecycleDiagnostics.logWithWindows(
@@ -72,6 +73,7 @@ final class SupacodeAppDelegate: NSObject, NSApplicationDelegate {
     WindowLifecycleDiagnostics.log("applicationDidBecomeActive -> surfaceMainWindow()")
     app.surfaceMainWindow()
   }
+
 
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
     WindowLifecycleDiagnostics.logWithWindows("applicationShouldHandleReopen hasVisibleWindows=\(flag)")
@@ -180,6 +182,15 @@ struct SupacodeApp: App {
     UserDefaults.standard.set(200, forKey: "NSInitialToolTipDelay")
     @Shared(.settingsFile) var settingsFile
     let initialSettings = settingsFile.global
+    let effectiveLanguageAtLaunch = AppLanguageBootstrap.apply(preference: initialSettings.appLanguage)
+    let systemPreferredLanguages: [String] = {
+      guard let domainName = Bundle.main.bundleIdentifier else {
+        return Locale.preferredLanguages
+      }
+      return AppLanguageBridge(defaults: .standard, domainName: domainName)
+        .platformLanguagesForPrediction()
+    }()
+
     let initialResolvedKeybindings = KeybindingResolver.resolve(
       schema: .appResolverSchema(),
       userOverrides: initialSettings.keybindingUserOverrides
@@ -216,7 +227,14 @@ struct SupacodeApp: App {
     _pullRequestRefreshCoordinator = State(initialValue: coordinator)
     let keyObserver = CommandKeyObserver()
     _commandKeyObserver = State(initialValue: keyObserver)
-    var initialAppState = AppFeature.State(settings: SettingsFeature.State(settings: initialSettings))
+    var initialAppState = AppFeature.State(
+      settings: SettingsFeature.State(
+        settings: initialSettings,
+        effectiveLanguageAtLaunch: effectiveLanguageAtLaunch,
+        systemPreferredLanguages: systemPreferredLanguages
+      )
+    )
+
     if let cliOpenPath = Self.cliLaunchOpenPath() {
       initialAppState.launchRestoreMode = .cliOpenPath(cliOpenPath)
     }
