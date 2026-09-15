@@ -11378,6 +11378,46 @@
           }
         }
       }
+    },
+    "Clear Workflow History?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除工作流历史记录？"
+          }
+        }
+      }
+    },
+    "Clear History": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除历史记录"
+          }
+        }
+      }
+    },
+    "\\(count) finished run\\(count == 1 ? \"\" : \"s\") and their prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\\(count) 个已完成的运行及其提示、交付和操作输出将被删除。仍在活动的运行将保留。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "Removed \\(count) run\\(count == 1 ? \"\" : \"s\").": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已删除 \\(count) 个运行。"
+          }
+        }
+      }
     }
   },
   "version": "1.3"
