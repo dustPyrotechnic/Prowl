@@ -141,7 +141,6 @@ extension AppLanguageBridgeClient: DependencyKey {
   static let testValue = AppLanguageBridgeClient()
 }
 
-
 extension DependencyValues {
   var appLanguageBridge: AppLanguageBridgeClient {
     get { self[AppLanguageBridgeClient.self] }
