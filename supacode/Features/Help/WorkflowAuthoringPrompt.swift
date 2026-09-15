@@ -51,13 +51,13 @@ nonisolated enum WorkflowAuthoringPrompt {
   ) -> String {
     switch AskAgentHelpPrompt.languageKey(for: locale) {
     case .english:
-      return english(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
+      return english(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
     case .simplifiedChinese:
-      return simplifiedChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
+      return simplifiedChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
     case .traditionalChinese:
-      return traditionalChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
+      return traditionalChinese(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
     case .japanese:
-      return japanese(skill: skillPath, manual: manualPath, directory: workflowsDirectory).prompt
+      return japanese(skill: skillPath, manual: manualPath, directory: workflowsDirectory)
     }
   }
 

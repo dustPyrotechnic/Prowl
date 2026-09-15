@@ -174,7 +174,7 @@ enum AppShortcuts {
     let shortcut: AppShortcut?
 
     var localizedTitle: String {
-      String(localized: String.LocalizationValue(title))
+      String(localized: String.LocalizationValue(title), table: "Localizable")
     }
   }
 

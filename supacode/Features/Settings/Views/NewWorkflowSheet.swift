@@ -41,7 +41,11 @@ struct NewWorkflowSheet: View {
     ) {
       AskAgentHelpView(
         strings: workflowAuthoringPromptStrings(
-          directory: store.workflowDirectory, draft: problem == nil ? store.newWorkflow?.request : nil)
+          directory: store.workflowDirectory,
+          draft: problem == nil ? store.newWorkflow?.request : nil,
+          appLocale: .current,
+          systemLocale: .current
+        )
       ) {
         store.send(.setAuthoringPromptPresented(false))
       }

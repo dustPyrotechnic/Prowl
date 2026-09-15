@@ -11264,6 +11264,120 @@
           }
         }
       }
+    },
+    "pane": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗格"
+          }
+        }
+      }
+    },
+    "panes": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗格"
+          }
+        }
+      }
+    },
+    "recent input": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近的输入"
+          }
+        }
+      }
+    },
+    "active agent work or an unseen agent result": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活跃的 Agent 工作或未查看的 Agent 结果"
+          }
+        }
+      }
+    },
+    "a command that has been running for at least 10 seconds": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已运行至少 10 秒的命令"
+          }
+        }
+      }
+    },
+    "active agent work, unseen agent results, or long-running commands": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活跃的 Agent 工作、未查看的 Agent 结果或长时间运行的命令"
+          }
+        }
+      }
+    },
+    "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将关闭「%3$@」中的 %1$lld 个%2$@，其中有 %4$@。关闭可能会丢失未提交的输入。"
+          }
+        }
+      }
+    },
+    "This will close %lld %@ in \"%@\" with %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This will close %lld %@ in \"%@\" with %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将关闭「%3$@」中的 %1$lld 个%2$@，其中有 %4$@。"
+          }
+        }
+      }
+    },
+    "This will close %lld %@ in \\\"%@\\\" with %@. Closing may lose unsubmitted input.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将关闭 \\\"%3$@\\\" 中的 %1$lld 个 %2$@，其中有 %4$@。关闭可能会丢失未提交的输入。"
+          }
+        }
+      }
+    },
+    "This will close %lld %@ in \\\"%@\\\" with %@.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将关闭 \\\"%3$@\\\" 中的 %1$lld 个 %2$@，其中有 %4$@。"
+          }
+        }
+      }
     }
   },
   "version": "1.3"
