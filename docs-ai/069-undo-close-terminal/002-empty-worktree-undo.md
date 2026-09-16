@@ -37,4 +37,4 @@ would have taken ⌘Z away from text fields.
 
 ## Refs
 
-PR (this branch, `feat/undo-close-empty-worktree`).
+#816.
