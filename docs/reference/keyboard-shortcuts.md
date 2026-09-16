@@ -199,9 +199,10 @@ Other Tabs, Close Tabs to the Right, Close All) come back as one unit.
 
 Each close has its own timer; a later close does not extend an earlier one. The
 undo history is app-wide and time-ordered: `⌘Z` restores the latest close even if it
-happened in another worktree, and Prowl selects that worktree so the restore is
-visible. When nothing is restorable, `⌘Z` reaches the terminal program as a normal
-key.
+happened in another tab or worktree, and Prowl selects that worktree and tab so the
+restore is visible. A pane launched from an Agent Profile keeps its Profile identity
+and managed-hook signals across the restore. When nothing is restorable, `⌘Z`
+reaches the terminal program as a normal key.
 
 Not restorable: closes whose process had already exited, worktree removal, layout
 restore, Run Script replacement, and a pane whose tab was split or rearranged after

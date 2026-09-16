@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 2026-09-16 | Plan written after reading Ghostty's macOS undo implementation and mapping Prowl's close paths | `5c381151` |
 | 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | #814 |
+| 2026-09-16 | Review round 1 (Pi reviewer, 2 P1 + 2 P2, all accepted): pane restore selects its tab; Profile launch identity and managed-hook registration survive a restore (`TerminalRetainedSurfaceContext`, `onManagedHookReadopted`, `CodexForwardingRecordStore.reinstate`); pane-record validity compares split structure, not just the leaf set; `closeAllSurfaces` voids the worktree's retained closes (`onSurfacesReset`) | #814 |
 
 ## Outcome & current state (as of 2026-09-16)
 
@@ -83,9 +84,18 @@ it again; six seconds after a close, `cmd-z` restored nothing.
 - Batch restores replay records in reverse order (not mentioned in the plan);
   the first attempt restored in close order and misplaced the later tabs.
 - The pane-record invalidation is lazy (checked at undo time by comparing the
-  tab's current leaves with the captured tree minus the closed pane) rather than
-  eager on every structural mutation; a stale entry is freed when ⌘Z reaches it
-  or when it expires, whichever comes first.
+  tab's current split structure with the captured tree minus the closed pane,
+  ignoring ratios and zoom) rather than eager on every structural mutation; a
+  stale entry is freed when ⌘Z reaches it or when it expires, whichever comes
+  first.
+- Restore carries launch bookkeeping the plan did not list: `forgetSurface`
+  drops the Profile record and the manager revokes the managed hook at close
+  time (observers see a real close), so the close record keeps both and the
+  restore registers the same hook token again under a fresh evidence epoch and
+  takes the Codex forwarding record off the retirement list.
+- Undoing a pane close selects the pane's tab (the plan only covered a
+  different worktree); a single restored tab is selected, a batch keeps each
+  tab's original selection.
 
 ## Open questions
 

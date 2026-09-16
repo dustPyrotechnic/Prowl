@@ -93,7 +93,8 @@ struct TerminalCloseUndoStackTests {
       tree: tree ?? SplitTree(view: left),
       focusedSurfaceID: right.id,
       wasRunScriptTab: false,
-      boundDirectoryKey: nil
+      boundDirectoryKey: nil,
+      contexts: [:]
     )
     stack.recordClose(.tabs(worktreeID: "wt", [record]))
 
@@ -118,7 +119,8 @@ struct TerminalCloseUndoStackTests {
       .pane(
         worktreeID: "wt",
         TerminalClosedPaneRecord(
-          tabID: TerminalTabID(), view: view, previousTree: SplitTree(view: view), wasFocused: true)))
+          tabID: TerminalTabID(), view: view, previousTree: SplitTree(view: view), wasFocused: true,
+          context: TerminalRetainedSurfaceContext(launchProfile: nil, hookRegistration: nil))))
 
     stack.discardSurface(id: view.id)
 
@@ -163,7 +165,8 @@ struct TerminalCloseUndoStackTests {
           tree: SplitTree(view: view),
           focusedSurfaceID: view.id,
           wasRunScriptTab: false,
-          boundDirectoryKey: nil
+          boundDirectoryKey: nil,
+          contexts: [:]
         )
       ])
   }

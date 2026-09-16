@@ -129,6 +129,12 @@ final class CodexForwardingRecordStore {
     scheduleCleanupIfNeeded()
   }
 
+  /// Takes a retired record back off the cleanup list: its process survived
+  /// the close (an undone pane close) and still forwards through it.
+  func reinstate(_ record: CodexForwardingRecord) {
+    retired.removeValue(forKey: record.locator)
+  }
+
   func cleanupRetired() {
     let date = now()
     for (locator, eligibleAt) in retired where date >= eligibleAt {

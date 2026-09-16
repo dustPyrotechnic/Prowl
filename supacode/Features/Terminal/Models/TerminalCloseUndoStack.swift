@@ -1,6 +1,14 @@
 import Foundation
 import ProwlCLIShared
 
+/// Launch bookkeeping that `forgetSurface` drops but a restored surface needs
+/// back: the Profile that launched it (name, config root) and the managed-hook
+/// registration its still-running process keeps sending events under.
+struct TerminalRetainedSurfaceContext {
+  let launchProfile: WorktreeTerminalState.SurfaceLaunchProfile?
+  let hookRegistration: AgentHookLaunchRegistration?
+}
+
 /// A tab that was closed but whose surfaces are still alive, so an undo can put
 /// it back exactly where it was.
 struct TerminalClosedTabRecord {
@@ -11,6 +19,7 @@ struct TerminalClosedTabRecord {
   let focusedSurfaceID: UUID?
   let wasRunScriptTab: Bool
   let boundDirectoryKey: String?
+  let contexts: [UUID: TerminalRetainedSurfaceContext]
 
   var tabID: TerminalTabID { item.id }
 
@@ -27,7 +36,8 @@ struct TerminalClosedTabRecord {
       tree: remaining,
       focusedSurfaceID: focusedSurfaceID == surfaceID ? nil : focusedSurfaceID,
       wasRunScriptTab: wasRunScriptTab,
-      boundDirectoryKey: boundDirectoryKey
+      boundDirectoryKey: boundDirectoryKey,
+      contexts: contexts.filter { $0.key != surfaceID }
     )
   }
 }
@@ -40,6 +50,7 @@ struct TerminalClosedPaneRecord {
   let view: GhosttySurfaceView
   let previousTree: SplitTree<GhosttySurfaceView>
   let wasFocused: Bool
+  let context: TerminalRetainedSurfaceContext
 }
 
 /// One undoable close. Batch closes (Close Other Tabs, Close All, ...) record

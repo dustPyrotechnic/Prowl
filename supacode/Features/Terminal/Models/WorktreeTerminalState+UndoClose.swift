@@ -8,8 +8,8 @@ import ProwlCLIShared
 /// `GhosttySurfaceView`s stay alive inside a `TerminalCloseRecord` until the
 /// owner restores or frees them. Restore re-runs the adoption steps of tab
 /// creation, so a restored pane is a new pane to the CLI (fresh handle) and
-/// to agent detection, while its process, scrollback, and split position are
-/// the original ones.
+/// to agent detection, while its process, scrollback, split position, and
+/// Profile launch identity are the original ones.
 extension WorktreeTerminalState {
   /// Captures what `closeTab` is about to destroy. `nil` when undo is off or
   /// the tab has no tree to keep.
@@ -18,6 +18,10 @@ extension WorktreeTerminalState {
       let index = tabManager.tabs.firstIndex(where: { $0.id == tabId }),
       let tree = trees[tabId]
     else { return nil }
+    var contexts: [UUID: TerminalRetainedSurfaceContext] = [:]
+    for leaf in tree.leaves() {
+      contexts[leaf.id] = retainedContext(for: leaf.id)
+    }
     return TerminalClosedTabRecord(
       item: tabManager.tabs[index],
       index: index,
@@ -25,7 +29,16 @@ extension WorktreeTerminalState {
       tree: tree,
       focusedSurfaceID: focusedSurfaceIdByTab[tabId],
       wasRunScriptTab: tabId == runScriptTabId,
-      boundDirectoryKey: boundDirectoryTabIDs.first { $0.value == tabId }?.key
+      boundDirectoryKey: boundDirectoryTabIDs.first { $0.value == tabId }?.key,
+      contexts: contexts
+    )
+  }
+
+  /// Read before `forgetSurface` drops it.
+  func retainedContext(for surfaceID: UUID) -> TerminalRetainedSurfaceContext {
+    TerminalRetainedSurfaceContext(
+      launchProfile: launchProfilesBySurface[surfaceID],
+      hookRegistration: launchHookRegistrationsBySurface[surfaceID]
     )
   }
 
@@ -76,16 +89,18 @@ extension WorktreeTerminalState {
     }
   }
 
-  /// Puts a closed tab back at its index with its tree. Returns `false` when
-  /// the tab is somehow present again; the caller then frees the record.
+  /// Puts a closed tab back at its index with its tree. `select` reveals it;
+  /// a batch restore passes the tab's original selection instead. Returns
+  /// `false` when the tab is somehow present again; the caller then frees the
+  /// record.
   @discardableResult
-  func restore(tab record: TerminalClosedTabRecord) -> Bool {
+  func restore(tab record: TerminalClosedTabRecord, select: Bool) -> Bool {
     let tabId = record.tabID
     guard !tabManager.tabs.contains(where: { $0.id == tabId }) else { return false }
-    tabManager.insertTab(record.item, at: record.index, select: record.wasSelected)
+    tabManager.insertTab(record.item, at: record.index, select: select)
     trees[tabId] = record.tree
     for leaf in record.tree.leaves() {
-      adoptRetainedSurface(leaf, tabId: tabId)
+      adoptRetainedSurface(leaf, tabId: tabId, context: record.contexts[leaf.id])
     }
     _ = registerTargetHandle(for: tabId)
     tabIsRunningById[tabId] = false
@@ -111,34 +126,57 @@ extension WorktreeTerminalState {
     return true
   }
 
-  /// Puts a closed pane back by reinstating the tab's pre-close tree. Returns
-  /// `false` when the tab changed structurally since the close (another split,
-  /// a moved pane); the caller then frees the record.
+  /// Puts a closed pane back by reinstating the tab's pre-close tree and
+  /// selects that tab so the user sees it. Returns `false` when the tab
+  /// changed shape since the close (a new split, a moved pane); the caller
+  /// then frees the record.
   @discardableResult
   func restore(pane record: TerminalClosedPaneRecord) -> Bool {
     let tabId = record.tabID
-    guard tabManager.tabs.contains(where: { $0.id == tabId }), let current = trees[tabId] else {
+    guard tabManager.tabs.contains(where: { $0.id == tabId }),
+      let current = trees[tabId],
+      let closedNode = record.previousTree.find(id: record.view.id)
+    else { return false }
+    // Leaf identity plus split direction and nesting; ratios and zoom may
+    // drift within the grace window without voiding the record.
+    let expected = record.previousTree.removing(closedNode).settingZoomed(nil)
+    guard current.settingZoomed(nil).structuralIdentity == expected.structuralIdentity else {
       return false
     }
-    let expected = Set(record.previousTree.leaves().map(\.id)).subtracting([record.view.id])
-    guard Set(current.leaves().map(\.id)) == expected else { return false }
-    adoptRetainedSurface(record.view, tabId: tabId)
+    adoptRetainedSurface(record.view, tabId: tabId, context: record.context)
     updateTree(record.previousTree, for: tabId)
     updateRunningState(for: tabId)
     updateTabAgentBusyState(for: tabId)
+    if tabManager.selectedTabId != tabId {
+      tabManager.selectTab(tabId)
+    }
     if record.wasFocused {
       focusSurface(record.view, in: tabId)
+    } else {
+      focusSurface(in: tabId)
     }
+    emitTaskStatusIfChanged()
     return true
   }
 
   /// The surface-level half of `createTab`'s adoption for a retained view.
-  private func adoptRetainedSurface(_ view: GhosttySurfaceView, tabId: TerminalTabID) {
+  private func adoptRetainedSurface(
+    _ view: GhosttySurfaceView,
+    tabId: TerminalTabID,
+    context: TerminalRetainedSurfaceContext?
+  ) {
     view.resumeFromPendingClose()
     configureBridgeCallbacks(for: view, tabId: tabId)
     configureSurfaceCallbacks(for: view, tabId: tabId)
     surfaces[view.id] = view
     _ = registerTargetHandle(for: view.id)
+    if let profile = context?.launchProfile {
+      launchProfilesBySurface[view.id] = profile
+    }
+    if let registration = context?.hookRegistration {
+      launchHookRegistrationsBySurface[view.id] = registration
+      onManagedHookReadopted?(view.id, registration)
+    }
     wakeAgentDetection(for: view, tabId: tabId)
   }
 }

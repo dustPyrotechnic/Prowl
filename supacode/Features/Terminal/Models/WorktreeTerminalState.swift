@@ -150,6 +150,9 @@ final class WorktreeTerminalState {
   /// edits must not relabel a live pane. Detected-but-not-launched agents
   /// have no entry here.
   var launchProfilesBySurface: [UUID: SurfaceLaunchProfile] = [:]
+  /// The managed-hook registration handed to the manager at Profile launch,
+  /// kept so an undone close can register the surviving process again.
+  @ObservationIgnored var launchHookRegistrationsBySurface: [UUID: AgentHookLaunchRegistration] = [:]
   var agentDetectionSchedules: [UUID: AgentDetectionSchedule] = [:]
   var agentDetectionTasks: [UUID: Task<Void, Never>] = [:]
   var agentDetectionPresenceBySurface: [UUID: AgentDetectionPresence] = [:]
@@ -291,6 +294,12 @@ final class WorktreeTerminalState {
   var onCloseRecorded: ((TerminalCloseRecord) -> Void)?
   /// A retained surface's process exited during the grace window.
   var onRetainedSurfaceExited: ((UUID) -> Void)?
+  /// An undo put a Profile-launched surface back; its process still signals
+  /// under this registration, so the receiver registers it again.
+  var onManagedHookReadopted: ((UUID, AgentHookLaunchRegistration) -> Void)?
+  /// Every surface of this worktree is being torn down outside the undoable
+  /// close paths (layout restore, prune); retained closes are void.
+  var onSurfacesReset: (() -> Void)?
   /// Ghostty `undo` / `redo` from a surface in this worktree. Return `true`
   /// when something was restored or re-closed.
   var onUndoRequested: (() -> Bool)?
@@ -685,6 +694,7 @@ final class WorktreeTerminalState {
       dedicatedHome: plan.dedicatedHome,
       sessionConfigRoot: plan.sessionConfigRoot
     )
+    launchHookRegistrationsBySurface[surface.surfaceID] = plan.hookRegistration
     if case .split = request.placement,
       let icon = Self.launchTabIcon(for: plan.runtime)
     {

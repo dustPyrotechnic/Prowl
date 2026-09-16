@@ -234,6 +234,101 @@ struct WorktreeTerminalUndoCloseTests {
     #expect(!seen.contains(.tabRestored(worktreeID: fixture.worktree.id)))
   }
 
+  // Round 1 review findings (docs-ai 069): pinned red before the fixes.
+
+  @Test func restoringAPaneFromAnotherTabSelectsItsTab() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let first = try #require(state.createTab())
+    let anchor = try #require(state.focusedSurfaceId(in: first))
+    let pane = try state.createSplit(of: anchor, direction: .right, initialInput: nil).get()
+    let second = try #require(state.createTab())
+
+    state.selectTab(first)
+    #expect(state.closeSurface(id: pane))
+    state.selectTab(second)
+
+    #expect(fixture.manager.undoClose())
+
+    #expect(state.tabManager.selectedTabId == first)
+    #expect(state.focusedSurfaceId(in: first) == pane)
+  }
+
+  @Test func restoredProfileSurfaceKeepsItsLaunchProfileAndHook() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    _ = try #require(state.createTab())
+    let registration = AgentHookLaunchRegistration(
+      token: "token-undo",
+      runtime: .codex,
+      launchCWD: fixture.worktree.workingDirectory,
+      nativeEvents: ["agent-turn-complete": .turnEnded],
+      coveredEvents: [.turnEnded],
+      forwardingRecord: nil
+    )
+    let plan = AgentProfileLaunchPlan(
+      profileID: UUID(),
+      profileName: "Codex · Bound",
+      runtime: .codex,
+      invocation: AgentInvocation(executable: "codex", arguments: []),
+      hookRegistration: registration,
+      commandEnvironmentTokens: [],
+      placement: .tab,
+      splitDirection: .right,
+      surfaceEnvironment: [:],
+      dedicatedHome: nil
+    )
+    let launched = try state.launchAgentProfile(
+      AgentProfileLaunchRequest(plan: plan, placement: .tab(background: false))
+    ).get()
+    let profile = try #require(state.launchProfilesBySurface[launched.surfaceID])
+    #expect(fixture.manager.hasManagedHookForTesting(surfaceID: launched.surfaceID))
+
+    #expect(state.closeTab(launched.tabID))
+    #expect(state.launchProfilesBySurface[launched.surfaceID] == nil)
+    #expect(!fixture.manager.hasManagedHookForTesting(surfaceID: launched.surfaceID))
+
+    #expect(fixture.manager.undoClose())
+
+    #expect(state.launchProfilesBySurface[launched.surfaceID] == profile)
+    #expect(fixture.manager.hasManagedHookForTesting(surfaceID: launched.surfaceID))
+  }
+
+  @Test func paneRecordIsDroppedWhenPanesWereRearranged() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let paneA = try #require(state.focusedSurfaceId(in: tab))
+    let paneB = try state.createSplit(of: paneA, direction: .right, initialInput: nil).get()
+    let paneC = try state.createSplit(of: paneB, direction: .right, initialInput: nil).get()
+    let view = try #require(state.surfaceView(for: paneC))
+
+    #expect(state.closeSurface(id: paneC))
+    state.performSplitOperation(.drop(payloadId: paneB, destinationId: paneA, zone: .left), in: tab)
+    let rearranged = state.splitTree(for: tab)
+    #expect(rearranged.leaves().map(\.id) == [paneB, paneA])
+
+    #expect(!fixture.manager.undoClose())
+    #expect(!view.isPendingClose)
+    #expect(state.splitTree(for: tab).structuralIdentity == rearranged.structuralIdentity)
+  }
+
+  @Test func layoutResetDiscardsRetainedRecords() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let surfaceID = try #require(state.focusedSurfaceId(in: tab))
+    let view = try #require(state.surfaceView(for: surfaceID))
+    #expect(state.closeTab(tab))
+    #expect(fixture.manager.closeUndoStack.canUndo)
+
+    state.closeAllSurfaces()
+
+    #expect(!fixture.manager.closeUndoStack.canUndo)
+    #expect(!view.isPendingClose)
+    #expect(!fixture.manager.undoClose())
+  }
+
   private struct Fixture {
     let manager: WorktreeTerminalManager
     let state: WorktreeTerminalState

@@ -386,6 +386,7 @@ extension WorktreeTerminalState {
   }
 
   func closeAllSurfaces() {
+    onSurfacesReset?()
     for tab in tabManager.tabs {
       unregisterTargetHandle(for: tab.id)
     }
@@ -703,6 +704,7 @@ extension WorktreeTerminalState {
     unregisterTargetHandle(for: surfaceID)
     surfaces.removeValue(forKey: surfaceID)
     launchProfilesBySurface.removeValue(forKey: surfaceID)
+    launchHookRegistrationsBySurface.removeValue(forKey: surfaceID)
     surfaceRunningStartedAtById.removeValue(forKey: surfaceID)
     autoCloseSurfaceIds.remove(surfaceID)
     pendingCustomCommands.removeValue(forKey: surfaceID)
@@ -966,6 +968,7 @@ extension WorktreeTerminalState {
       }
       return true
     }
+    let context = retainedContext(for: view.id)
     if retain {
       detachSurface(view)
     } else {
@@ -985,7 +988,8 @@ extension WorktreeTerminalState {
       onCloseRecorded?(
         .pane(
           worktreeID: worktreeID,
-          TerminalClosedPaneRecord(tabID: tabId, view: view, previousTree: tree, wasFocused: wasFocused)
+          TerminalClosedPaneRecord(
+            tabID: tabId, view: view, previousTree: tree, wasFocused: wasFocused, context: context)
         )
       )
     }

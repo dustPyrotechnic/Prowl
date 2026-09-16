@@ -896,6 +896,19 @@ final class WorktreeTerminalManager {
     state.onRetainedSurfaceExited = { [weak self] surfaceID in
       self?.closeUndoStack.discardSurface(id: surfaceID)
     }
+    state.onManagedHookReadopted = { [weak self] surfaceID, registration in
+      guard let self else { return }
+      // The close revoked the hook and scheduled its forwarding record for
+      // cleanup; the process kept both, so register the same token again with
+      // a fresh evidence epoch and take the record off the cleanup list.
+      _ = agentObservationStore.registerManagedHook(registration, surfaceID: surfaceID)
+      if let record = registration.forwardingRecord {
+        codexForwardingRecordStore?.reinstate(record)
+      }
+    }
+    state.onSurfacesReset = { [weak self] in
+      self?.closeUndoStack.discard { $0 == worktree.id }
+    }
     state.onUndoRequested = { [weak self] in
       self?.undoClose() ?? false
     }
@@ -1096,7 +1109,7 @@ final class WorktreeTerminalManager {
         // batch replays in reverse to land every tab back where it was.
         var restored: [TerminalTabID] = []
         for tab in tabs.reversed() {
-          if state.restore(tab: tab) {
+          if state.restore(tab: tab, select: tabs.count == 1 || tab.wasSelected) {
             restored.append(tab.tabID)
           } else {
             free(tab.tree.leaves())
@@ -1184,6 +1197,10 @@ final class WorktreeTerminalManager {
 
   func stateContaining(tabId: TerminalTabID) -> WorktreeTerminalState? {
     activeWorktreeStates.first { $0.surfaceView(for: tabId) != nil }
+  }
+
+  func hasManagedHookForTesting(surfaceID: UUID) -> Bool {
+    agentObservationStore.hasManagedHook(surfaceID: surfaceID)
   }
 
   private func containsSurface(_ surfaceID: UUID) -> Bool {
