@@ -92,6 +92,14 @@ final class WorktreeTerminalManager {
     closeUndoStack.onExpire = { [weak self] surfaces in
       self?.free(surfaces)
     }
+    runtime.onAppUndo = { [weak self] in self?.undoClose() ?? false }
+    runtime.onAppRedo = { [weak self] in self?.redoClose() ?? false }
+  }
+
+  /// The undo/redo key with no terminal surface focused (docs-ai 069.002):
+  /// Ghostty resolves the binding, `onAppUndo` / `onAppRedo` do the work.
+  func performAppUndoRedoKey(_ event: NSEvent) -> Bool {
+    runtime?.performAppUndoRedoBinding(for: event) ?? false
   }
 
   func handleCommand(_ command: TerminalClient.Command) {

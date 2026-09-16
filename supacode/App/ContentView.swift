@@ -191,16 +191,8 @@ struct ContentView: View {
 
   /// Also carries the ⌘Z route for an emptied worktree (docs-ai 069.002).
   private var windowTabbingDisabler: WindowTabbingDisabler {
-    let shortcuts = TerminalCloseUndoKeyMonitor.Shortcuts.resolving(
-      undo: ghosttyShortcuts.keyboardShortcut(for: "undo"),
-      redo: ghosttyShortcuts.keyboardShortcut(for: "redo")
-    )
     let manager = terminalManager
-    return WindowTabbingDisabler(
-      undoShortcuts: shortcuts,
-      undoClose: { manager.undoClose() },
-      redoClose: { manager.redoClose() }
-    )
+    return WindowTabbingDisabler(dispatchUndoRedoKey: { manager.performAppUndoRedoKey($0) })
   }
 
   private var renameBranchPromptRequest: Binding<PendingRenameBranchRequest?> {

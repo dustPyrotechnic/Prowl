@@ -49,6 +49,11 @@ final class GhosttyRuntime {
   var currentColorScheme: ColorScheme?
   var appKeybindOverrideContents = ""
   var appKeybindOverrideEntries: [String] = []
+  /// App-scoped `undo` / `redo` (no focused surface); see `+AppKey`.
+  var onAppUndo: (() -> Bool)?
+  var onAppRedo: (() -> Bool)?
+  var appUndoRedoOutcome: Bool?
+  var isDispatchingUndoRedoKey = false
   var themeFallbackOverrideContents = ""
   var runtimeOverrideSignature = ""
   var onConfigChange: (() -> Void)?
