@@ -172,9 +172,13 @@ final class GhosttySurfaceView: NSView, Identifiable {
   /// restore or free. While set, the view stays out of every host: a detached
   /// view must not ask its old scroll wrapper to re-adopt it.
   private(set) var isPendingClose = false
-  /// Ghostty reported the child process's exit. Such a surface is not worth
-  /// keeping for undo: there is no running process to bring back.
-  var childProcessHasExited: Bool { bridge.state.childExitCode != nil }
+  /// The child process has exited, per libghostty's own flag or the
+  /// `show_child_exited` report. Such a surface is not worth keeping for undo:
+  /// there is no running process to bring back.
+  var childProcessHasExited: Bool {
+    if let surface, ghostty_surface_process_exited(surface) { return true }
+    return bridge.state.childExitCode != nil
+  }
   private var eventMonitor: Any?
   private var notificationObservers: [NSObjectProtocol] = []
   var prevPressureStage: Int = 0

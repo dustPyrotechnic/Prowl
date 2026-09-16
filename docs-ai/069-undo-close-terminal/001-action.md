@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 2026-09-16 | Plan written after reading Ghostty's macOS undo implementation and mapping Prowl's close paths | `5c381151` |
 | 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | #814 |
+| 2026-09-17 | Dogfooding fix: ⌘W on an idle shell was not undoable. Ghostty's close callback carries `needsConfirmQuit()`, which is false for a shell at its prompt, and the first cut used it as "process alive". Retention now follows `childProcessHasExited` (`ghostty_surface_process_exited` or the `show_child_exited` report, which Ghostty sends before the close request of an exited child); close-on-success passes `retainForUndo: false` explicitly | #814 |
 | 2026-09-16 | Review round 4 (Pi reviewer, 1 P2, accepted): Ghostty's `show_child_exited` (sent without a close request under `wait-after-command`) now reaches retained surfaces through `GhosttySurfaceBridge.onChildExited`, a close skips retention for a surface whose child already exited, and a tab record keeps only its living panes | #814 |
 | 2026-09-16 | Review round 3 (Pi reviewer, 1 P2, accepted): the Canvas card-focus action `newTerminalTabCreatedInCanvas` resolves its target with `terminalWorktree(for:)`, so an undo in a plain-folder repository reveals the restored card too | #814 |
 | 2026-09-16 | Review round 2 (Pi reviewer, 2 P1 + 1 P2, all accepted): a retained close defers the Codex forwarding record's retirement until the surface is freed (`deferredForwardingRecords`; the 2 s cleanup would have deleted the file inside the 5 s window); Canvas adoption asks for visible occlusion like `createSplit`; `tabRestored` now carries the tab and the reducer routes Canvas through `newTerminalTabCreatedInCanvas` (card focus) and normal mode through worktree selection only when another worktree is showing | #814 |
@@ -112,6 +113,12 @@ Four rounds with a Pi reviewer (read-only, static inspection) on 2026-09-16:
 2 P1 + 2 P2, then 2 P1 + 1 P2, then 1 P2, then 1 P2. Every finding was
 accepted and pinned by a failing test before the fix. Round 4 reported no
 P0/P1 and nothing further on the ordinary close → ⌘Z → redo path.
+
+- The plan gated retention on the close callback's `processAlive`; that flag is
+  Ghostty's `needsConfirmQuit()` and is false for an idle shell, so only panes
+  with a foreground child (agents, long commands) were undoable at first. The
+  gate is the child's exit state instead; the confirmation prompt still keys
+  off the callback flag.
 
 ## Open questions
 

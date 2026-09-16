@@ -102,7 +102,9 @@ struct WorktreeTerminalUndoCloseTests {
     #expect(!fixture.manager.undoClose())
   }
 
-  @Test func deadProcessCloseIsNotRecorded() throws {
+  /// Ghostty's close callback carries `needsConfirmQuit()`, which is false for
+  /// an idle shell at its prompt: that is the plain ⌘W case and must be undoable.
+  @Test func idleShellCloseRequestIsRecorded() throws {
     let fixture = makeFixture()
     let state = fixture.state
     let tab = try #require(state.createTab())
@@ -110,6 +112,36 @@ struct WorktreeTerminalUndoCloseTests {
     let view = try #require(state.surfaceView(for: surfaceID))
 
     #expect(state.handleCloseRequest(for: view, processAlive: false))
+
+    #expect(view.isPendingClose)
+    #expect(fixture.manager.closeUndoStack.canUndo)
+    #expect(fixture.manager.undoClose())
+    #expect(state.surfaceView(for: surfaceID) === view)
+  }
+
+  /// A shell that exited reports `show_child_exited` before its close request.
+  @Test func deadProcessCloseIsNotRecorded() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let surfaceID = try #require(state.focusedSurfaceId(in: tab))
+    let view = try #require(state.surfaceView(for: surfaceID))
+    reportChildExit(on: view)
+
+    #expect(state.handleCloseRequest(for: view, processAlive: false))
+
+    #expect(!view.isPendingClose)
+    #expect(!fixture.manager.closeUndoStack.canUndo)
+  }
+
+  @Test func autoCloseOnSuccessIsNotRecorded() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let surfaceID = try #require(state.focusedSurfaceId(in: tab))
+    let view = try #require(state.surfaceView(for: surfaceID))
+
+    #expect(state.handleCloseRequest(for: view, processAlive: false, retainForUndo: false))
 
     #expect(!view.isPendingClose)
     #expect(!fixture.manager.closeUndoStack.canUndo)

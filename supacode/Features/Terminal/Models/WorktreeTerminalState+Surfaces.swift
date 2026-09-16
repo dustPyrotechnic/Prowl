@@ -272,7 +272,8 @@ extension WorktreeTerminalState {
       try? await Task.sleep(for: Self.autoCloseDelay)
       guard let self else { return }
       guard let view = self.surfaces[surfaceId] else { return }
-      self.handleCloseRequest(for: view, processAlive: false)
+      // Close-on-success is the command's own outcome, not something to undo.
+      self.handleCloseRequest(for: view, processAlive: false, retainForUndo: false)
     }
   }
 
@@ -911,12 +912,20 @@ extension WorktreeTerminalState {
     return closeSurface(view, confirmation: confirmation, retainForUndo: retainForUndo)
   }
 
-  /// Ghostty asked to close the surface. A dead process leaves nothing to
-  /// restore, so those closes free the surface as before.
+  /// Ghostty asked to close the surface. `processAlive` is Ghostty's
+  /// `needsConfirmQuit()`: false for an idle shell at its prompt as well as for
+  /// an exited child, so it only decides whether to confirm. Whether the close
+  /// is undoable follows the child's real state, which Ghostty reports through
+  /// `show_child_exited` before its close request.
   @discardableResult
-  func handleCloseRequest(for view: GhosttySurfaceView, processAlive: Bool) -> Bool {
+  func handleCloseRequest(
+    for view: GhosttySurfaceView,
+    processAlive: Bool,
+    retainForUndo: Bool? = nil
+  ) -> Bool {
     let confirmation: TerminalCloseConfirmationMode = processAlive ? .prompt(.pane) : .skip
-    return closeSurface(view, confirmation: confirmation, retainForUndo: processAlive)
+    return closeSurface(
+      view, confirmation: confirmation, retainForUndo: retainForUndo ?? !view.childProcessHasExited)
   }
 
   @discardableResult
