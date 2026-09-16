@@ -653,7 +653,9 @@ extension RepositoriesFeature {
       return .merge(.send(.selectWorktree(worktreeID, focusTerminal: true)), createTab)
 
     case .newTerminalTabCreatedInCanvas(let worktreeID, let tabID):
-      guard state.isShowingCanvas, state.worktree(for: worktreeID) != nil else { return .none }
+      // A plain folder's terminal target is its synthesized worktree, so an
+      // undo restoring one of its tabs must pass this guard too.
+      guard state.isShowingCanvas, state.terminalWorktree(for: worktreeID) != nil else { return .none }
       requestCanvasFocus(.tab(tabID), openedWorktreeID: worktreeID, state: &state)
       return .none
 

@@ -419,6 +419,19 @@ final class GhosttyRuntime {
     return value
   }
 
+  /// Ghostty's `undo-timeout`: how long a closed pane or tab stays restorable.
+  /// libghostty exports the duration in milliseconds; zero disables undo.
+  func undoTimeout() -> Duration {
+    let fallback: Duration = .seconds(5)
+    guard let config else { return fallback }
+    var value: UInt = 0
+    let key = "undo-timeout"
+    guard ghostty_config_get(config, &value, key, UInt(key.lengthOfBytes(using: .utf8))) else {
+      return fallback
+    }
+    return .milliseconds(value)
+  }
+
   func shouldShowScrollbar() -> Bool {
     guard let config else { return true }
     var valuePtr: UnsafePointer<CChar>?
