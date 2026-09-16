@@ -791,7 +791,10 @@ Close one explicit tab or pane. The positional form uses a UUID, `pN`, or `tN`; 
 long forms are `--pane <uuid|pN|N>` and `--tab <uuid|tN|N>`. `close` rejects
 worktree targeting and has no focus fallback. Protected agent work or a long-running
 command may trigger GUI confirmation; `--force` skips it only after positive
-identification.
+identification. The close is undoable in the GUI for Ghostty's `undo-timeout`
+(5 s by default): the pane's process keeps running until then, but the CLI treats
+the close as final — the old handle is dead, and a restored pane appears with a
+new handle.
 
 ```bash
 prowl close "$pane" --json

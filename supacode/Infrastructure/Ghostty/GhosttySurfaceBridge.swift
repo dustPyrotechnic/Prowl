@@ -21,6 +21,10 @@ final class GhosttySurfaceBridge {
   var onDesktopNotification: ((String, String) -> Void)?
   var onCommandFinished: ((Int?, UInt64) -> Void)?
   var onPromptTitle: ((ghostty_action_prompt_title_e) -> Void)?
+  /// Return `true` when something was undone / redone. `false` lets Ghostty's
+  /// `performable` undo binding fall through to the terminal program.
+  var onUndo: (() -> Bool)?
+  var onRedo: (() -> Bool)?
 
   // Coalesce OSC-9 progress: a flush task applies the latest value at the
   // throttle cadence while it moves, and a slow stale-watch clears a bar whose
@@ -133,11 +137,9 @@ final class GhosttySurfaceBridge {
       GHOSTTY_ACTION_CLOSE_ALL_WINDOWS:
       return false
     case GHOSTTY_ACTION_UNDO:
-      NSApp.sendAction(#selector(UndoManager.undo), to: nil, from: nil)
-      return true
+      return onUndo?() ?? false
     case GHOSTTY_ACTION_REDO:
-      NSApp.sendAction(#selector(UndoManager.redo), to: nil, from: nil)
-      return true
+      return onRedo?() ?? false
     default:
       return nil
     }

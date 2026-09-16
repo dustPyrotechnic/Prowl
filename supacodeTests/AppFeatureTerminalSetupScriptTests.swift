@@ -125,6 +125,45 @@ struct AppFeatureTerminalSetupScriptTests {
     #expect(watcherCommands.value == [.setOpenedWorktreeIDs([])])
   }
 
+  @Test(.dependencies) func tabRestoredSelectsTheRestoredWorktree() async {
+    let worktree = makeWorktree()
+    let repositoriesState = makeRepositoriesState(
+      worktree: worktree,
+      pendingSetupScript: false,
+      selected: false
+    )
+    let store = TestStore(
+      initialState: AppFeature.State(
+        repositories: repositoriesState,
+        settings: SettingsFeature.State()
+      )
+    ) {
+      AppFeature()
+    }
+    store.exhaustivity = .off
+
+    await store.send(.terminalEvent(.tabRestored(worktreeID: worktree.id)))
+    await store.receive(\.repositories.selectWorktree)
+
+    #expect(store.state.repositories.selection == .worktree(worktree.id))
+    #expect(store.state.repositories.openedWorktreeIDs.contains(worktree.id))
+  }
+
+  @Test(.dependencies) func tabRestoredForUnknownWorktreeDoesNothing() async {
+    let worktree = makeWorktree()
+    let store = TestStore(
+      initialState: AppFeature.State(
+        repositories: makeRepositoriesState(worktree: worktree, pendingSetupScript: false, selected: false),
+        settings: SettingsFeature.State()
+      )
+    ) {
+      AppFeature()
+    }
+
+    await store.send(.terminalEvent(.tabRestored(worktreeID: "/tmp/repo/missing")))
+    await store.finish()
+  }
+
   @Test(.dependencies) func setupScriptConsumedEventClearsPending() async {
     let worktree = makeWorktree()
     let repositoriesState = makeRepositoriesState(

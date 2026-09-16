@@ -1,0 +1,96 @@
+# 069 — Undo Close Terminal: Action Log
+
+## Timeline
+
+| Date | Change | Ref |
+| --- | --- | --- |
+| 2026-09-16 | Plan written after reading Ghostty's macOS undo implementation and mapping Prowl's close paths | `5c381151` |
+| 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | PR (this branch, `feat/undo-close-terminal`) |
+
+## Outcome & current state (as of 2026-09-16)
+
+- `supacode/Features/Terminal/Models/TerminalCloseUndoStack.swift` —
+  `TerminalClosedTabRecord`, `TerminalClosedPaneRecord`, `TerminalCloseRecord`
+  (`.pane` / `.tabs`, the latter carrying a whole batch), `TerminalReopenRecord`
+  (redo), and `TerminalCloseUndoStack`: LIFO undo + redo slots, one expiry `Task`
+  per entry on an injected `Clock<Duration>`, `onExpire` handing surfaces back for
+  freeing, `discardSurface(id:)` for a process exit during the grace window, and
+  `discard(where:)` for pruned worktrees. `timeout == .zero` expires at once.
+- `supacode/Features/Terminal/Models/WorktreeTerminalState+UndoClose.swift` —
+  `makeClosedTabRecord(for:)` (index, selection, tree, focused pane, run-script
+  flag, bound-directory key), `detachTree(for:)`, `detachSurface(_:)`
+  (suspends the view and nils every bridge callback except a pending
+  `onCloseRequest` that reports the exit), `recordClosedTab(_:)` (group-aware),
+  `restore(tab:)` and `restore(pane:)`, and the private `adoptRetainedSurface`
+  that re-runs the surface half of tab creation (bridge/surface callbacks,
+  `surfaces`, a fresh target handle, agent-detection wake).
+- `supacode/Features/Terminal/Models/WorktreeTerminalState+Surfaces.swift` —
+  the private `closeSurface(_:confirmation:retainForUndo:)` detaches when
+  `undoCloseTimeout > .zero` and the caller allows retention; the last pane of a
+  tab produces a tab record. `handleCloseRequest` passes
+  `retainForUndo: processAlive`. `configureBridgeCallbacks` wires
+  `bridge.onUndo` / `onRedo` to the state's `onUndoRequested` / `onRedoRequested`.
+- `supacode/Features/Terminal/Models/WorktreeTerminalState.swift` —
+  `undoCloseTimeout`, `pendingCloseGroup`, the four new callbacks,
+  `closeTab(_:confirmation:retainForUndo:)`, and `closeTabs(_:)` which the three
+  batch closes use so one ⌘Z restores the batch. Run Script replacement, stop, and
+  agent-profile rollback pass `retainForUndo: false`.
+- `supacode/Features/Terminal/BusinessLogic/WorktreeTerminalManager.swift` —
+  owns `closeUndoStack` (timeout from `GhosttyRuntime.undoTimeout()`, clock
+  injectable as `undoCloseClock`), wires each state's callbacks, `undoClose()`
+  (pops until a restorable entry; batches replay in reverse because each index
+  was taken from the shrinking array), `redoClose()` (re-closes with `.skip`,
+  keeping the redo history while it runs), and `prune` discarding the removed
+  worktrees' entries. A restore into a non-selected worktree emits
+  `.tabRestored`.
+- `supacode/Infrastructure/Ghostty/GhosttySurfaceBridge.swift` —
+  `GHOSTTY_ACTION_UNDO` / `REDO` return the handler result; `false` lets the
+  `performable` binding fall through to the pty (previously always swallowed).
+- `supacode/Infrastructure/Ghostty/GhosttySurfaceView.swift` — `isPendingClose`,
+  `suspendForPendingClose()` (focus off, occlusion paused, wrapper link cleared,
+  removed from its superview), `resumeFromPendingClose()`; the attachment-change
+  reattach request skips pending views.
+- `supacode/Infrastructure/Ghostty/GhosttyRuntime.swift` — `undoTimeout()` reads
+  `undo-timeout` (milliseconds via `ghostty_config_get`, 5 s fallback).
+- `supacode/Features/Terminal/Models/TerminalTabManager.swift` —
+  `insertTab(_:at:select:)`.
+- `supacode/Clients/Terminal/TerminalClient.swift`,
+  `supacode/Features/App/Reducer/AppFeature+TerminalEvents.swift` —
+  `Event.tabRestored(worktreeID:)` → `tabRestoredEffect` selects the worktree
+  (or plain-folder repository). The coalescer never coalesces it.
+- Docs: `docs/reference/keyboard-shortcuts.md` (engine table rows + "Undo close"
+  section), `docs/components/terminal.md`, `docs/components/cli.md`.
+- Tests: `supacodeTests/TerminalCloseUndoStackTests.swift` (7),
+  `supacodeTests/WorktreeTerminalUndoCloseTests.swift` (13: tab index/selection/
+  same surface/new handle, split position, expiry, process exit, dead-process
+  close, zero timeout, batch, redo, stale pane, prune, reveal event),
+  `GhosttySurfaceBridgeTests` (fall-through, handler result),
+  `AppFeatureTerminalSetupScriptTests` (`tabRestored`).
+
+Verification on 2026-09-16: `make build-app` 0 warnings; `make test` green
+(3291 app tests + mirror and shell-cancellation bundles, zero failures);
+`make check` passed. Live check against an isolated Debug instance
+(`PROWL_CLI_SOCKET`, bundled debug CLI): a tab closed with `prowl close --force`
+came back on `prowl key cmd-z` with the same tab and pane UUIDs, selection,
+focus, and a marker echoed before the close still in scrollback; a split pane
+closed and restored the same way; `cmd-shift-z` re-closed it and `cmd-z` restored
+it again; six seconds after a close, `cmd-z` restored nothing.
+
+## Deviations from plan
+
+- `TerminalClosedPaneRecord` carries no worktree id; the id lives on the
+  `TerminalCloseRecord` case, which is what the stack and manager key on.
+- Batch restores replay records in reverse order (not mentioned in the plan);
+  the first attempt restored in close order and misplaced the later tabs.
+- The pane-record invalidation is lazy (checked at undo time by comparing the
+  tab's current leaves with the captured tree minus the closed pane) rather than
+  eager on every structural mutation; a stale entry is freed when ⌘Z reaches it
+  or when it expires, whichever comes first.
+
+## Open questions
+
+- Ghostty itself does not fire `undo` when no terminal surface has focus. After
+  closing the only tab of the only worktree there is nothing to receive ⌘Z, as
+  the plan's non-goal states; a menu-driven route is still open.
+- `undoCloseTimeout` is read once at manager creation. A Ghostty config reload
+  that changes `undo-timeout` takes effect on the next launch.

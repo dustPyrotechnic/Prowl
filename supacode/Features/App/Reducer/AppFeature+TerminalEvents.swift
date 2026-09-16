@@ -129,6 +129,9 @@ extension AppFeature {
     case .tabClosed(let worktreeID, let remainingTabs):
       return tabClosedEffect(worktreeID: worktreeID, remainingTabs: remainingTabs, state: state)
 
+    case .tabRestored(let worktreeID):
+      return tabRestoredEffect(worktreeID: worktreeID, state: state)
+
     case .focusChanged(_, let surfaceID):
       // Keep the Active Agents panel's keyboard-navigation anchor in sync with
       // the surface that actually has focus, so control-option-up/down steps from the right place.
@@ -316,5 +319,19 @@ extension AppFeature {
         await worktreeInfoWatcher.send(.setOpenedWorktreeIDs(syncedOpenedWorktreeIDs))
       }
     )
+  }
+
+  /// An undo restored a tab into a worktree other than the selected one:
+  /// select it so the user sees what came back. Plain folders select as a
+  /// repository, like layout restore does.
+  func tabRestoredEffect(
+    worktreeID: Worktree.ID,
+    state: State
+  ) -> Effect<Action> {
+    if let repo = state.repositories.repositories[id: worktreeID], repo.kind == .plain {
+      return .send(.repositories(.selectRepository(worktreeID)))
+    }
+    guard state.repositories.worktree(for: worktreeID) != nil else { return .none }
+    return .send(.repositories(.selectWorktree(worktreeID)))
   }
 }

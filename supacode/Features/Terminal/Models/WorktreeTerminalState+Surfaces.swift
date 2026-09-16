@@ -446,6 +446,12 @@ extension WorktreeTerminalState {
   }
 
   func configureBridgeCallbacks(for view: GhosttySurfaceView, tabId: TerminalTabID) {
+    view.bridge.onUndo = { [weak self] in
+      self?.onUndoRequested?() ?? false
+    }
+    view.bridge.onRedo = { [weak self] in
+      self?.onRedoRequested?() ?? false
+    }
     view.bridge.onTitleChange = { [weak self, weak view] title in
       guard let self, let view else { return }
       if self.focusedSurfaceIdByTab[tabId] == view.id,
@@ -893,19 +899,29 @@ extension WorktreeTerminalState {
   }
 
   @discardableResult
-  func closeSurface(id surfaceID: UUID, confirmation: TerminalCloseConfirmationMode = .prompt(.pane)) -> Bool {
+  func closeSurface(
+    id surfaceID: UUID,
+    confirmation: TerminalCloseConfirmationMode = .prompt(.pane),
+    retainForUndo: Bool = true
+  ) -> Bool {
     guard let view = surfaces[surfaceID] else { return false }
-    return closeSurface(view, confirmation: confirmation)
+    return closeSurface(view, confirmation: confirmation, retainForUndo: retainForUndo)
   }
 
+  /// Ghostty asked to close the surface. A dead process leaves nothing to
+  /// restore, so those closes free the surface as before.
   @discardableResult
   func handleCloseRequest(for view: GhosttySurfaceView, processAlive: Bool) -> Bool {
     let confirmation: TerminalCloseConfirmationMode = processAlive ? .prompt(.pane) : .skip
-    return closeSurface(view, confirmation: confirmation)
+    return closeSurface(view, confirmation: confirmation, retainForUndo: processAlive)
   }
 
   @discardableResult
-  private func closeSurface(_ view: GhosttySurfaceView, confirmation: TerminalCloseConfirmationMode) -> Bool {
+  private func closeSurface(
+    _ view: GhosttySurfaceView,
+    confirmation: TerminalCloseConfirmationMode,
+    retainForUndo: Bool
+  ) -> Bool {
     guard surfaces[view.id] != nil else { return false }
     guard confirmCloseIfNeeded(surfaceIDs: [view.id], mode: confirmation) else { return false }
     guard let tabId = tabId(containing: view.id), let tree = trees[tabId] else {
@@ -918,14 +934,19 @@ extension WorktreeTerminalState {
       forgetSurface(view.id)
       return true
     }
-    let nextSurface =
-      focusedSurfaceIdByTab[tabId] == view.id
-      ? tree.focusTargetAfterClosing(node)
-      : nil
+    let retain = retainForUndo && undoCloseTimeout > .zero
+    let wasFocused = focusedSurfaceIdByTab[tabId] == view.id
+    let nextSurface = wasFocused ? tree.focusTargetAfterClosing(node) : nil
     let newTree = tree.removing(node)
-    view.closeSurface()
-    forgetSurface(view.id)
     if newTree.isEmpty {
+      // The last pane goes with its tab, so the undo record is a tab record.
+      let record = retain ? makeClosedTabRecord(for: tabId) : nil
+      if record != nil {
+        detachSurface(view)
+      } else {
+        view.closeSurface()
+      }
+      forgetSurface(view.id)
       trees.removeValue(forKey: tabId)
       focusedSurfaceIdByTab.removeValue(forKey: tabId)
       removeBoundDirectoryTab(tabId)
@@ -940,16 +961,33 @@ extension WorktreeTerminalState {
       // Shelf's "retire the book when its last tab closes" logic
       // never saw this very common path.
       onTabClosed?()
+      if let record {
+        recordClosedTab(record)
+      }
       return true
     }
+    if retain {
+      detachSurface(view)
+    } else {
+      view.closeSurface()
+    }
+    forgetSurface(view.id)
     updateTree(newTree, for: tabId)
     updateRunningState(for: tabId)
-    if focusedSurfaceIdByTab[tabId] == view.id {
+    if wasFocused {
       if let nextSurface {
         focusSurface(nextSurface, in: tabId)
       } else {
         focusedSurfaceIdByTab.removeValue(forKey: tabId)
       }
+    }
+    if retain {
+      onCloseRecorded?(
+        .pane(
+          worktreeID: worktreeID,
+          TerminalClosedPaneRecord(tabID: tabId, view: view, previousTree: tree, wasFocused: wasFocused)
+        )
+      )
     }
     return true
   }

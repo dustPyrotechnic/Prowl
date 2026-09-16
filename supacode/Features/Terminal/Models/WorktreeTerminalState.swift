@@ -219,6 +219,13 @@ final class WorktreeTerminalState {
   /// Surfaces running a tracked Custom Command. The stored name is surfaced as a success
   /// toast when the command exits with code 0. One-shot: removed on the first finish event.
   var pendingCustomCommands: [UUID: String] = [:]
+  /// Ghostty's `undo-timeout`. While positive, closed panes and tabs are
+  /// detached and handed to `onCloseRecorded` instead of freed; zero keeps the
+  /// historical free-on-close behavior (docs-ai 069).
+  var undoCloseTimeout: Duration = .zero
+  /// Collects the tab records of one batch close (Close Other Tabs, ...) so
+  /// they reach `onCloseRecorded` as a single undoable entry.
+  @ObservationIgnored var pendingCloseGroup: [TerminalClosedTabRecord]?
   /// Per-surface set of titles known to be the shell's idle prompt
   /// (the title `precmd` restores between commands). Populated by
   /// observing the first title that arrives after each
@@ -279,6 +286,15 @@ final class WorktreeTerminalState {
   var onAgentEntryRemoved: ((ActiveAgentEntry.ID) -> Void)?
   /// Emitted exactly once after agent cleanup for each torn-down surface.
   var onSurfaceClosed: ((UUID) -> Void)?
+  /// A close kept its surfaces alive; the receiver owns them until it restores
+  /// them through `restore(tab:)` / `restore(pane:)` or frees them.
+  var onCloseRecorded: ((TerminalCloseRecord) -> Void)?
+  /// A retained surface's process exited during the grace window.
+  var onRetainedSurfaceExited: ((UUID) -> Void)?
+  /// Ghostty `undo` / `redo` from a surface in this worktree. Return `true`
+  /// when something was restored or re-closed.
+  var onUndoRequested: (() -> Bool)?
+  var onRedoRequested: (() -> Bool)?
   /// The exact surface is installed but its Profile command has not been sent.
   /// Returning false rolls the surface back before agent input can execute.
   var onAgentProfileSurfacePrepared: ((UUID, AgentProfileLaunchPlan) -> Bool)?
@@ -720,11 +736,12 @@ final class WorktreeTerminalState {
     _ surface: LaunchedSurface,
     placement: AgentProfileLaunchRequest.Placement
   ) {
+    // The surface never ran its Profile command: nothing worth restoring.
     switch placement {
     case .tab:
-      _ = closeTab(surface.tabID, confirmation: .skip)
+      _ = closeTab(surface.tabID, confirmation: .skip, retainForUndo: false)
     case .split:
-      _ = closeSurface(id: surface.surfaceID, confirmation: .skip)
+      _ = closeSurface(id: surface.surfaceID, confirmation: .skip, retainForUndo: false)
     }
   }
 
@@ -774,7 +791,7 @@ final class WorktreeTerminalState {
   func runScript(_ script: String) -> TerminalTabID? {
     guard let input = runScriptInput(script) else { return nil }
     if let existing = runScriptTabId {
-      closeTab(existing, confirmation: .skip)
+      closeTab(existing, confirmation: .skip, retainForUndo: false)
     }
     let tabId = createTab(
       TabCreation(
@@ -801,7 +818,7 @@ final class WorktreeTerminalState {
   @discardableResult
   func stopRunScript() -> Bool {
     guard let runScriptTabId else { return false }
-    return closeTab(runScriptTabId, confirmation: .skip)
+    return closeTab(runScriptTabId, confirmation: .skip, retainForUndo: false)
   }
 
   private struct TabCreation: Equatable {
@@ -1005,11 +1022,22 @@ final class WorktreeTerminalState {
     closeTab(tabId, confirmation: .prompt(.tab))
   }
 
+  /// `retainForUndo: false` frees the surfaces at once, for closes that make
+  /// no sense to restore (a replaced Run Script tab, a rolled-back launch).
   @discardableResult
-  func closeTab(_ tabId: TerminalTabID, confirmation: TerminalCloseConfirmationMode) -> Bool {
+  func closeTab(
+    _ tabId: TerminalTabID,
+    confirmation: TerminalCloseConfirmationMode,
+    retainForUndo: Bool = true
+  ) -> Bool {
     guard confirmCloseIfNeeded(tabIds: [tabId], mode: confirmation) else { return false }
     let wasRunScriptTab = tabId == runScriptTabId
-    removeTree(for: tabId)
+    let record = retainForUndo ? makeClosedTabRecord(for: tabId) : nil
+    if record != nil {
+      detachTree(for: tabId)
+    } else {
+      removeTree(for: tabId)
+    }
     unregisterTargetHandle(for: tabId)
     removeBoundDirectoryTab(tabId)
     tabManager.closeTab(tabId)
@@ -1023,31 +1051,41 @@ final class WorktreeTerminalState {
       setRunScriptTabId(nil)
     }
     onTabClosed?()
+    if let record {
+      recordClosedTab(record)
+    }
     return true
   }
 
   func closeOtherTabs(keeping tabId: TerminalTabID) {
     let ids = tabManager.tabs.map(\.id).filter { $0 != tabId }
     guard confirmCloseIfNeeded(tabIds: ids, mode: .prompt(.tabs(count: ids.count))) else { return }
-    for id in ids {
-      closeTab(id, confirmation: .skip)
-    }
+    closeTabs(ids)
   }
 
   func closeTabsToRight(of tabId: TerminalTabID) {
     guard let index = tabManager.tabs.firstIndex(where: { $0.id == tabId }) else { return }
     let ids = tabManager.tabs.dropFirst(index + 1).map(\.id)
     guard confirmCloseIfNeeded(tabIds: ids, mode: .prompt(.tabs(count: ids.count))) else { return }
-    for id in ids {
-      closeTab(id, confirmation: .skip)
-    }
+    closeTabs(ids)
   }
 
   func closeAllTabs() {
     let ids = tabManager.tabs.map(\.id)
     guard confirmCloseIfNeeded(tabIds: ids, mode: .prompt(.tabs(count: ids.count))) else { return }
+    closeTabs(ids)
+  }
+
+  /// Closes already-confirmed tabs as one undoable batch.
+  func closeTabs(_ ids: [TerminalTabID]) {
+    pendingCloseGroup = []
     for id in ids {
       closeTab(id, confirmation: .skip)
+    }
+    let records = pendingCloseGroup ?? []
+    pendingCloseGroup = nil
+    if !records.isEmpty {
+      onCloseRecorded?(.tabs(worktreeID: worktreeID, records))
     }
   }
 

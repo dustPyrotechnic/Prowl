@@ -14,6 +14,10 @@ final class WorktreeTerminalManager {
   private let layoutPersistence: TerminalLayoutPersistenceClient
   private let skipsSurfaceCreationForTesting: Bool
   private let targetHandleRegistry = TerminalTargetHandleRegistry()
+  /// App-wide undo history for pane and tab closes (docs-ai 069). One stack
+  /// for every worktree: ⌘Z undoes the most recent close wherever it happened.
+  @ObservationIgnored let closeUndoStack: TerminalCloseUndoStack
+  @ObservationIgnored private var isRedoingClose = false
   @ObservationIgnored private let agentObservationStore: AgentObservationStore
   @ObservationIgnored private let agentDispatchStore: AgentDispatchStore
   @ObservationIgnored private let codexConfigReadProcess: CodexConfigReadProcess
@@ -64,12 +68,19 @@ final class WorktreeTerminalManager {
       )
     },
     forwardingRecordBaseDirectory: URL = SupacodePaths.agentHookForwardingDirectory,
+    undoCloseClock: any Clock<Duration> = ContinuousClock(),
     skipsSurfaceCreationForTesting: Bool = false
   ) {
     self.runtime = runtime
     self.layoutPersistence = layoutPersistence
     self.skipsSurfaceCreationForTesting = skipsSurfaceCreationForTesting
     self.preferredFontSize = preferredFontSize
+    self.closeUndoStack = TerminalCloseUndoStack(timeout: runtime.undoTimeout(), clock: undoCloseClock)
+    closeUndoStack.onExpire = { surfaces in
+      for surface in surfaces {
+        surface.closeSurface()
+      }
+    }
     self.agentObservationStore = AgentObservationStore(
       bufferCapacity: agentObservationBufferCapacity)
     self.agentDispatchStore = agentDispatchStore
@@ -877,6 +888,20 @@ final class WorktreeTerminalManager {
       enabled: commandFinishedNotificationEnabled,
       threshold: commandFinishedNotificationThreshold
     )
+    state.undoCloseTimeout = closeUndoStack.timeout
+    state.onCloseRecorded = { [weak self] record in
+      guard let self else { return }
+      closeUndoStack.recordClose(record, clearingRedo: !isRedoingClose)
+    }
+    state.onRetainedSurfaceExited = { [weak self] surfaceID in
+      self?.closeUndoStack.discardSurface(id: surfaceID)
+    }
+    state.onUndoRequested = { [weak self] in
+      self?.undoClose() ?? false
+    }
+    state.onRedoRequested = { [weak self] in
+      self?.redoClose() ?? false
+    }
     state.isSelected = { [weak self] in
       self?.selectedWorktreeID == worktree.id
     }
@@ -1046,6 +1071,78 @@ final class WorktreeTerminalManager {
     return state.closeFocusedSurface()
   }
 
+  /// Restores the most recent close that is still restorable. Entries whose
+  /// worktree is gone or whose tab changed shape since the close are freed and
+  /// skipped. Returns `false` when nothing was restored, so the key falls
+  /// through to the terminal program.
+  @discardableResult
+  func undoClose() -> Bool {
+    while let record = closeUndoStack.popUndo() {
+      guard let state = states[record.worktreeID] else {
+        free(record.retainedSurfaces)
+        continue
+      }
+      switch record {
+      case .pane(let worktreeID, let pane):
+        guard state.restore(pane: pane) else {
+          free([pane.view])
+          continue
+        }
+        closeUndoStack.recordReopen(.pane(worktreeID: worktreeID, surfaceID: pane.view.id))
+        revealAfterUndo(worktreeID)
+        return true
+      case .tabs(let worktreeID, let tabs):
+        // Each record's index was taken from the array as it shrank, so the
+        // batch replays in reverse to land every tab back where it was.
+        var restored: [TerminalTabID] = []
+        for tab in tabs.reversed() {
+          if state.restore(tab: tab) {
+            restored.append(tab.tabID)
+          } else {
+            free(tab.tree.leaves())
+          }
+        }
+        guard !restored.isEmpty else { continue }
+        closeUndoStack.recordReopen(.tabs(worktreeID: worktreeID, restored.reversed()))
+        revealAfterUndo(worktreeID)
+        return true
+      }
+    }
+    return false
+  }
+
+  /// Closes again what the last undo restored, without a confirmation prompt.
+  @discardableResult
+  func redoClose() -> Bool {
+    guard let record = closeUndoStack.popRedo(), let state = states[record.worktreeID] else {
+      return false
+    }
+    isRedoingClose = true
+    defer { isRedoingClose = false }
+    switch record {
+    case .pane(_, let surfaceID):
+      return state.closeSurface(id: surfaceID, confirmation: .skip)
+    case .tabs(_, let tabIDs):
+      let present = tabIDs.filter { id in state.tabManager.tabs.contains { $0.id == id } }
+      guard !present.isEmpty else { return false }
+      state.closeTabs(present)
+      return true
+    }
+  }
+
+  private func free(_ surfaces: [GhosttySurfaceView]) {
+    for surface in surfaces {
+      surface.closeSurface()
+    }
+  }
+
+  /// A restore into a worktree other than the selected one would be invisible;
+  /// ask the reducer to show it. Canvas (no selection) keeps its own view.
+  private func revealAfterUndo(_ worktreeID: Worktree.ID) {
+    guard let selectedWorktreeID, selectedWorktreeID != worktreeID else { return }
+    emit(.tabRestored(worktreeID: worktreeID))
+  }
+
   func prune(keeping worktreeIDs: Set<Worktree.ID>) {
     var removed: [WorktreeTerminalState] = []
     var removedIDs: Set<Worktree.ID> = []
@@ -1053,6 +1150,7 @@ final class WorktreeTerminalManager {
       removed.append(state)
       removedIDs.insert(id)
     }
+    closeUndoStack.discard { removedIDs.contains($0) }
     for state in removed {
       state.closeAllSurfaces()
     }
@@ -1407,6 +1505,7 @@ final class WorktreeTerminalManager {
       self.hookResourcesProvider = { nil }
       self.forwardingRecordBaseDirectory = SupacodePaths.agentHookForwardingDirectory
       self.baselineFontSize = 13
+      self.closeUndoStack = TerminalCloseUndoStack(timeout: .zero)
     }
   #endif
 }

@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Planned |
+| **Status** | Implemented |
 | **Anchor date** | 2026-09-16 |
 | **Primary PRs** | (fill in as they merge) |
 | **Related** | [035-protected-terminal-close](../035-protected-terminal-close/000-plan.md), [009-terminal-surface-lifecycle](../009-terminal-surface-lifecycle/000-plan.md), [012-keybinding-system](../012-keybinding-system/000-plan.md), [014-terminal-layout-persistence](../014-terminal-layout-persistence/000-plan.md), [027-split-pane-ux](../027-split-pane-ux/000-plan.md), `docs/reference/keyboard-shortcuts.md`, `docs/components/terminal.md`, `docs/components/cli.md` |
@@ -163,4 +163,4 @@ after a close they did see. Revisit relaxing #766 after dogfooding.
 
 ## Amendments
 
-(append `- Updated 2026-MM-DD: ... — see [00N-topic.md](00N-topic.md)` lines here)
+None. Implementation details and deviations are in [001-action.md](001-action.md).
