@@ -26,7 +26,6 @@ struct WorkflowAuthoringPromptTests {
     #expect(!strings.explanation.isEmpty)
   }
 
-
   @Test func everySupportedLocaleRoutesToItsPromptTemplate() {
     let routes = [
       (identifier: "en", sentinel: "Write a Prowl Agent Workflow"),

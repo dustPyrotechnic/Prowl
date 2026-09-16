@@ -4,6 +4,7 @@ import SwiftUI
 /// Settings › Workflows › "New Workflow…": name and id the bundle, pick a starter shape, or
 /// hand the job to an agent. Writing the file is the reducer's `createWorkflowTapped`.
 struct NewWorkflowSheet: View {
+  let appLocale: Locale
   @Bindable var store: StoreOf<WorkflowsSettingsFeature>
   @State private var isIconPickerPresented = false
   @FocusState private var nameFieldFocused: Bool
@@ -43,7 +44,7 @@ struct NewWorkflowSheet: View {
         strings: workflowAuthoringPromptStrings(
           directory: store.workflowDirectory,
           draft: problem == nil ? store.newWorkflow?.request : nil,
-          appLocale: .current,
+          appLocale: appLocale,
           systemLocale: .current
         )
       ) {

@@ -49,16 +49,31 @@ nonisolated struct AppLanguageBridge {
   /// Preferred languages for predicting the next normal launch, with any
   /// Prowl-derived `AppleLanguages` prefix removed so it is not mistaken
   /// for the user's system list.
+  ///
+  /// This cannot rely on `Locale.preferredLanguages` always containing the
+  /// app override first — in an isolated launch it may contain only the
+  /// override. Instead, it derives the prediction from the saved original
+  /// per-app preference and global preferences, excluding command-line
+  /// overrides.
   func platformLanguagesForPrediction(
     preferredLanguages: [String] = Locale.preferredLanguages
   ) -> [String] {
-    var languages = preferredLanguages
-    if let derived = lastWritten, derived == currentAppleLanguages {
-      for code in derived where languages.first == code {
-        languages.removeFirst()
+    // If we own the key and it still matches our last write, restore the
+    // saved original; otherwise use the current persistent domain value
+    // (which may have been changed externally).
+    if let lastWritten, lastWritten == currentAppleLanguages {
+      if defaults.bool(forKey: Self.originalExistedKey),
+        let original = defaults.stringArray(forKey: Self.originalValueKey)
+      {
+        return original
+      } else {
+        // Original did not exist; fall back to global preferences
+        return Array(UserDefaults.standard.persistentDomain(forName: "NSGlobalDomain")?["AppleLanguages"] as? [String] ?? [])
       }
+    } else {
+      // Either we never wrote, or the value was changed externally
+      return currentAppleLanguages ?? []
     }
-    return languages
   }
 
   private func applyDerivedLanguages(for language: AppLanguage) {

@@ -34,7 +34,7 @@ struct WorkflowsSettingsView: View {
       .sheet(
         isPresented: Binding(get: { store.newWorkflow != nil }, set: { if !$0 { store.send(.dismissNewWorkflow) } })
       ) {
-        NewWorkflowSheet(store: store)
+        NewWorkflowSheet(appLocale: appLocale, store: store)
       }
     } destination: { detailStore in
       WorkflowSettingsDetailView(store: detailStore)
