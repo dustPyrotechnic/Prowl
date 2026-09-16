@@ -447,6 +447,7 @@ extension WorktreeTerminalState {
   }
 
   func configureBridgeCallbacks(for view: GhosttySurfaceView, tabId: TerminalTabID) {
+    view.bridge.onChildExited = nil
     view.bridge.onUndo = { [weak self] in
       self?.onUndoRequested?() ?? false
     }
@@ -936,7 +937,7 @@ extension WorktreeTerminalState {
       forgetSurface(view.id)
       return true
     }
-    let retain = retainForUndo && undoCloseTimeout > .zero
+    let retain = retainForUndo && undoCloseTimeout > .zero && !view.childProcessHasExited
     let wasFocused = focusedSurfaceIdByTab[tabId] == view.id
     let nextSurface = wasFocused ? tree.focusTargetAfterClosing(node) : nil
     let newTree = tree.removing(node)

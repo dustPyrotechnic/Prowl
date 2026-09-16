@@ -353,6 +353,65 @@ struct WorktreeTerminalUndoCloseTests {
     #expect(applied.last == true)
   }
 
+  // Round 4 review finding: child exit without a close request
+  // (Ghostty `wait-after-command`).
+
+  @Test func childExitDuringGraceDropsTheRecord() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let surfaceID = try #require(state.focusedSurfaceId(in: tab))
+    let view = try #require(state.surfaceView(for: surfaceID))
+
+    #expect(state.closeTab(tab))
+    reportChildExit(on: view)
+
+    #expect(!fixture.manager.closeUndoStack.canUndo)
+    #expect(!view.isPendingClose)
+    #expect(!fixture.manager.undoClose())
+  }
+
+  @Test func closingAnExitedTerminalIsNotRecorded() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let surfaceID = try #require(state.focusedSurfaceId(in: tab))
+    let view = try #require(state.surfaceView(for: surfaceID))
+    reportChildExit(on: view)
+
+    #expect(state.closeTab(tab))
+
+    #expect(!view.isPendingClose)
+    #expect(!fixture.manager.closeUndoStack.canUndo)
+  }
+
+  @Test func closingATabKeepsOnlyItsLivingPanesRestorable() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    let tab = try #require(state.createTab())
+    let anchor = try #require(state.focusedSurfaceId(in: tab))
+    let exited = try state.createSplit(of: anchor, direction: .right, initialInput: nil).get()
+    let exitedView = try #require(state.surfaceView(for: exited))
+    let livingView = try #require(state.surfaceView(for: anchor))
+    reportChildExit(on: exitedView)
+
+    #expect(state.closeTab(tab))
+    #expect(!exitedView.isPendingClose)
+    #expect(livingView.isPendingClose)
+
+    #expect(fixture.manager.undoClose())
+    #expect(state.splitTree(for: tab).leaves().map(\.id) == [anchor])
+    #expect(state.surfaceView(for: exited) == nil)
+    #expect(state.focusedSurfaceId(in: tab) == anchor)
+  }
+
+  private func reportChildExit(on view: GhosttySurfaceView) {
+    var action = ghostty_action_s()
+    action.tag = GHOSTTY_ACTION_SHOW_CHILD_EXITED
+    action.action.child_exited.exit_code = 0
+    _ = view.bridge.handleAction(target: ghostty_target_s(), action: action)
+  }
+
   private struct Fixture {
     let manager: WorktreeTerminalManager
     let state: WorktreeTerminalState

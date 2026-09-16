@@ -25,6 +25,10 @@ final class GhosttySurfaceBridge {
   /// `performable` undo binding fall through to the terminal program.
   var onUndo: (() -> Bool)?
   var onRedo: (() -> Bool)?
+  /// The child process ended. With `wait-after-command` Ghostty keeps the
+  /// surface open and never sends a close request, so a surface retained for
+  /// undo needs this to learn it has nothing left to restore.
+  var onChildExited: (() -> Void)?
 
   // Coalesce OSC-9 progress: a flush task applies the latest value at the
   // throttle cadence while it moves, and a slow stale-watch clears a bar whose
@@ -294,6 +298,7 @@ final class GhosttySurfaceBridge {
       let info = action.action.child_exited
       state.childExitCode = info.exit_code
       state.childExitTimeMs = info.timetime_ms
+      onChildExited?()
       return true
 
     case GHOSTTY_ACTION_READONLY:

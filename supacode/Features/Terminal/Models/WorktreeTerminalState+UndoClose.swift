@@ -22,7 +22,7 @@ extension WorktreeTerminalState {
     for leaf in tree.leaves() {
       contexts[leaf.id] = retainedContext(for: leaf.id)
     }
-    return TerminalClosedTabRecord(
+    var record: TerminalClosedTabRecord? = TerminalClosedTabRecord(
       item: tabManager.tabs[index],
       index: index,
       wasSelected: tabManager.selectedTabId == tabId,
@@ -32,6 +32,12 @@ extension WorktreeTerminalState {
       boundDirectoryKey: boundDirectoryTabIDs.first { $0.value == tabId }?.key,
       contexts: contexts
     )
+    // A pane whose process already ended has nothing to bring back; it is
+    // freed with the close and the record keeps only the living panes.
+    for leaf in tree.leaves() where leaf.childProcessHasExited {
+      record = record?.removingSurface(id: leaf.id)
+    }
+    return record
   }
 
   /// Read before `forgetSurface` drops it.
@@ -58,11 +64,16 @@ extension WorktreeTerminalState {
     retainedForUndoSurfaceIDs.remove(view.id)
   }
 
-  /// `removeTree(for:)` with the leaves detached instead of freed.
+  /// `removeTree(for:)` with the living leaves detached instead of freed.
   func detachTree(for tabId: TerminalTabID) {
     guard let tree = trees.removeValue(forKey: tabId) else { return }
     for surface in tree.leaves() {
-      detachAndForgetSurface(surface)
+      if surface.childProcessHasExited {
+        surface.closeSurface()
+        forgetSurface(surface.id)
+      } else {
+        detachAndForgetSurface(surface)
+      }
     }
     focusedSurfaceIdByTab.removeValue(forKey: tabId)
     tabIsRunningById.removeValue(forKey: tabId)
@@ -88,6 +99,10 @@ extension WorktreeTerminalState {
     bridge.onCommandFinished = nil
     bridge.onPromptTitle = nil
     bridge.onCloseRequest = { [weak self, weak view] _ in
+      guard let self, let view else { return }
+      onRetainedSurfaceExited?(view.id)
+    }
+    bridge.onChildExited = { [weak self, weak view] in
       guard let self, let view else { return }
       onRetainedSurfaceExited?(view.id)
     }
