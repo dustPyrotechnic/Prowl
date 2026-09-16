@@ -1195,8 +1195,8 @@ struct CommandPaletteFeatureTests {
 
     #expect(!ordered.isEmpty, "Should generate command palette items")
     #expect(
-      ordered.first?.kind == .openFailingCheckDetails(worktree.id),
-      "Failing check action should rank first"
+      ordered.first?.kind == .copyFailingJobURL(worktree.id),
+      "Copy failing job URL action should rank first when details URL is available"
     )
   }
   @Test func commandPaletteFailingActionFallsBackToLogsWhenCheckURLMissing() {
