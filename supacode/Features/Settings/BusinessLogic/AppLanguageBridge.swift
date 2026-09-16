@@ -55,27 +55,30 @@ nonisolated struct AppLanguageBridge {
   /// override. Instead, it derives the prediction from the saved original
   /// per-app preference and global preferences, excluding command-line
   /// overrides.
-  func platformLanguagesForPrediction(
-    preferredLanguages: [String] = Locale.preferredLanguages
-  ) -> [String] {
-    // If we own the key and it still matches our last write, restore the
-    // saved original; otherwise use the current persistent domain value
-    // (which may have been changed externally).
+  func platformLanguagesForPrediction() -> [String] {
+    // If we own the key and it still matches our last write, predict using
+    // the saved original (what will be active when user returns to "system")
     if let lastWritten, lastWritten == currentAppleLanguages {
       if defaults.bool(forKey: Self.originalExistedKey),
         let original = defaults.stringArray(forKey: Self.originalValueKey)
       {
         return original
       } else {
-        // Original did not exist; fall back to global preferences
+        // We owned it but original didn't exist; return global as fallback
         return Array(
           UserDefaults.standard.persistentDomain(forName: "NSGlobalDomain")?["AppleLanguages"] as? [String] ?? []
         )
       }
-    } else {
-      // Either we never wrote, or the value was changed externally
-      return currentAppleLanguages ?? []
     }
+
+    // We don't own the key: predict using current persistent value,
+    // falling back to global if app domain is empty
+    if let current = currentAppleLanguages, !current.isEmpty {
+      return current
+    }
+    return Array(
+      UserDefaults.standard.persistentDomain(forName: "NSGlobalDomain")?["AppleLanguages"] as? [String] ?? []
+    )
   }
 
   private func applyDerivedLanguages(for language: AppLanguage) {

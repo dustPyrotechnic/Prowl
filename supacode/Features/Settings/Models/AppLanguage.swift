@@ -16,7 +16,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Codable, Sendable {
   var title: String {
     switch self {
     case .system:
-      return String(localized: "Follow System", comment: "App language option: Use system language")
+      return "Follow System / 跟随系统"
     case .zhHans:
       return "简体中文"
     case .english:
