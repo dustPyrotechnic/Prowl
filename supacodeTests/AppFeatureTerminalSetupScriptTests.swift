@@ -291,6 +291,32 @@ struct AppFeatureTerminalSetupScriptTests {
     )
   }
 
+  // Round 3 review finding: plain folders in Canvas.
+  @Test(.dependencies) func tabRestoredInCanvasRequestsTheCardFocusForAPlainFolder() async {
+    let repository = Repository(
+      id: "/tmp/plain-folder",
+      rootURL: URL(fileURLWithPath: "/tmp/plain-folder"),
+      name: "plain-folder",
+      kind: .plain,
+      worktrees: []
+    )
+    var repositoriesState = RepositoriesFeature.State()
+    repositoriesState.repositories = [repository]
+    repositoriesState.selection = .canvas
+    let tabID = TerminalTabID()
+    let store = TestStore(
+      initialState: AppFeature.State(repositories: repositoriesState, settings: SettingsFeature.State())
+    ) {
+      AppFeature()
+    }
+    store.exhaustivity = .off
+
+    await store.send(.terminalEvent(.tabRestored(worktreeID: repository.id, tabID: tabID)))
+    await store.receive(\.repositories.newTerminalTabCreatedInCanvas)
+
+    #expect(store.state.repositories.pendingCanvasFocusRequest?.target == .tab(tabID))
+  }
+
   private func makeRepositoriesState(
     worktree: Worktree,
     pendingSetupScript: Bool,

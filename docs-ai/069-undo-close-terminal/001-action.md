@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 2026-09-16 | Plan written after reading Ghostty's macOS undo implementation and mapping Prowl's close paths | `5c381151` |
 | 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | #814 |
+| 2026-09-16 | Review round 3 (Pi reviewer, 1 P2, accepted): the Canvas card-focus action `newTerminalTabCreatedInCanvas` resolves its target with `terminalWorktree(for:)`, so an undo in a plain-folder repository reveals the restored card too | #814 |
 | 2026-09-16 | Review round 2 (Pi reviewer, 2 P1 + 1 P2, all accepted): a retained close defers the Codex forwarding record's retirement until the surface is freed (`deferredForwardingRecords`; the 2 s cleanup would have deleted the file inside the 5 s window); Canvas adoption asks for visible occlusion like `createSplit`; `tabRestored` now carries the tab and the reducer routes Canvas through `newTerminalTabCreatedInCanvas` (card focus) and normal mode through worktree selection only when another worktree is showing | #814 |
 | 2026-09-16 | Review round 1 (Pi reviewer, 2 P1 + 2 P2, all accepted): pane restore selects its tab; Profile launch identity and managed-hook registration survive a restore (`TerminalRetainedSurfaceContext`, `onManagedHookReadopted`, `CodexForwardingRecordStore.reinstate`); pane-record validity compares split structure, not just the leaf set; `closeAllSurfaces` voids the worktree's retained closes (`onSurfacesReset`) | #814 |
 
