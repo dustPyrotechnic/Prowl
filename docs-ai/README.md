@@ -127,3 +127,4 @@ agent-facing manual for that).
 | 066 | [agent-island](066-agent-island/000-plan.md) | 2026-09-01 | Notch-aware Active Agents island, global keyboard entry, Agents Display settings, and hover-revealed floating placement |
 | 067 | [remote-mirror](067-remote-mirror/000-plan.md) | 2026-09-09 | App-owned Host and native remote terminal mirrors; [macOS UX and viewport](067-remote-mirror/006-macos-ux.md) |
 | 068 | [agent-state-providers](068-agent-state-providers/000-plan.md) | 2026-09-14 | Shared [architecture](068-agent-state-providers/architecture.md), released [Codex provider](068-agent-state-providers/codex.md), and [Claude spike and migration plan](068-agent-state-providers/claude.md); implementation awaiting review |
+| 069 | [undo-close-terminal](069-undo-close-terminal/000-plan.md) | 2026-09-16 | Undo a pane or tab close with ⌘Z within Ghostty’s `undo-timeout`: closed surfaces stay alive off-tree and restore into their original tab and split position |
