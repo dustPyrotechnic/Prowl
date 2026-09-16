@@ -5,7 +5,7 @@
 | Date | Change | Ref |
 | --- | --- | --- |
 | 2026-09-16 | Plan written after reading Ghostty's macOS undo implementation and mapping Prowl's close paths | `5c381151` |
-| 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | PR (this branch, `feat/undo-close-terminal`) |
+| 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | #814 |
 
 ## Outcome & current state (as of 2026-09-16)
 
