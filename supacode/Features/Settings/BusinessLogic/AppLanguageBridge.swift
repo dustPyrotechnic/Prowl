@@ -68,7 +68,9 @@ nonisolated struct AppLanguageBridge {
         return original
       } else {
         // Original did not exist; fall back to global preferences
-        return Array(UserDefaults.standard.persistentDomain(forName: "NSGlobalDomain")?["AppleLanguages"] as? [String] ?? [])
+        return Array(
+          UserDefaults.standard.persistentDomain(forName: "NSGlobalDomain")?["AppleLanguages"] as? [String] ?? []
+        )
       }
     } else {
       // Either we never wrote, or the value was changed externally

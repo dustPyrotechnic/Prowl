@@ -123,8 +123,11 @@ struct WorkflowHistoryFeature {
         } message: {
           TextState(
             String(
-              localized: "\(count) finished run\(count == 1 ? "" : "s") and their prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.",
-              comment: "Clear workflow history confirmation: Pluralized run count with full explanation of deletion scope."
+              localized:
+                "\(count) finished run\(count == 1 ? "" : "s") and their prompts, deliveries, and action outputs "
+                + "will be deleted. Runs that are still active are kept. This cannot be undone.",
+              comment:
+                "Clear workflow history confirmation: Pluralized run count with full explanation of deletion scope."
             )
           )
         }
@@ -144,7 +147,10 @@ struct WorkflowHistoryFeature {
       case .cleared(let cleanup):
         state.isBusy = true
         let count = cleanup.removed.count
-        state.result = String(localized: "Removed \(count) run\(count == 1 ? "" : "s").", comment: "Workflow history clear result: Pluralized count of removed runs.")
+        state.result = String(
+          localized: "Removed \(count) run\(count == 1 ? "" : "s").",
+          comment: "Workflow history clear result: Pluralized count of removed runs."
+        )
         state.error = cleanup.failures.isEmpty ? nil : cleanup.failures.joined(separator: "\n")
         return .run { send in
           do { await send(.loaded(try await operations.preview())) } catch {
