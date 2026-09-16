@@ -28,7 +28,7 @@ struct AppearanceSettingsView: View {
           )
             .foregroundStyle(.secondary)
           if store.languageChangePending {
-            Text("将在下次启动时切换语言")
+            Text("The language will switch on next launch.", comment: "App language change pending notice")
               .font(.footnote)
               .foregroundStyle(.secondary)
           }

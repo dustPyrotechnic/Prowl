@@ -1168,8 +1168,10 @@ struct CommandPaletteFeatureTests {
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
     let ordered = CommandPaletteFeature.filterItems(items: items, query: "")
-  }
 
+    #expect(!ordered.isEmpty, "Should generate command palette items")
+    #expect(ordered.first?.kind == .markPullRequestReady(worktree.id), "Draft PR action should rank first")
+  }
   @Test func commandPaletteFailingActionRanksFirst() {
     let rootPath = "/tmp/repo"
     let worktree = makeWorktree(id: "\(rootPath)/wt-failing", name: "failing", repoRoot: rootPath)
@@ -1190,8 +1192,17 @@ struct CommandPaletteFeatureTests {
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
     let ordered = CommandPaletteFeature.filterItems(items: items, query: "")
-  }
 
+    #expect(!ordered.isEmpty, "Should generate command palette items")
+    // Verify the failing check action is present with high priority
+    let hasFailingCheckAction = ordered.contains(where: { item in
+      if case .openFailingCheckDetails(let wtID) = item.kind, wtID == worktree.id {
+        return true
+      }
+      return false
+    })
+    #expect(hasFailingCheckAction, "Should include openFailingCheckDetails action for failing check")
+  }
   @Test func commandPaletteFailingActionFallsBackToLogsWhenCheckURLMissing() {
     let rootPath = "/tmp/repo"
     let worktree = makeWorktree(id: "\(rootPath)/wt-failing", name: "failing", repoRoot: rootPath)
@@ -1211,8 +1222,14 @@ struct CommandPaletteFeatureTests {
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
     let ordered = CommandPaletteFeature.filterItems(items: items, query: "")
-  }
 
+    #expect(!ordered.isEmpty, "Should generate command palette items")
+    if case .copyCiFailureLogs(let wtID) = ordered.first?.kind {
+      #expect(wtID == worktree.id, "CI failure logs action should rank first when check URL missing")
+    } else {
+      Issue.record("Expected copyCiFailureLogs as first item, got \(String(describing: ordered.first?.kind))")
+    }
+  }
   @Test func commandPaletteMergeActionRanksFirstWhenMergeable() {
     let rootPath = "/tmp/repo"
     let worktree = makeWorktree(id: "\(rootPath)/wt-merge", name: "merge", repoRoot: rootPath)
@@ -1230,8 +1247,14 @@ struct CommandPaletteFeatureTests {
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
     let ordered = CommandPaletteFeature.filterItems(items: items, query: "")
-  }
 
+    #expect(!ordered.isEmpty, "Should generate command palette items")
+    if case .mergePullRequest(let wtID) = ordered.first?.kind {
+      #expect(wtID == worktree.id, "Merge PR action should rank first when mergeable")
+    } else {
+      Issue.record("Expected mergePullRequest as first item, got \(String(describing: ordered.first?.kind))")
+    }
+  }
   @Test func commandPaletteShowsCloseActionForOpenPullRequest() {
     let rootPath = "/tmp/repo"
     let worktree = makeWorktree(id: "\(rootPath)/wt-close", name: "close", repoRoot: rootPath)

@@ -124,14 +124,16 @@ struct WorkflowHistoryFeature {
           let message = if count == 1 {
             String(
               localized:
-                "1 finished run and its prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.",
+                "1 finished run and its prompts, deliveries, and action outputs will be deleted. " +
+                "Runs that are still active are kept. This cannot be undone.",
               comment: "Clear workflow history confirmation: singular (1 run)"
             )
           } else {
             String(
               format: String(
                 localized:
-                  "%lld finished runs and their prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.",
+                "%lld finished runs and their prompts, deliveries, and action outputs will be deleted. " +
+                "Runs that are still active are kept. This cannot be undone.",
                 comment: "Clear workflow history confirmation: plural (N runs)"
               ),
               count

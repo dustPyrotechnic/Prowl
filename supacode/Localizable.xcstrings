@@ -11245,7 +11245,7 @@
         }
       }
     },
-    "将在下次启动时切换语言": {
+    "The language will switch on next launch.": {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
