@@ -186,7 +186,18 @@ struct ContentView: View {
         WorkflowStartOverlayView(store: workflowStartStore)
       }
     }
-    .background(WindowTabbingDisabler())
+    .background(
+      WindowTabbingDisabler(
+        undoShortcuts: TerminalCloseUndoKeyMonitor.Shortcuts(
+          undo: ghosttyShortcuts.keyboardShortcut(for: "undo")
+            ?? TerminalCloseUndoKeyMonitor.Shortcuts.ghosttyDefaults.undo,
+          redo: ghosttyShortcuts.keyboardShortcut(for: "redo")
+            ?? TerminalCloseUndoKeyMonitor.Shortcuts.ghosttyDefaults.redo
+        ),
+        undoClose: { terminalManager.undoClose() },
+        redoClose: { terminalManager.redoClose() }
+      )
+    )
   }
 
   private var renameBranchPromptRequest: Binding<PendingRenameBranchRequest?> {

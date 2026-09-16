@@ -168,7 +168,8 @@ launch. Notification bodies are not persisted.
   doesn't pin which split has keyboard focus. The CLI's `pane.focused` is the
   truth.
 - Closing the **last** tab leaves the worktree with no visible terminal (Shelf
-  removes the book; Canvas drops the card).
+  removes the book; Canvas drops the card). `⌘Z` within `undo-timeout` brings
+  it back.
 - Closing a pane or tab asks for confirmation after editing within the last 10 seconds or
   during input-method composition. See [recent input close protection](../reference/keyboard-shortcuts.md#recent-input-close-protection).
 - A closed pane or tab stays restorable for Ghostty's `undo-timeout` (5 s by
