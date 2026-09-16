@@ -619,6 +619,19 @@ as a workflow run. Poll the returned run ID with `workflow status` and inspect i
 
 `validate` accepts the bundle directory, not its `workflow.yaml`. Loose YAML files are not workflow bundles. See [Workflows](workflows.md#script-actions-and-bundles) for approval and results.
 
+### Built-in Review Loop workflow
+
+```bash
+prowl workflow run prowl.review-loop --role reviewer="Pi Reviewer" --input min_rounds=2 --input max_rounds=4 --json
+```
+
+Start from the implementing agent and follow `data.self_initiated.line` to submit
+the brief. The selected reviewer opens in a right split and stays for all rounds.
+`focus` is optional. Minimum and maximum each accept 1–30; minimum must not exceed
+maximum. Defaults are 2 and 4. The final summary distinguishes clean from a round
+limit reached with remaining work; `completed` alone does not mean clean.
+See [Built-in Review Loop](workflows.md#built-in-review-loop).
+
 ### Built-in handoff workflow
 
 `prowl workflow run prowl.handoff --role receiver=Codex --json` asks the calling agent for
