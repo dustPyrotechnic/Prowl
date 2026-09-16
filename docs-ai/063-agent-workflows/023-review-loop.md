@@ -2,7 +2,8 @@
 
 ## Status
 
-Implemented and Debug-accepted, 2026-09-16. D2 is now named Review Loop (`prowl.review-loop`).
+Implemented and Debug-accepted, 2026-09-16. PR [#815](https://github.com/onevcat/Prowl/pull/815).
+D2 is now named Review Loop (`prowl.review-loop`).
 
 ## Contract
 
@@ -91,3 +92,6 @@ Native GUI inspection confirmed the built-in entry, selectable reviewer, default
 title templates, so the bundle uses static step titles; tasks and summaries still
 state the actual review round. No UI code changed. Existing PR publication was not
 exercised by the disposable fixtures, which have no remote or PR.
+
+The isolated acceptance instances were closed after verification; completion receipts
+and screenshots remain in the local acceptance directory. Personal sessions were not restarted.
