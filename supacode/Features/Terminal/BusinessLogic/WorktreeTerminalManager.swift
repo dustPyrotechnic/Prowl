@@ -18,6 +18,11 @@ final class WorktreeTerminalManager {
   /// for every worktree: ⌘Z undoes the most recent close wherever it happened.
   @ObservationIgnored let closeUndoStack: TerminalCloseUndoStack
   @ObservationIgnored private var isRedoingClose = false
+  /// Codex forwarding records of retained (undoable) closes. The hook is
+  /// revoked at close time like any other, but the record's file stays off
+  /// the retirement list while the process may come back: retirement cleanup
+  /// (2 s) would otherwise delete it inside the undo window.
+  @ObservationIgnored private var deferredForwardingRecords: [UUID: CodexForwardingRecord] = [:]
   @ObservationIgnored private let agentObservationStore: AgentObservationStore
   @ObservationIgnored private let agentDispatchStore: AgentDispatchStore
   @ObservationIgnored private let codexConfigReadProcess: CodexConfigReadProcess
@@ -76,11 +81,6 @@ final class WorktreeTerminalManager {
     self.skipsSurfaceCreationForTesting = skipsSurfaceCreationForTesting
     self.preferredFontSize = preferredFontSize
     self.closeUndoStack = TerminalCloseUndoStack(timeout: runtime.undoTimeout(), clock: undoCloseClock)
-    closeUndoStack.onExpire = { surfaces in
-      for surface in surfaces {
-        surface.closeSurface()
-      }
-    }
     self.agentObservationStore = AgentObservationStore(
       bufferCapacity: agentObservationBufferCapacity)
     self.agentDispatchStore = agentDispatchStore
@@ -89,6 +89,9 @@ final class WorktreeTerminalManager {
     self.hookResourcesProvider = hookResourcesProvider
     self.forwardingRecordBaseDirectory = forwardingRecordBaseDirectory
     baselineFontSize = runtime.defaultFontSize()
+    closeUndoStack.onExpire = { [weak self] surfaces in
+      self?.free(surfaces)
+    }
   }
 
   func handleCommand(_ command: TerminalClient.Command) {
@@ -898,13 +901,11 @@ final class WorktreeTerminalManager {
     }
     state.onManagedHookReadopted = { [weak self] surfaceID, registration in
       guard let self else { return }
-      // The close revoked the hook and scheduled its forwarding record for
-      // cleanup; the process kept both, so register the same token again with
-      // a fresh evidence epoch and take the record off the cleanup list.
+      // The close revoked the hook; the process kept its token and forwarding
+      // record, so register the same token again under a fresh evidence epoch
+      // and keep the record out of retirement for good.
+      deferredForwardingRecords.removeValue(forKey: surfaceID)
       _ = agentObservationStore.registerManagedHook(registration, surfaceID: surfaceID)
-      if let record = registration.forwardingRecord {
-        codexForwardingRecordStore?.reinstate(record)
-      }
     }
     state.onSurfacesReset = { [weak self] in
       self?.closeUndoStack.discard { $0 == worktree.id }
@@ -980,19 +981,15 @@ final class WorktreeTerminalManager {
       }
       emit(.agentEntryChanged(entry))
     }
-    state.onAgentEntryRemoved = { [weak self] surfaceID in
+    state.onAgentEntryRemoved = { [weak self, weak state] surfaceID in
       guard let self else { return }
-      if let record = agentObservationStore.revokeManagedHook(surfaceID: surfaceID) {
-        retireForwardingRecord(record)
-      }
+      revokeManagedHook(surfaceID: surfaceID, state: state)
       agentObservationStore.publishAgentRemoved(surfaceID: surfaceID)
       emit(.agentEntryRemoved(surfaceID))
     }
-    state.onSurfaceClosed = { [weak self] surfaceID in
+    state.onSurfaceClosed = { [weak self, weak state] surfaceID in
       guard let self else { return }
-      if let record = agentObservationStore.revokeManagedHook(surfaceID: surfaceID) {
-        retireForwardingRecord(record)
-      }
+      revokeManagedHook(surfaceID: surfaceID, state: state)
       agentObservationStore.publishSurfaceClosed(surfaceID: surfaceID)
       agentDispatchStore.surfaceClosed(surfaceID: surfaceID)
     }
@@ -1102,7 +1099,7 @@ final class WorktreeTerminalManager {
           continue
         }
         closeUndoStack.recordReopen(.pane(worktreeID: worktreeID, surfaceID: pane.view.id))
-        revealAfterUndo(worktreeID)
+        emit(.tabRestored(worktreeID: worktreeID, tabID: pane.tabID))
         return true
       case .tabs(let worktreeID, let tabs):
         // Each record's index was taken from the array as it shrank, so the
@@ -1117,7 +1114,10 @@ final class WorktreeTerminalManager {
         }
         guard !restored.isEmpty else { continue }
         closeUndoStack.recordReopen(.tabs(worktreeID: worktreeID, restored.reversed()))
-        revealAfterUndo(worktreeID)
+        let revealed = tabs.first { $0.wasSelected && restored.contains($0.tabID) }?.tabID ?? restored.last
+        if let revealed {
+          emit(.tabRestored(worktreeID: worktreeID, tabID: revealed))
+        }
         return true
       }
     }
@@ -1143,17 +1143,24 @@ final class WorktreeTerminalManager {
     }
   }
 
+  /// Final disposal of retained surfaces: whatever the close deferred for a
+  /// possible restore is released now.
   private func free(_ surfaces: [GhosttySurfaceView]) {
     for surface in surfaces {
+      if let record = deferredForwardingRecords.removeValue(forKey: surface.id) {
+        retireForwardingRecord(record)
+      }
       surface.closeSurface()
     }
   }
 
-  /// A restore into a worktree other than the selected one would be invisible;
-  /// ask the reducer to show it. Canvas (no selection) keeps its own view.
-  private func revealAfterUndo(_ worktreeID: Worktree.ID) {
-    guard let selectedWorktreeID, selectedWorktreeID != worktreeID else { return }
-    emit(.tabRestored(worktreeID: worktreeID))
+  private func revokeManagedHook(surfaceID: UUID, state: WorktreeTerminalState?) {
+    guard let record = agentObservationStore.revokeManagedHook(surfaceID: surfaceID) else { return }
+    if state?.isRetainedForUndo(surfaceID) == true {
+      deferredForwardingRecords[surfaceID] = record
+    } else {
+      retireForwardingRecord(record)
+    }
   }
 
   func prune(keeping worktreeIDs: Set<Worktree.ID>) {
@@ -1201,6 +1208,10 @@ final class WorktreeTerminalManager {
 
   func hasManagedHookForTesting(surfaceID: UUID) -> Bool {
     agentObservationStore.hasManagedHook(surfaceID: surfaceID)
+  }
+
+  func forwardingRecordStoreForTesting() -> CodexForwardingRecordStore? {
+    forwardingRecordStore()
   }
 
   private func containsSurface(_ surfaceID: UUID) -> Bool {

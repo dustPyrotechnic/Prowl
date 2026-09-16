@@ -196,13 +196,12 @@ struct WorktreeTerminalUndoCloseTests {
     #expect(!fixture.manager.closeUndoStack.canUndo)
   }
 
-  @Test func restoringTheLastTabReopensTheWorktreeAndRevealsIt() async throws {
+  @Test func restoringTheLastTabReopensTheWorktreeAndReportsTheTab() async throws {
     let fixture = makeFixture()
     let state = fixture.state
     let tab = try #require(state.createTab())
     let stream = fixture.manager.eventStream()
     #expect(state.closeTab(tab))
-    fixture.manager.selectedWorktreeID = "/tmp/repo/other"
 
     #expect(fixture.manager.undoClose())
 
@@ -212,26 +211,30 @@ struct WorktreeTerminalUndoCloseTests {
       if case .tabRestored = event { break }
     }
     #expect(seen.contains(.tabCreated(worktreeID: fixture.worktree.id)))
-    #expect(seen.last == .tabRestored(worktreeID: fixture.worktree.id))
+    #expect(seen.last == .tabRestored(worktreeID: fixture.worktree.id, tabID: tab))
   }
 
-  @Test func undoIntoTheSelectedWorktreeDoesNotAskForReveal() async throws {
+  @Test func batchRestoreReportsTheTabThatWasSelected() async throws {
     let fixture = makeFixture()
     let state = fixture.state
-    let tab = try #require(state.createTab())
+    let first = try #require(state.createTab())
+    let second = try #require(state.createTab())
+    state.selectTab(second)
     let stream = fixture.manager.eventStream()
-    #expect(state.closeTab(tab))
-    fixture.manager.selectedWorktreeID = fixture.worktree.id
+    state.closeAllTabs()
 
     #expect(fixture.manager.undoClose())
-    state.onSetupScriptConsumed?()
 
-    var seen: [TerminalClient.Event] = []
+    var reported: TerminalTabID?
     for await event in stream {
-      seen.append(event)
-      if case .setupScriptConsumed = event { break }
+      if case .tabRestored(_, let tabID) = event {
+        reported = tabID
+        break
+      }
     }
-    #expect(!seen.contains(.tabRestored(worktreeID: fixture.worktree.id)))
+    #expect(reported == second)
+    #expect(state.tabManager.tabs.map(\.id) == [first, second])
+    #expect(state.tabManager.selectedTabId == second)
   }
 
   // Round 1 review findings (docs-ai 069): pinned red before the fixes.
@@ -258,29 +261,7 @@ struct WorktreeTerminalUndoCloseTests {
     let fixture = makeFixture()
     let state = fixture.state
     _ = try #require(state.createTab())
-    let registration = AgentHookLaunchRegistration(
-      token: "token-undo",
-      runtime: .codex,
-      launchCWD: fixture.worktree.workingDirectory,
-      nativeEvents: ["agent-turn-complete": .turnEnded],
-      coveredEvents: [.turnEnded],
-      forwardingRecord: nil
-    )
-    let plan = AgentProfileLaunchPlan(
-      profileID: UUID(),
-      profileName: "Codex · Bound",
-      runtime: .codex,
-      invocation: AgentInvocation(executable: "codex", arguments: []),
-      hookRegistration: registration,
-      commandEnvironmentTokens: [],
-      placement: .tab,
-      splitDirection: .right,
-      surfaceEnvironment: [:],
-      dedicatedHome: nil
-    )
-    let launched = try state.launchAgentProfile(
-      AgentProfileLaunchRequest(plan: plan, placement: .tab(background: false))
-    ).get()
+    let launched = try launchProfile(in: state, cwd: fixture.worktree.workingDirectory)
     let profile = try #require(state.launchProfilesBySurface[launched.surfaceID])
     #expect(fixture.manager.hasManagedHookForTesting(surfaceID: launched.surfaceID))
 
@@ -329,6 +310,49 @@ struct WorktreeTerminalUndoCloseTests {
     #expect(!fixture.manager.undoClose())
   }
 
+  // Round 2 review findings.
+
+  @Test func retainedProfileCloseKeepsTheForwardingRecordUntilTheSurfaceIsFreed() async throws {
+    let base = FileManager.default.temporaryDirectory.appending(path: "undo-forwarding-\(UUID().uuidString)")
+    defer { try? FileManager.default.removeItem(at: base) }
+    let fixture = makeFixture(forwardingRecordBaseDirectory: base)
+    let state = fixture.state
+    let store = try #require(fixture.manager.forwardingRecordStoreForTesting())
+    let record = try store.create(argv: ["/tmp/notifier"])
+    let launched = try launchProfile(in: state, cwd: fixture.worktree.workingDirectory, forwardingRecord: record)
+
+    #expect(state.closeTab(launched.tabID))
+    #expect(!store.isRetired(record))
+
+    #expect(fixture.manager.undoClose())
+    #expect(!store.isRetired(record))
+    #expect(fixture.manager.hasManagedHookForTesting(surfaceID: launched.surfaceID))
+
+    #expect(state.closeTab(launched.tabID))
+    await fixture.clock.advance(by: .seconds(5))
+    await settle()
+    #expect(store.isRetired(record))
+  }
+
+  @Test func restoringAPaneInCanvasRequestsVisibleOcclusion() throws {
+    let fixture = makeFixture()
+    let state = fixture.state
+    state.isCanvasManaged = true
+    let tab = try #require(state.createTab())
+    let anchor = try #require(state.focusedSurfaceId(in: tab))
+    let pane = try state.createSplit(of: anchor, direction: .right, initialInput: nil).get()
+    let view = try #require(state.surfaceView(for: pane))
+    view.attachmentStateForTesting = { (hasSuperview: true, hasWindow: true) }
+    var applied: [Bool] = []
+    view.onOcclusionAppliedForTesting = { applied.append($0) }
+
+    #expect(state.closeSurface(id: pane))
+    #expect(applied.last == false)
+
+    #expect(fixture.manager.undoClose())
+    #expect(applied.last == true)
+  }
+
   private struct Fixture {
     let manager: WorktreeTerminalManager
     let state: WorktreeTerminalState
@@ -336,13 +360,23 @@ struct WorktreeTerminalUndoCloseTests {
     let clock: TestClock<Duration>
   }
 
-  private func makeFixture() -> Fixture {
+  private func makeFixture(forwardingRecordBaseDirectory: URL? = nil) -> Fixture {
     let clock = TestClock()
-    let manager = WorktreeTerminalManager(
-      runtime: GhosttyRuntime(),
-      undoCloseClock: clock,
-      skipsSurfaceCreationForTesting: true
-    )
+    let manager: WorktreeTerminalManager
+    if let forwardingRecordBaseDirectory {
+      manager = WorktreeTerminalManager(
+        runtime: GhosttyRuntime(),
+        forwardingRecordBaseDirectory: forwardingRecordBaseDirectory,
+        undoCloseClock: clock,
+        skipsSurfaceCreationForTesting: true
+      )
+    } else {
+      manager = WorktreeTerminalManager(
+        runtime: GhosttyRuntime(),
+        undoCloseClock: clock,
+        skipsSurfaceCreationForTesting: true
+      )
+    }
     let worktree = Worktree(
       id: "/tmp/repo/wt-1",
       name: "wt-1",
@@ -351,6 +385,36 @@ struct WorktreeTerminalUndoCloseTests {
       repositoryRootURL: URL(fileURLWithPath: "/tmp/repo")
     )
     return Fixture(manager: manager, state: manager.state(for: worktree), worktree: worktree, clock: clock)
+  }
+
+  private func launchProfile(
+    in state: WorktreeTerminalState,
+    cwd: URL,
+    forwardingRecord: CodexForwardingRecord? = nil
+  ) throws -> LaunchedSurface {
+    let registration = AgentHookLaunchRegistration(
+      token: "token-undo",
+      runtime: .codex,
+      launchCWD: cwd,
+      nativeEvents: ["agent-turn-complete": .turnEnded],
+      coveredEvents: [.turnEnded],
+      forwardingRecord: forwardingRecord
+    )
+    let plan = AgentProfileLaunchPlan(
+      profileID: UUID(),
+      profileName: "Codex · Bound",
+      runtime: .codex,
+      invocation: AgentInvocation(executable: "codex", arguments: []),
+      hookRegistration: registration,
+      commandEnvironmentTokens: [],
+      placement: .tab,
+      splitDirection: .right,
+      surfaceEnvironment: [:],
+      dedicatedHome: nil
+    )
+    return try state.launchAgentProfile(
+      AgentProfileLaunchRequest(plan: plan, placement: .tab(background: false))
+    ).get()
   }
 
   private func settle() async {

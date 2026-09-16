@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 2026-09-16 | Plan written after reading Ghostty's macOS undo implementation and mapping Prowl's close paths | `5c381151` |
 | 2026-09-16 | Undo stack, detach-instead-of-free close paths, restore, Ghostty `undo`/`redo` routing, `tabRestored` event, docs | #814 |
+| 2026-09-16 | Review round 2 (Pi reviewer, 2 P1 + 1 P2, all accepted): a retained close defers the Codex forwarding record's retirement until the surface is freed (`deferredForwardingRecords`; the 2 s cleanup would have deleted the file inside the 5 s window); Canvas adoption asks for visible occlusion like `createSplit`; `tabRestored` now carries the tab and the reducer routes Canvas through `newTerminalTabCreatedInCanvas` (card focus) and normal mode through worktree selection only when another worktree is showing | #814 |
 | 2026-09-16 | Review round 1 (Pi reviewer, 2 P1 + 2 P2, all accepted): pane restore selects its tab; Profile launch identity and managed-hook registration survive a restore (`TerminalRetainedSurfaceContext`, `onManagedHookReadopted`, `CodexForwardingRecordStore.reinstate`); pane-record validity compares split structure, not just the leaf set; `closeAllSurfaces` voids the worktree's retained closes (`onSurfacesReset`) | #814 |
 
 ## Outcome & current state (as of 2026-09-16)
@@ -91,8 +92,14 @@ it again; six seconds after a close, `cmd-z` restored nothing.
 - Restore carries launch bookkeeping the plan did not list: `forgetSurface`
   drops the Profile record and the manager revokes the managed hook at close
   time (observers see a real close), so the close record keeps both and the
-  restore registers the same hook token again under a fresh evidence epoch and
-  takes the Codex forwarding record off the retirement list.
+  restore registers the same hook token again under a fresh evidence epoch.
+  The Codex forwarding record is never retired while the close is retained
+  (`WorktreeTerminalState.isRetainedForUndo` during the observer callbacks,
+  `WorktreeTerminalManager.deferredForwardingRecords` afterwards); final
+  disposal retires it, a restore drops the deferral.
+- Every successful undo emits `tabRestored(worktreeID:tabID:)`; the reducer,
+  not the manager, decides how to reveal it (Canvas card focus request, or
+  worktree selection when another worktree is showing).
 - Undoing a pane close selects the pane's tab (the plan only covered a
   different worktree); a single restored tab is selected, a batch keeps each
   tab's original selection.

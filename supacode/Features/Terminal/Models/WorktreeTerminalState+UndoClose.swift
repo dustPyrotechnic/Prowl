@@ -42,12 +42,27 @@ extension WorktreeTerminalState {
     )
   }
 
+  /// True while `forgetSurface` runs for a surface that stays alive for undo,
+  /// so the close-time observers can defer what a living process still needs
+  /// (its Codex forwarding record).
+  func isRetainedForUndo(_ surfaceID: UUID) -> Bool {
+    retainedForUndoSurfaceIDs.contains(surfaceID)
+  }
+
+  /// Detaches and forgets in one step; the retained marker lives only for the
+  /// duration of the observer callbacks.
+  func detachAndForgetSurface(_ view: GhosttySurfaceView) {
+    detachSurface(view)
+    retainedForUndoSurfaceIDs.insert(view.id)
+    forgetSurface(view.id)
+    retainedForUndoSurfaceIDs.remove(view.id)
+  }
+
   /// `removeTree(for:)` with the leaves detached instead of freed.
   func detachTree(for tabId: TerminalTabID) {
     guard let tree = trees.removeValue(forKey: tabId) else { return }
     for surface in tree.leaves() {
-      detachSurface(surface)
-      forgetSurface(surface.id)
+      detachAndForgetSurface(surface)
     }
     focusedSurfaceIdByTab.removeValue(forKey: tabId)
     tabIsRunningById.removeValue(forKey: tabId)
@@ -170,6 +185,12 @@ extension WorktreeTerminalState {
     configureSurfaceCallbacks(for: view, tabId: tabId)
     surfaces[view.id] = view
     _ = registerTargetHandle(for: view.id)
+    // Canvas owns occlusion and never runs the tree-change activity sync, so
+    // ask for visibility here as `createSplit` does; the deferred-attachment
+    // path delivers it once the card hosts the view again.
+    if isCanvasManaged {
+      view.setOcclusion(true)
+    }
     if let profile = context?.launchProfile {
       launchProfilesBySurface[view.id] = profile
     }

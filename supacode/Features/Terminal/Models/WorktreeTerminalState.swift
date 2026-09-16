@@ -229,6 +229,8 @@ final class WorktreeTerminalState {
   /// Collects the tab records of one batch close (Close Other Tabs, ...) so
   /// they reach `onCloseRecorded` as a single undoable entry.
   @ObservationIgnored var pendingCloseGroup: [TerminalClosedTabRecord]?
+  /// Surfaces whose `forgetSurface` is running for a retained (undoable) close.
+  @ObservationIgnored var retainedForUndoSurfaceIDs: Set<UUID> = []
   /// Per-surface set of titles known to be the shell's idle prompt
   /// (the title `precmd` restores between commands). Populated by
   /// observing the first title that arrives after each

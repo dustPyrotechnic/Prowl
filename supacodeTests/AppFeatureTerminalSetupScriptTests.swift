@@ -142,7 +142,7 @@ struct AppFeatureTerminalSetupScriptTests {
     }
     store.exhaustivity = .off
 
-    await store.send(.terminalEvent(.tabRestored(worktreeID: worktree.id)))
+    await store.send(.terminalEvent(.tabRestored(worktreeID: worktree.id, tabID: TerminalTabID())))
     await store.receive(\.repositories.selectWorktree)
 
     #expect(store.state.repositories.selection == .worktree(worktree.id))
@@ -160,8 +160,42 @@ struct AppFeatureTerminalSetupScriptTests {
       AppFeature()
     }
 
-    await store.send(.terminalEvent(.tabRestored(worktreeID: "/tmp/repo/missing")))
+    await store.send(.terminalEvent(.tabRestored(worktreeID: "/tmp/repo/missing", tabID: TerminalTabID())))
     await store.finish()
+  }
+
+  @Test(.dependencies) func tabRestoredIntoTheSelectedWorktreeSendsNothing() async {
+    let worktree = makeWorktree()
+    let store = TestStore(
+      initialState: AppFeature.State(
+        repositories: makeRepositoriesState(worktree: worktree, pendingSetupScript: false, selected: true),
+        settings: SettingsFeature.State()
+      )
+    ) {
+      AppFeature()
+    }
+
+    await store.send(.terminalEvent(.tabRestored(worktreeID: worktree.id, tabID: TerminalTabID())))
+    await store.finish()
+  }
+
+  @Test(.dependencies) func tabRestoredInCanvasRequestsTheCardFocus() async {
+    let worktree = makeWorktree()
+    var repositoriesState = makeRepositoriesState(worktree: worktree, pendingSetupScript: false, selected: false)
+    repositoriesState.selection = .canvas
+    let tabID = TerminalTabID()
+    let store = TestStore(
+      initialState: AppFeature.State(repositories: repositoriesState, settings: SettingsFeature.State())
+    ) {
+      AppFeature()
+    }
+    store.exhaustivity = .off
+
+    await store.send(.terminalEvent(.tabRestored(worktreeID: worktree.id, tabID: tabID)))
+    await store.receive(\.repositories.newTerminalTabCreatedInCanvas)
+
+    #expect(store.state.repositories.pendingCanvasFocusRequest?.target == .tab(tabID))
+    #expect(store.state.repositories.selection == .canvas)
   }
 
   @Test(.dependencies) func setupScriptConsumedEventClearsPending() async {

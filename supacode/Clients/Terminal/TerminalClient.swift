@@ -77,9 +77,9 @@ struct TerminalClient {
     case notificationIndicatorChanged(count: Int)
     case tabCreated(worktreeID: Worktree.ID)
     case tabClosed(worktreeID: Worktree.ID, remainingTabs: Int)
-    /// An undo put a closed tab or pane back into a worktree that is not the
-    /// selected one; the reducer selects it so the restore is visible.
-    case tabRestored(worktreeID: Worktree.ID)
+    /// An undo put a closed tab or pane back. The reducer reveals it: the
+    /// worktree in normal mode, the card in Canvas.
+    case tabRestored(worktreeID: Worktree.ID, tabID: TerminalTabID)
     case focusChanged(worktreeID: Worktree.ID, surfaceID: UUID)
     case taskStatusChanged(worktreeID: Worktree.ID, status: WorktreeTaskStatus)
     case agentEntryChanged(ActiveAgentEntry)

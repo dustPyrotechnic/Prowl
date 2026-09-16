@@ -944,11 +944,11 @@ extension WorktreeTerminalState {
       // The last pane goes with its tab, so the undo record is a tab record.
       let record = retain ? makeClosedTabRecord(for: tabId) : nil
       if record != nil {
-        detachSurface(view)
+        detachAndForgetSurface(view)
       } else {
         view.closeSurface()
+        forgetSurface(view.id)
       }
-      forgetSurface(view.id)
       trees.removeValue(forKey: tabId)
       focusedSurfaceIdByTab.removeValue(forKey: tabId)
       removeBoundDirectoryTab(tabId)
@@ -970,11 +970,11 @@ extension WorktreeTerminalState {
     }
     let context = retainedContext(for: view.id)
     if retain {
-      detachSurface(view)
+      detachAndForgetSurface(view)
     } else {
       view.closeSurface()
+      forgetSurface(view.id)
     }
-    forgetSurface(view.id)
     updateTree(newTree, for: tabId)
     updateRunningState(for: tabId)
     if wasFocused {
