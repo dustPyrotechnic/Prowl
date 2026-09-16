@@ -186,17 +186,20 @@ struct ContentView: View {
         WorkflowStartOverlayView(store: workflowStartStore)
       }
     }
-    .background(
-      WindowTabbingDisabler(
-        undoShortcuts: TerminalCloseUndoKeyMonitor.Shortcuts(
-          undo: ghosttyShortcuts.keyboardShortcut(for: "undo")
-            ?? TerminalCloseUndoKeyMonitor.Shortcuts.ghosttyDefaults.undo,
-          redo: ghosttyShortcuts.keyboardShortcut(for: "redo")
-            ?? TerminalCloseUndoKeyMonitor.Shortcuts.ghosttyDefaults.redo
-        ),
-        undoClose: { terminalManager.undoClose() },
-        redoClose: { terminalManager.redoClose() }
-      )
+    .background(windowTabbingDisabler)
+  }
+
+  /// Also carries the ⌘Z route for an emptied worktree (docs-ai 069.002).
+  private var windowTabbingDisabler: WindowTabbingDisabler {
+    let shortcuts = TerminalCloseUndoKeyMonitor.Shortcuts.resolving(
+      undo: ghosttyShortcuts.keyboardShortcut(for: "undo"),
+      redo: ghosttyShortcuts.keyboardShortcut(for: "redo")
+    )
+    let manager = terminalManager
+    return WindowTabbingDisabler(
+      undoShortcuts: shortcuts,
+      undoClose: { manager.undoClose() },
+      redoClose: { manager.redoClose() }
     )
   }
 

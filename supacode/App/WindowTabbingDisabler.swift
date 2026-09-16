@@ -49,7 +49,12 @@ final class WindowTabbingView: NSView, NSWindowDelegate {
   ) {
     guard undoShortcuts != shortcuts else { return }
     undoShortcuts = shortcuts
-    undoKeyMonitor = TerminalCloseUndoKeyMonitor(shortcuts: shortcuts, undo: undo, redo: redo)
+    undoKeyMonitor = TerminalCloseUndoKeyMonitor(
+      ownerWindow: { [weak self] in self?.window },
+      shortcuts: shortcuts,
+      undo: undo,
+      redo: redo
+    )
   }
 
   func windowShouldClose(_ sender: NSWindow) -> Bool {

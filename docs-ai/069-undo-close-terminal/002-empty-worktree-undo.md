@@ -23,12 +23,17 @@ would have taken ⌘Z away from text fields.
 ## Change
 
 - `supacode/App/TerminalCloseUndoKeyMonitor.swift` — a local `keyDown` monitor
-  scoped to the key window. It routes Ghostty's resolved `undo` / `redo`
-  triggers (`GhosttyShortcutManager.keyboardShortcut(for:)`, ⌘Z / ⌘⇧Z by
-  default) to `WorktreeTerminalManager.undoClose()` / `redoClose()` and
-  swallows the event only when something was restored or re-closed. It passes
-  the key through when the first responder is a `GhosttySurfaceView` (Ghostty's
-  binding handles it) or an `NSText` field editor (standard text undo).
+  bound to its owning window (`decision(for:ownerWindow:shortcuts:)` rejects
+  events of any other window; a Settings or Diff window never drives the main
+  window's stack). It routes Ghostty's default `undo` / `redo` triggers (⌘Z,
+  ⌘⇧T, ⌘⇧Z) plus whatever `GhosttyShortcutManager.keyboardShortcut(for:)`
+  resolves — additively, because `ghostty_config_trigger` hides `performable`
+  bindings (the defaults are) and keeps one trigger per action — to
+  `WorktreeTerminalManager.undoClose()` / `redoClose()`, and swallows the event
+  only when something was restored or re-closed. It passes the key through when
+  the first responder is a `GhosttySurfaceView` (Ghostty's binding handles it)
+  or an `NSText` field editor (standard text undo). A `performable:` rebinding
+  or an unbind of `undo` is invisible to this route (Review Loop round 1, R2).
 - `supacode/App/WindowTabbingDisabler.swift` — the main window's helper view
   owns the monitor; `ContentView` supplies the triggers and the manager
   closures. The monitor is re-created only when the triggers change.
