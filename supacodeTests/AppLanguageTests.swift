@@ -16,7 +16,7 @@ struct AppLanguageTests {
   }
 
   @Test func titlesUseNativeLanguageForms() {
-    #expect(AppLanguage.system.title == "跟随系统")
+    #expect(AppLanguage.system.title == "Follow System / 跟随系统")
     #expect(AppLanguage.zhHans.title == "简体中文")
     #expect(AppLanguage.english.title == "English")
   }
@@ -224,7 +224,7 @@ struct AppLanguageTests {
     bridge.synchronize(preference: .zhHans)
 
     #expect(
-      bridge.platformLanguagesForPrediction(preferredLanguages: ["zh-Hans", "en"]) == ["en"]
+      bridge.platformLanguagesForPrediction() == ["en"]
     )
   }
 
@@ -235,7 +235,7 @@ struct AppLanguageTests {
     let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
 
     #expect(
-      bridge.platformLanguagesForPrediction(preferredLanguages: ["fr", "en"]) == ["fr", "en"]
+      bridge.platformLanguagesForPrediction() == ["fr", "en"]
     )
   }
 

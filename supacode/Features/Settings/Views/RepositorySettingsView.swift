@@ -79,10 +79,9 @@ struct RepositorySettingsView: View {
           } header: {
             Text("Workspace")
           } footer: {
+            let metadataPath = ProjectWorkspace.metadataURL(for: store.rootURL).path(percentEncoded: false)
             Text(
-              "Read-only. Defined in "
-                + "\(ProjectWorkspace.metadataURL(for: store.rootURL).path(percentEncoded: false)) "
-                + "— edit that file to change it."
+              "Read-only. Defined in \(metadataPath) — edit that file to change it."
             )
             .font(.footnote)
             .foregroundStyle(.secondary)
@@ -196,11 +195,15 @@ struct RepositorySettingsView: View {
           Section {
             if store.showsDiffSettings {
               Toggle(isOn: observeLineDiffsAutomatically) {
-                Text("Observe line diffs automatically")
-                Text(
-                  "Keeps each workspace's line-change badge up to date in the background. "
+                VStack(alignment: .leading, spacing: 2) {
+                  Text("Observe line diffs automatically")
+                  let message =
+                    "Keeps each workspace's line-change badge up to date in the background. "
                     + "Turn off for very large repositories to avoid background git diff work."
-                )
+                  Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
               }
               .help(
                 "Refresh workspace line-change badges automatically. "
@@ -210,11 +213,15 @@ struct RepositorySettingsView: View {
 
             if store.showsPullRequestSettings {
               Toggle(isOn: fetchPullRequestState) {
-                Text("Fetch pull request state")
-                Text(
-                  "Periodically checks pull request status (open, merged, checks) for this repository's branches. "
+                VStack(alignment: .leading, spacing: 2) {
+                  Text("Fetch pull request state")
+                  let message =
+                    "Periodically checks pull request status (open, merged, checks) for this repository's branches. "
                     + "Turn off to skip background GitHub queries."
-                )
+                  Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
               }
               .help(
                 "Fetch pull request status for this repository's branches. "
@@ -282,10 +289,10 @@ struct RepositorySettingsView: View {
         } header: {
           VStack(alignment: .leading, spacing: 4) {
             Text("Agents")
-            Text(
+            let message =
               "Recommended first in the Agents menu for this repository. "
-                + "Without a designation, the last profile launched here is recommended."
-            )
+              + "Without a designation, the last profile launched here is recommended."
+            Text(message)
             .foregroundStyle(.secondary)
           }
         }
@@ -379,10 +386,11 @@ struct RepositorySettingsView: View {
           } header: {
             VStack(alignment: .leading, spacing: 4) {
               Text("Custom Commands")
-              Text(
-                "Repository and global terminal actions. Enabled commands appear in repository order, "
-                  + "then global order. Edit global commands in Settings → Commands."
-              )
+              let message =
+                "Repository and global terminal actions. "
+                + "Enabled commands appear in repository order, then global order. "
+                + "Edit global commands in Settings → Commands."
+              Text(message)
               .foregroundStyle(.secondary)
             }
           }
@@ -417,7 +425,7 @@ struct RepositorySettingsView: View {
         isPresented: Binding(
           get: { workflowsStore.newWorkflow != nil }, set: { if !$0 { workflowsStore.send(.dismissNewWorkflow) } })
       ) {
-        NewWorkflowSheet(store: workflowsStore)
+        NewWorkflowSheet(appLocale: appLocale, store: workflowsStore)
       }
     } destination: { detailStore in
       if featureFlags.workflowUI {

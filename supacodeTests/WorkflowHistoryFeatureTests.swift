@@ -107,9 +107,15 @@ struct WorkflowHistoryFeatureTests {
       ButtonState(role: .cancel) { TextState("Cancel") }
       ButtonState(role: .destructive, action: .confirmClear) { TextState("Clear History") }
     } message: {
-      TextState(
-        "\(count) finished run\(count == 1 ? "" : "s") and their prompts, deliveries, and action outputs "
-          + "will be deleted. Runs that are still active are kept. This cannot be undone.")
+      let message = if count == 1 {
+        "1 finished run and its prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone."
+      } else {
+        String(
+          format: "%lld finished runs and their prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.",
+          count
+        )
+      }
+      return TextState(message)
     }
   }
 }
