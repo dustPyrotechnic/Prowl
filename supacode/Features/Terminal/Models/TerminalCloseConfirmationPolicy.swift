@@ -60,7 +60,8 @@ enum TerminalCloseConfirmationPolicy {
     for decision: TerminalCloseConfirmationDecision,
     worktreeName: String
   ) -> String {
-    let paneText = decision.protectedPaneCount == 1
+    let paneText =
+      decision.protectedPaneCount == 1
       ? String(localized: "pane")
       : String(localized: "panes")
     let reasonText: String

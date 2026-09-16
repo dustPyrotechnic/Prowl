@@ -293,7 +293,7 @@ struct RepositorySettingsView: View {
               "Recommended first in the Agents menu for this repository. "
               + "Without a designation, the last profile launched here is recommended."
             Text(message)
-            .foregroundStyle(.secondary)
+              .foregroundStyle(.secondary)
           }
         }
 
@@ -391,7 +391,7 @@ struct RepositorySettingsView: View {
                 + "Enabled commands appear in repository order, then global order. "
                 + "Edit global commands in Settings → Commands."
               Text(message)
-              .foregroundStyle(.secondary)
+                .foregroundStyle(.secondary)
             }
           }
         }

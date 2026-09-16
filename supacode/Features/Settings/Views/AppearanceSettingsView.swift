@@ -26,7 +26,7 @@ struct AppearanceSettingsView: View {
             "The change applies the next time Prowl starts; quitting the app may interrupt running terminal tasks.",
             comment: "App language setting footer: Restart requirement and terminal task warning"
           )
-            .foregroundStyle(.secondary)
+          .foregroundStyle(.secondary)
           if store.languageChangePending {
             Text("The language will switch on next launch.", comment: "App language change pending notice")
               .font(.footnote)

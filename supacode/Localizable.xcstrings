@@ -11399,26 +11399,6 @@
         }
       }
     },
-    "1 finished run and its prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1 个已完成的运行及其提示、交付和操作输出将被删除。仍在活动的运行将保留。此操作无法撤销。"
-          }
-        }
-      }
-    },
-    "%lld finished runs and their prompts, deliveries, and action outputs will be deleted. Runs that are still active are kept. This cannot be undone.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld 个已完成的运行及其提示、交付和操作输出将被删除。仍在活动的运行将保留。此操作无法撤销。"
-          }
-        }
-      }
-    },
     "Removed 1 run.": {
       "localizations": {
         "zh-Hans": {
@@ -11435,6 +11415,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "已删除 %lld 个运行。"
+          }
+        }
+      }
+    },
+    "The change applies the next time Prowl starts; quitting the app may interrupt running terminal tasks.": {
+      "comment": "App language setting footer: Restart requirement and terminal task warning",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改将在下次启动 Prowl 时生效；退出应用可能会中断正在运行的终端任务。"
+          }
+        }
+      }
+    },
+    "Start Host": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启动主机"
+          }
+        }
+      }
+    },
+    "Delete This Run?": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除此运行？"
+          }
+        }
+      }
+    },
+    "1 finished run will be deleted. Runs that are still active are kept. This cannot be undone.": {
+      "comment": "Clear workflow history confirmation: singular (1 run)",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将删除 1 个已完成的运行。仍在活动的运行会被保留。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "%lld finished runs will be deleted. Runs that are still active are kept. This cannot be undone.": {
+      "comment": "Clear workflow history confirmation: plural (N runs)",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将删除 %lld 个已完成的运行。仍在活动的运行会被保留。此操作无法撤销。"
           }
         }
       }

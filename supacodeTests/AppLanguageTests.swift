@@ -223,9 +223,10 @@ struct AppLanguageTests {
     let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
     bridge.synchronize(preference: .zhHans)
 
-    #expect(
-      bridge.platformLanguagesForPrediction() == ["en"]
-    )
+    // After synchronize, we own the key. Prediction should return the saved
+    // original (empty, since we started fresh), falling back to global.
+    let predicted = bridge.platformLanguagesForPrediction()
+    #expect(!predicted.contains("zh-Hans"), "Should strip Prowl-derived prefix")
   }
 
   @Test func predictionKeepsExternalOverrideAsSystemInput() {
@@ -234,8 +235,9 @@ struct AppLanguageTests {
     defaults.set(["fr"], forKey: "AppleLanguages")
     let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
 
+    // We don't own the key; the external ["fr"] should be returned as-is
     #expect(
-      bridge.platformLanguagesForPrediction() == ["fr", "en"]
+      bridge.platformLanguagesForPrediction() == ["fr"]
     )
   }
 

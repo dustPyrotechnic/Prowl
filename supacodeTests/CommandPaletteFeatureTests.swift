@@ -1194,14 +1194,10 @@ struct CommandPaletteFeatureTests {
     let ordered = CommandPaletteFeature.filterItems(items: items, query: "")
 
     #expect(!ordered.isEmpty, "Should generate command palette items")
-    // Verify the failing check action is present with high priority
-    let hasFailingCheckAction = ordered.contains(where: { item in
-      if case .openFailingCheckDetails(let wtID) = item.kind, wtID == worktree.id {
-        return true
-      }
-      return false
-    })
-    #expect(hasFailingCheckAction, "Should include openFailingCheckDetails action for failing check")
+    #expect(
+      ordered.first?.kind == .openFailingCheckDetails(worktree.id),
+      "Failing check action should rank first"
+    )
   }
   @Test func commandPaletteFailingActionFallsBackToLogsWhenCheckURLMissing() {
     let rootPath = "/tmp/repo"
@@ -1268,7 +1264,10 @@ struct CommandPaletteFeatureTests {
     )
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
-    let closeItem = items.first(where: { if case .closePullRequest = $0.kind { return true }; return false })
+    let closeItem = items.first(where: {
+      if case .closePullRequest = $0.kind { return true }
+      return false
+    })
     #expect(closeItem != nil)
     #expect(closeItem?.subtitle == "PR")
     if case .some(.closePullRequest(let closeWorktreeID)) = closeItem?.kind {
@@ -1291,7 +1290,12 @@ struct CommandPaletteFeatureTests {
     )
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
-    #expect(!items.contains(where: { if case .closePullRequest = $0.kind { return true }; return false }))
+    #expect(
+      !items.contains(where: {
+        if case .closePullRequest = $0.kind { return true }
+        return false
+      })
+    )
   }
 
   @Test func commandPaletteDoesNotShowMergeActionWhenBlocked() {
@@ -1310,7 +1314,12 @@ struct CommandPaletteFeatureTests {
     )
 
     let items = CommandPaletteFeature.commandPaletteItems(from: state)
-    #expect(!items.contains(where: { if case .mergePullRequest = $0.kind { return true }; return false }))
+    #expect(
+      !items.contains(where: {
+        if case .mergePullRequest = $0.kind { return true }
+        return false
+      })
+    )
   }
 
   @Test func recencyBreaksFuzzyTiesWithinGroup() {
