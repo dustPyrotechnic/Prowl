@@ -5,11 +5,13 @@ from pathlib import Path
 
 from localization import (
     Baseline,
+    apply_summary,
     apply_translations,
     build_settings_command,
     candidate_literals,
     debt_places,
     open_places,
+    places_elsewhere,
     extracted_keys,
     extraction_issues,
     placeholders,
@@ -112,12 +114,13 @@ class TranslationIssueTests(unittest.TestCase):
 
 class ExtractionIssueTests(unittest.TestCase):
     def test_reports_key_in_code_without_entry(self):
-        issues = extraction_issues(catalog({"Open": entry("打开")}), {"Open": {"A.swift"}, "Close": {"B.swift"}})
-        self.assertEqual(issues.missing, {"Close": ["B.swift"]})
+        extracted = {"Open": {"supacode/A.swift:3"}, "Close": {"supacode/B.swift:9", "supacode/B.swift:4"}}
+        issues = extraction_issues(catalog({"Open": entry("打开")}), extracted)
+        self.assertEqual(issues.missing, {"Close": ["supacode/B.swift:4", "supacode/B.swift:9"]})
         self.assertEqual(issues.unused, [])
 
     def test_reports_entry_without_use(self):
-        issues = extraction_issues(catalog({"Open": entry("打开"), "Close": entry("关闭")}), {"Open": {"A.swift"}})
+        issues = extraction_issues(catalog({"Open": entry("打开"), "Close": entry("关闭")}), {"Open": {"A.swift:1"}})
         self.assertEqual(issues.unused, ["Close"])
 
     def test_keeps_manual_entry_without_use(self):
@@ -133,12 +136,15 @@ class ExtractedKeyTests(unittest.TestCase):
             source.write_text("")
             data = {
                 "source": str(source),
-                "tables": {"Localizable": [{"key": "Open"}, {"key": ""}], "Other": [{"key": "Ignored"}]},
+                "tables": {
+                    "Localizable": [{"key": "Open", "location": {"startingLine": 7}}, {"key": ""}],
+                    "Other": [{"key": "Ignored"}],
+                },
             }
             (root / "View.stringsdata").write_text(json.dumps(data))
             removed = {"source": str(root / "Removed.swift"), "tables": {"Localizable": [{"key": "Gone"}]}}
             (root / "Removed.stringsdata").write_text(json.dumps(removed))
-            self.assertEqual(extracted_keys(root), {"Open": {"View.swift"}})
+            self.assertEqual(extracted_keys(root, root=root), {"Open": {"View.swift:7"}})
 
 
 class ApplyTests(unittest.TestCase):
@@ -153,6 +159,17 @@ class ApplyTests(unittest.TestCase):
         data = catalog({})
         self.assertEqual(apply_translations(data, {"%@:%@": None}), [])
         self.assertEqual(data["strings"]["%@:%@"], {"shouldTranslate": False})
+
+    def test_summarizes_what_apply_changed(self):
+        data = catalog({"Open": entry("开")})
+        translations = {"Open": {"zh-Hans": "打开"}, "Close": {"zh-Hans": "关闭"}, "Title": {"manual": True}, "·": None}
+        self.assertEqual(apply_summary(data, translations), "Added 3, updated 1 (1 manual, 1 not translatable).")
+
+    def test_marks_a_key_as_manual_without_a_new_translation(self):
+        data = catalog({"Toggle Canvas": entry("切换画布")})
+        self.assertEqual(apply_translations(data, {"Toggle Canvas": {"manual": True}}), [])
+        self.assertEqual(data["strings"]["Toggle Canvas"]["extractionState"], "manual")
+        self.assertEqual(data["strings"]["Toggle Canvas"]["localizations"]["zh-Hans"], unit("切换画布"))
 
     def test_marks_a_run_time_key_as_manual(self):
         data = catalog({})
@@ -175,7 +192,7 @@ class PruneTests(unittest.TestCase):
             "Run time": entry("运行时", extractionState="manual"),
         }
         data = catalog(strings)
-        self.assertEqual(prune(data, {"Open": {"A.swift"}}), ["Gone"])
+        self.assertEqual(prune(data, {"Open": {"A.swift:1"}}), ["Gone"])
         self.assertEqual(sorted(data["strings"]), ["Open", "Run time"])
 
 
@@ -239,7 +256,13 @@ class BaselineTests(unittest.TestCase):
 
     def test_ignores_what_the_compiler_extracted_from_the_same_file(self):
         found = {"Open %@": ["supacode/Features/C.swift:3"]}
-        self.assertEqual(unknown_candidates(found, self.baseline(), extracted={"Open %lld": {"C.swift"}}), {})
+        extracted = {"Open %lld": {"supacode/Features/C.swift:3"}}
+        self.assertEqual(unknown_candidates(found, self.baseline(), extracted), {})
+
+    def test_does_not_confuse_two_files_with_the_same_name(self):
+        found = {"Open %@": ["supacode/Features/A/Row.swift:3"]}
+        extracted = {"Open %@": {"supacode/Features/B/Row.swift:3"}}
+        self.assertEqual(list(unknown_candidates(found, self.baseline(), extracted)), ["Open %@"])
 
     def test_trusts_a_run_time_key_only_where_titles_are_looked_up(self):
         baseline = self.baseline(runtimeKeyPaths={"supacode/App/AppShortcuts.swift": "Binding.localizedTitle"})
@@ -255,12 +278,12 @@ class BaselineTests(unittest.TestCase):
             "Toggle Left Sidebar": ["supacode/App/AppShortcuts.swift:3"],
             "Not in the catalog": ["supacode/App/AppShortcuts.swift:4"],
         }
-        unknown = unknown_candidates(found, baseline, {"Toggle Left Sidebar": {"SidebarCommands.swift"}})
+        unknown = unknown_candidates(found, baseline, {"Toggle Left Sidebar": {"supacode/Commands/SidebarCommands.swift:15"}})
         self.assertEqual(list(unknown), ["Not in the catalog"])
 
     def test_reports_a_literal_that_only_another_file_localizes(self):
         found = {"Toggle Canvas": ["supacode/App/Menu.swift:3", "supacode/Features/Palette.swift:9"]}
-        extracted = {"Toggle Canvas": {"Menu.swift"}}
+        extracted = {"Toggle Canvas": {"supacode/App/Menu.swift:3"}}
         self.assertEqual(
             unknown_candidates(found, self.baseline(), extracted),
             {"Toggle Canvas": ["supacode/Features/Palette.swift:9"]},
@@ -298,10 +321,18 @@ class BaselineTests(unittest.TestCase):
         )
         self.assertEqual(len(debt_places(still_open, baseline, changed=None)), 2)
 
+    def test_names_the_places_of_a_literal_outside_the_changed_files(self):
+        baseline = self.baseline(debt=["Open on %@"])
+        still_open = {"Open on %@": ["supacode/Commands/Menu.swift:3", "supacode/Features/Button.swift:9"]}
+        self.assertEqual(
+            places_elsewhere(still_open, "Open on %@", changed={"supacode/Commands/Menu.swift"}),
+            ["supacode/Features/Button.swift:9"],
+        )
+
     def test_debt_is_paid_when_every_place_is_localized(self):
         baseline = self.baseline(debt=["Expand All", "Collapse All"])
         found = {"Expand All": ["supacode/Features/Sidebar.swift:3"], "Collapse All": ["supacode/Features/Sidebar.swift:4"]}
-        still_open = open_places(found, baseline, {"Expand All": {"Sidebar.swift"}})
+        still_open = open_places(found, baseline, {"Expand All": {"supacode/Features/Sidebar.swift:3"}})
         self.assertEqual(baseline.obsolete(set(still_open)), ["Expand All"])
 
 

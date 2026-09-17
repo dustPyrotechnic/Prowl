@@ -113,6 +113,11 @@ Palette titles are such keys. `AppLanguageTests` checks that each shortcut title
 entry. `LocalizedStringResource(runtimeKey:)` (in `supacode/App/AppShortcuts.swift`) marks the
 call sites.
 
+A run-time lookup localizes only the value it returns. When the same `String` also goes to
+`Button(title)` or `Text(title)`, that use is verbatim: the Shelf menu items showed English
+while their tooltips were Chinese, and the nine `Select Book N` manual entries made the catalog
+look complete.
+
 Prefer to let the compiler see the literal:
 
 - Give a helper a `LocalizedStringResource` or `LocalizedStringKey` parameter, not `String`.

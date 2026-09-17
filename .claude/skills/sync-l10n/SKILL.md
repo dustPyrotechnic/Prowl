@@ -14,7 +14,8 @@ Read these first:
 
 - `docs-ai/070-app-localization/000-plan.md` — the design and why it works this way.
 - `docs-ai/070-app-localization/glossary.md` — the vocabulary. **Follow it for every value.**
-  When a new term needs a decision, add it to the glossary in the same change.
+  When a new term needs a decision, add it to the glossary in the same change. The glossary is
+  a living document of this skill, so this edit of `docs-ai/` is expected.
 
 All edits to the catalog and the baseline go through `scripts/localization.py`. Do not edit
 `supacode/Localizable.xcstrings` or `scripts/localization_baseline.json` by hand: the script
@@ -31,66 +32,65 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
   years of growth; per-literal entries do not.
 - **Ask when the meaning is not clear.** A wrong exemption hides UI copy for good. Collect the
   unclear suspects and ask the user once, with the location and your best guess for each.
-- **The debt is allowed to exist.** Burn it down within the budget below. Do not start a
+- **The debt is allowed to exist.** Burn it down within the budget in step 3. Do not start a
   large refactor inside a release.
 
 ## Steps
+
+Work in this order, because a change to Swift code changes what the compiler extracts:
+**first every code change (steps 2 and 3), then one rebuild, then translate everything in one
+`apply` (step 4), then `prune` (step 5).** The commands are `python3 scripts/localization.py
+<command>`; `make check-localization` and `make audit-localization` are wrappers for `check` and
+for `build-app` + `audit`.
 
 1. **Build and audit.** `$SCRATCH` is any temporary directory outside the repository.
    ```bash
    make build-app
    python3 scripts/localization.py audit --json > "$SCRATCH/l10n-audit.json"
    ```
-   The report has six lists and the size of the debt. When every list is empty, steps 2–5
-   have nothing to do: go to step 6. The audit needs a fresh build, because it reads what the
-   compiler extracted. Build again after every change to Swift code.
+   - The audit needs a fresh build, because it reads what the compiler extracted. Build again
+     after every change to Swift code.
+   - `audit` exits with 1 while any list is not empty. That is a finding, not a failure; do
+     not chain it with `&&`.
+   - Write down the `debt` number now. The report in step 7 needs it.
+   - The JSON has six lists and the debt:
+     ```json
+     {
+       "broken": ["\"Copy %@\": zh-Hans placeholders [] do not match source [@]"],
+       "missing": {"Stop Host": ["supacode/Features/RemoteMirror/MirrorHostButton.swift:88"]},
+       "unused": ["Legacy banner"],
+       "untranslated": ["\"Close\": no zh-Hans translation"],
+       "suspects": {"Beta channel %@": ["supacode/Features/Settings/Views/UpdatesSettingsView.swift:53"]},
+       "obsolete": ["A literal that left the code"],
+       "debt": 622
+     }
+     ```
+   - When every list is empty, go to step 3.
 
-2. **`broken`** — a translation whose placeholders do not match its source. Fix the value
-   with `apply` (step 4). This is the only list that also fails `make check`.
-
-3. **`unused`** — catalog entries that no code uses. Before you remove them, look for run-time
-   keys: a key that is looked up through `LocalizedStringResource(runtimeKey:)` or
-   `String.LocalizationValue(<variable>)` is invisible to the compiler. Find the literal in the
-   source (`git grep -F '"<key>"' -- supacode`). If it is still a run-time key, keep it and mark
-   it with `"manual": true` through `apply`. Remove the rest:
-   ```bash
-   python3 scripts/localization.py prune
-   ```
-   `prune` also drops the baseline entries in `obsolete`: the literal left the code, or every
-   place of it is localized now.
-
-4. **`missing` and `untranslated`** — write the translations to a JSON file and apply it:
-   ```json
-   {
-     "Stop Host": {"zh-Hans": "停止主机"},
-     "Resetting “%@” restores %@.": {"zh-Hans": "重置“%1$@”会恢复 %2$@。"},
-     "Toggle Canvas": {"zh-Hans": "切换画布", "manual": true},
-     "%@:%@": null
-   }
-   ```
-   ```bash
-   python3 scripts/localization.py apply "$SCRATCH/l10n-new.json"
-   ```
-   - Translate into **every** language the catalog uses (`untranslated` names the language).
-   - `null` means "do not translate": a key that is only placeholders, punctuation, or a
-     sample value such as `XXXX-XXXX`.
-   - Keep every placeholder. When the order changes, number all of them (`%1$@`, `%2$lld`).
-   - For a short or ambiguous string ("Open", "Run", "%@ in %@"), read the source file that
-     `missing` names before you translate. One English word can need two translations; then
-     the code needs its own key with a default value (see the plan, "Keys the compiler cannot
-     see").
-   - `apply` rejects a value with wrong placeholders and prints why.
-
-5. **`suspects`** — literals that look like UI copy, are not localized in that file, and are not
+2. **`suspects`** — literals that look like UI copy, are not localized in that file, and are not
    in the baseline yet. The same words can be localized in a menu and verbatim in a tooltip, so
-   the report names each place. Open each location and decide:
+   the report names each place. Open each place and decide:
 
    | It is… | Do |
    | --- | --- |
-   | UI copy, and the fix is local | Make it localizable in code (patterns below), rebuild, translate it in step 4 |
-   | UI copy, but the fix needs a wider change (an error type, a reducer with tests, text that travels between machines) | Record it as `debt` |
+   | UI copy, and the fix is local | Make it localizable in code (patterns below). It shows up as `missing` after the rebuild |
+   | UI copy, but the fix is not local | Record it as `debt` |
    | Not UI: a log line, an identifier, a product name, text for an agent, a CLI or wire-protocol message, developer-only text | Exempt it with that category — or add a rule when the whole file or pattern is not UI |
-   | Not clear | Ask the user (one batch) |
+   | Not clear | Ask the user, all unclear items in one batch |
+
+   - **Local** means: you change only the file of the literal (and the signature of a helper in
+     that file), and no test asserts on the text. An error type that several callers show, a
+     reducer whose tests compare the text, and text that travels between machines are not local.
+   - Code that nothing calls yet is still triaged. Judge by where the type lives and what the
+     text says.
+   - **When you cannot ask the user** (an unattended run): never exempt an unclear literal, because
+     a wrong exemption hides UI copy for good. Localize it or record it as `debt`, and list it
+     under "Needs human decision".
+   - A decision is about the **literal**, not about one place. Exempt a literal only when
+     **every** place is not UI. "Default" in a preview and in a real label is `debt`.
+   - A suspect shows every interpolation as `%@`. The real key comes from the compiler and can
+     differ (`%lld` for `Int`, `%d` for `Int32`). Do not write translations from the suspect
+     text: rebuild and copy the key from `missing`.
 
    ```json
    {
@@ -101,39 +101,93 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
    ```bash
    python3 scripts/localization.py triage "$SCRATCH/l10n-triage.json"
    ```
-   Categories: `identifier`, `product-name`, `log`, `agent-prompt`, `protocol`, `developer`,
-   `other`. The latest decision wins, so a wrong exemption can be moved back to `debt`.
+   Either key can be left out. Categories: `identifier`, `product-name`, `log`, `agent-prompt`,
+   `protocol`, `developer`, `other`. The latest decision wins, so a wrong exemption can be moved
+   back to `debt`.
 
-   - A decision is about the **literal**, not about one place. Exempt a literal only when
-     **every** place is not UI. "Default" in a preview and in a real label is `debt`.
-   - Rules live in three maps of the baseline file. Edit them directly (the value is the
-     reason), then run the audit again:
-     `exemptPaths` (a whole file or folder is never UI), `exemptLinePatterns` (a call pattern
-     is never UI, such as a logger), and `runtimeKeyPaths` (a file whose titles reach the
-     catalog through a run-time lookup, such as `AppShortcuts.swift`; there a literal that is
-     a catalog key counts as localized).
-   - When there are more suspects than the budget in step 6 allows, localize the ones a user
-     sees most (the main window, menus, the Command Palette, alerts) and record the rest as
-     `debt`.
+   Rules live in three maps of `scripts/localization_baseline.json`. Edit them directly (the
+   value is the reason), then run the audit again: `exemptPaths` (a whole file or folder is
+   never UI), `exemptLinePatterns` (a call pattern is never UI, such as a logger), and
+   `runtimeKeyPaths` (a file whose titles reach the catalog through a run-time lookup, such as
+   `AppShortcuts.swift`; there a literal that is a catalog key counts as localized).
 
-6. **Debt budget.** In each release, localize the debt in files that changed since the previous
-   release tag, up to about 30 literals. Start with what a user sees most.
+3. **Debt budget.** In each release, localize the debt in files that changed since the previous
+   release tag, up to about 30 **literals**. Skip this step when the release is urgent. Do more
+   only when the user asks.
    ```bash
    python3 scripts/localization.py debt --since "$(git describe --tags --abbrev=0)"
    ```
-   After the code is localizable, rebuild, translate the new `missing` strings (step 4), and
-   run `prune`: it removes a debt entry when every place of its literal is localized, so the
-   number goes down. Skip this step when the release is urgent. Do more only when the user asks.
+   (`git fetch --tags` first when `git describe` finds no tag.)
+   - The command lists **places**. One literal can have several, and a debt entry is paid only
+     when **every** place of its literal is localized. `(also at …)` names the places in files
+     that did not change; fix those too, or leave the literal for a later release.
+   - Choose what a user sees most: the main window, menus, the Command Palette, alerts. A file
+     can be done in part.
+   - When you localize a string that the code puts together from parts, localize every part,
+     also the parts the audit did not list (`"Listening · " + count`), or the UI mixes two
+     languages. Turn a `+` chain into one literal with interpolation; the key changes
+     (`"Last seen "` becomes `Last seen %@`) and `prune` still sees that the debt is paid.
+   - Suspects and debt share this budget. When there are more local fixes than the budget
+     allows, do the most visible ones and record the rest as `debt`.
 
-7. **Verify.** Rebuild and audit again until the report is empty, then:
+4. **Rebuild, then translate `broken`, `missing`, and `untranslated` in one file.**
    ```bash
-   make build-app && python3 scripts/localization.py audit
-   make check
+   make build-app
+   python3 scripts/localization.py audit --json > "$SCRATCH/l10n-audit.json"
    ```
-   When you changed Swift code, run `make test` as well. Tests assert on English copy, and a
-   key you changed can break one.
+   ```json
+   {
+     "Stop Host": {"zh-Hans": "停止主机"},
+     "Resetting “%@” restores %@.": {"zh-Hans": "重置“%1$@”会恢复 %2$@。"},
+     "Toggle Canvas": {"zh-Hans": "切换画布", "manual": true},
+     "Select Worktree 1": {"manual": true},
+     "%@:%@": null
+   }
+   ```
+   ```bash
+   python3 scripts/localization.py apply "$SCRATCH/l10n-new.json"
+   ```
+   - `apply` prints what it added and updated; keep the numbers for the report. It rejects a
+     value with wrong placeholders and prints why.
+   - For `broken`, put the corrected value in the same file. To see the current value, read
+     `supacode/Localizable.xcstrings`; reading is fine, only editing goes through the script.
+   - Translate into **every** language the catalog uses (`untranslated` names the language).
+   - `null` means "do not translate": a key that is only placeholders, punctuation, or a
+     sample value such as `XXXX-XXXX`.
+   - Keep every placeholder exactly (`%lld` stays `%lld`). When the order changes, number all of
+     them (`%1$@`, `%2$lld`).
+   - For a short or ambiguous string ("Open", "Run", "%@ in %@"), open the place that `missing`
+     names before you translate. One English word can need two translations; then the code
+     needs its own key with a default value (see the plan, "Keys the compiler cannot see").
 
-8. **Report.**
+5. **`unused` and `obsolete`.** `prune` removes **every** `unused` entry that is not marked
+   manual; there is no selection by key. So look for run-time keys first: a key that the code
+   looks up through `LocalizedStringResource(runtimeKey:)` or
+   `String.LocalizationValue(<variable>)` is invisible to the compiler. Find the literal in the
+   Swift sources:
+   ```bash
+   git grep -nF '"<key>"' -- 'supacode/*.swift'
+   ```
+   When it is still a run-time key, mark it with `{"<key>": {"manual": true}}` through `apply`.
+   Then:
+   ```bash
+   python3 scripts/localization.py prune
+   ```
+   `prune` also removes the baseline entries in `obsolete`: the literal left the code, or every
+   place of it is localized now. It never removes a manual entry; when a run-time lookup is
+   gone for good, tell the user in the report.
+
+6. **Verify.** `make check` formats changed Swift files, so it comes first.
+   ```bash
+   make check
+   make build-app
+   python3 scripts/localization.py audit
+   ```
+   Repeat from the step that owns a finding until `audit` prints only the `Known debt` line and
+   exits with 0. When you changed Swift code, run `make test` as well: tests assert on English
+   copy, and a changed key can break one.
+
+7. **Report.**
    ```
    ## L10n Sync
    Translated: <n> new, <n> updated · Removed: <n> unused · Marked manual: <n>
@@ -155,6 +209,7 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
 | Long copy | One multi-line literal with `\` line continuations. `"a " + "b"` is a `String` and is never localized |
 | The title is only known at run time | `LocalizedStringResource(runtimeKey:)`, and mark the catalog entry `manual` |
 | Data, not copy (a branch name, a path) | `Text(verbatim:)` |
+| A title with a value in it, used for a button and a tooltip | `let title: LocalizedStringResource = "Select Book \(index + 1)"`, then `Button(title)`. A `String` passed to `Button` or `Text` is shown verbatim, also when a `runtimeKey` lookup elsewhere localizes the same words |
 
 SwiftLint's `void_function_in_ternary` can misfire on `flag ? String(localized: "a") :
 String(localized: "b")` inside a `switch` expression. Use `if`/`else` there.

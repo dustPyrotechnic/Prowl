@@ -5,6 +5,7 @@
            translation whose placeholders do not match the source string. A missing
            translation is not a failure, because translations are synced at release time.
   audit    Release check. Reports everything the `sync-l10n` skill must resolve:
+             broken        translations whose placeholders do not match the source
              missing       strings the code uses but the catalog does not have
              unused        catalog entries that no code uses
              untranslated  entries without a finished translation
@@ -12,7 +13,8 @@
                            have not been triaged into the baseline
              obsolete      baseline entries that are done: the literal left the code, or
                            every place of it is localized now
-           It also prints the size of the known debt. Needs a Debug build.
+           It also prints the size of the known debt. Needs a Debug build. The exit
+           status is 1 while any list is not empty; that is a finding, not a failure.
   apply    Add or update translations from a JSON file, validated and in Xcode's format.
   prune    Remove unused catalog entries and obsolete baseline entries.
   triage   Record decisions about suspects in the baseline (exempt or debt).
@@ -162,6 +164,15 @@ def apply_translations(catalog: dict, translations: dict) -> list[str]:
     return errors
 
 
+def apply_summary(catalog: dict, translations: dict) -> str:
+    """Describe what `apply_translations` is about to do. Call it before the merge."""
+    added = sum(1 for key in translations if key not in catalog["strings"])
+    manual = sum(1 for values in translations.values() if values and values.get("manual"))
+    untranslatable = sum(1 for values in translations.values() if values is None)
+    updated = len(translations) - added
+    return f"Added {added}, updated {updated} ({manual} manual, {untranslatable} not translatable)."
+
+
 # MARK: - Coverage
 
 
@@ -171,19 +182,27 @@ class ExtractionIssues:
     unused: list[str] = field(default_factory=list)
 
 
-def extracted_keys(directory: Path) -> dict[str, set[str]]:
-    """Map each key the compiler extracted to the source files that use it."""
+def extracted_keys(directory: Path, root: Path = ROOT) -> dict[str, set[str]]:
+    """Map each key the compiler extracted to the places (`path:line`) that use it."""
     keys: dict[str, set[str]] = {}
+    root = root.resolve()
     for path in sorted(Path(directory).rglob("*.stringsdata")):
         data = json.loads(path.read_text())
         source = Path(data.get("source", ""))
         # Incremental builds can leave the output of a deleted file behind.
         if not source.is_file():
             continue
+        source = source.resolve()
+        name = source.relative_to(root).as_posix() if source.is_relative_to(root) else source.name
         for item in data.get("tables", {}).get(TABLE, []):
             if item["key"]:
-                keys.setdefault(item["key"], set()).add(source.name)
+                line = item.get("location", {}).get("startingLine", 0)
+                keys.setdefault(item["key"], set()).add(f"{name}:{line}")
     return keys
+
+
+def place_path(place: str) -> str:
+    return place.rsplit(":", 1)[0]
 
 
 def extraction_issues(catalog: dict, extracted: dict[str, set[str]]) -> ExtractionIssues:
@@ -392,16 +411,16 @@ def open_places(
     tooltip elsewhere. In a file that looks titles up at run time, a catalog key is localized.
     """
     localized: dict[str, set[str]] = {}
-    for key, files in extracted.items():
-        localized.setdefault(loosen(key), set()).update(files)
+    for key, places in extracted.items():
+        localized.setdefault(loosen(key), set()).update(place_path(place) for place in places)
     still_open = {}
     for literal, places in found.items():
         files = localized.get(loosen(literal))
         in_catalog = files is not None or literal in runtime_keys
         remaining = []
         for place in places:
-            path = place.rsplit(":", 1)[0]
-            if Path(path).name in (files or ()) or (in_catalog and baseline.looks_up_at_run_time(path)):
+            path = place_path(place)
+            if path in (files or ()) or (in_catalog and baseline.looks_up_at_run_time(path)):
                 continue
             remaining.append(place)
         if remaining:
@@ -418,6 +437,11 @@ def unknown_candidates(
     """Open places of the candidates that nobody has triaged into the baseline yet."""
     still_open = open_places(found, baseline, extracted, runtime_keys)
     return {literal: places for literal, places in still_open.items() if not baseline.knows(literal)}
+
+
+def places_elsewhere(still_open: dict[str, list[str]], literal: str, changed: set[str]) -> list[str]:
+    """Open places of a literal outside the changed files. The debt is paid only when they go too."""
+    return [place for place in still_open.get(literal, []) if place_path(place) not in changed]
 
 
 def debt_places(
@@ -490,7 +514,10 @@ def command_audit(arguments) -> int:
 
 def command_apply(arguments) -> int:
     catalog = load_json(arguments.catalog)
-    errors = apply_translations(catalog, load_json(arguments.translations))
+    translations = load_json(arguments.translations)
+    summary = apply_summary(catalog, translations)
+    errors = apply_translations(catalog, translations)
+    print(summary)
     print_issues("Rejected", errors)
     arguments.catalog.write_text(serialize(catalog))
     return 1 if errors else 0
@@ -546,7 +573,9 @@ def command_debt(arguments) -> int:
     for path, items in sorted(by_file.items(), key=lambda item: -len(item[1])):
         print(f"\n## {path} ({len(items)})")
         for line, literal in items:
-            print(f"  {line}: " + literal.replace("\n", "\\n"))
+            elsewhere = places_elsewhere(still_open, literal, changed) if changed is not None else []
+            note = f"  (also at {', '.join(elsewhere)})" if elsewhere else ""
+            print(f"  {line}: " + literal.replace("\n", "\\n") + note)
     print(f"\n{sum(len(items) for items in by_file.values())} debt place(s) in {len(by_file)} file(s).")
     return 0
 
