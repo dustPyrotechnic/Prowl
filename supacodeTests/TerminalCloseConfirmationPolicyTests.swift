@@ -40,11 +40,7 @@ struct TerminalCloseConfirmationPolicyTests {
       for: decision,
       worktreeName: "wt"
     )
-    let paneText = String(localized: "pane")
-    let reasonText = String(localized: "recent input")
-    let template = String(
-      localized: "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input.")
-    #expect(message == String(format: template, 1, paneText, "wt", reasonText))
+    #expect(message == "This will close 1 pane in “wt” with recent input. Closing may lose unsubmitted input.")
   }
 
   @Test func editingKeyClassificationExcludesNavigationAndShortcuts() {
@@ -169,10 +165,10 @@ struct TerminalCloseConfirmationPolicyTests {
       worktreeName: "feature/foo"
     )
 
-    let paneText = String(localized: "pane")
-    let reasonText = String(localized: "active agent work or an unseen agent result")
-    let template = String(localized: "This will close %lld %@ in \"%@\" with %@.")
-    #expect(message == String(format: template, 1, paneText, "feature/foo", reasonText))
+    #expect(
+      message
+        == "This will close 1 pane in “feature/foo” with active agent work or an unseen agent result."
+    )
   }
 
   @Test func informativeMessageAggregatesMixedReasons() {
@@ -196,10 +192,9 @@ struct TerminalCloseConfirmationPolicyTests {
       worktreeName: "wt"
     )
 
-    let paneText = String(localized: "panes")
-    let reasonText = String(
-      localized: "active agent work, unseen agent results, or long-running commands")
-    let template = String(localized: "This will close %lld %@ in \"%@\" with %@.")
-    #expect(message == String(format: template, 2, paneText, "wt", reasonText))
+    #expect(
+      message
+        == "This will close 2 panes in “wt” with active agent work, unseen agent results, or long-running commands."
+    )
   }
 }

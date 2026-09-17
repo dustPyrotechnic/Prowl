@@ -11325,15 +11325,9 @@
         }
       }
     },
-    "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input.": {
+    "This will close %lld %@ in “%@” with %@. Closing may lose unsubmitted input.": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input."
-          }
-        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -11342,39 +11336,13 @@
         }
       }
     },
-    "This will close %lld %@ in \"%@\" with %@.": {
+    "This will close %lld %@ in “%@” with %@.": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This will close %lld %@ in \"%@\" with %@."
-          }
-        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "这将关闭「%3$@」中的 %1$lld 个%2$@，其中有 %4$@。"
-          }
-        }
-      }
-    },
-    "This will close %lld %@ in \\\"%@\\\" with %@. Closing may lose unsubmitted input.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这将关闭 \\\"%3$@\\\" 中的 %1$lld 个 %2$@，其中有 %4$@。关闭可能会丢失未提交的输入。"
-          }
-        }
-      }
-    },
-    "This will close %lld %@ in \\\"%@\\\" with %@.": {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这将关闭 \\\"%3$@\\\" 中的 %1$lld 个 %2$@，其中有 %4$@。"
           }
         }
       }

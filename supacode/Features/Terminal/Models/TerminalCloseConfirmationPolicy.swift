@@ -74,7 +74,7 @@ enum TerminalCloseConfirmationPolicy {
         activities.append(String(localized: "a command that has been running for at least 10 seconds"))
       }
       let activitiesList = activities.joined(separator: ", ")
-      let template = String(localized: "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input.")
+      let template = String(localized: "This will close %lld %@ in “%@” with %@. Closing may lose unsubmitted input.")
       return String(format: template, decision.protectedPaneCount, paneText, worktreeName, activitiesList)
     } else if decision.reasons == Set([.agentActive]) {
       reasonText = String(localized: "active agent work or an unseen agent result")
@@ -83,7 +83,7 @@ enum TerminalCloseConfirmationPolicy {
     } else {
       reasonText = String(localized: "active agent work, unseen agent results, or long-running commands")
     }
-    let template = String(localized: "This will close %lld %@ in \"%@\" with %@.")
+    let template = String(localized: "This will close %lld %@ in “%@” with %@.")
     return String(format: template, decision.protectedPaneCount, paneText, worktreeName, reasonText)
   }
   private static func protectionReason(

@@ -32,11 +32,11 @@ struct WindowTitleTests {
     var state = RepositoriesFeature.State()
 
     state.selection = .canvas
-    #expect(WindowTitle.compute(repositories: state, terminalManager: manager) == String(localized: "Canvas"))
+    #expect(WindowTitle.compute(repositories: state, terminalManager: manager) == "Canvas")
 
     state.selection = .archivedWorktrees
     #expect(
-      WindowTitle.compute(repositories: state, terminalManager: manager) == String(localized: "Archived Worktrees")
+      WindowTitle.compute(repositories: state, terminalManager: manager) == "Archived Worktrees"
     )
   }
 

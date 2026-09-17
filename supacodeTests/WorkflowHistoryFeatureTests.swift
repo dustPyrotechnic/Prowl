@@ -108,27 +108,18 @@ struct WorkflowHistoryFeatureTests {
 
   private static func clearAlert(count: Int) -> AlertState<WorkflowHistoryFeature.Alert> {
     AlertState {
-      TextState(String(localized: "Clear Workflow History?"))
+      TextState("Clear Workflow History?")
     } actions: {
-      ButtonState(role: .cancel) { TextState(String(localized: "Cancel")) }
+      ButtonState(role: .cancel) { TextState("Cancel") }
       ButtonState(role: .destructive, action: .confirmClear) {
-        TextState(String(localized: "Clear History"))
+        TextState("Clear History")
       }
     } message: {
       let message =
         if count == 1 {
-          String(
-            localized:
-              "1 finished run will be deleted. Runs that are still active are kept. This cannot be undone."
-          )
+          "1 finished run will be deleted. Runs that are still active are kept. This cannot be undone."
         } else {
-          String(
-            format: String(
-              localized:
-                "%lld finished runs will be deleted. Runs that are still active are kept. This cannot be undone."
-            ),
-            count
-          )
+          "\(count) finished runs will be deleted. Runs that are still active are kept. This cannot be undone."
         }
       return TextState(message)
     }
@@ -136,9 +127,9 @@ struct WorkflowHistoryFeatureTests {
 
   private static func clearedResult(count: Int) -> String {
     if count == 1 {
-      String(localized: "Removed 1 run.")
+      "Removed 1 run."
     } else {
-      String(format: String(localized: "Removed %lld runs."), count)
+      "Removed \(count) runs."
     }
   }
 }

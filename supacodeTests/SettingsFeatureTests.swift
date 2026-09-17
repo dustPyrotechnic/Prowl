@@ -822,19 +822,17 @@ struct SettingsFeatureTests {
 
     await store.send(.showNotificationPermissionAlert(errorMessage: nil)) {
       $0.alert = AlertState {
-        TextState(String(localized: "Prowl cannot send system notifications"))
+        TextState("Prowl cannot send system notifications")
       } actions: {
         ButtonState(action: .openSystemNotificationSettings) {
-          TextState(String(localized: "Open System Settings"))
+          TextState("Open System Settings")
         }
         ButtonState(role: .cancel, action: .dismiss) {
-          TextState(String(localized: "Cancel"))
+          TextState("Cancel")
         }
       } message: {
         TextState(
-          String(
-            localized:
-              "Notification permission is turned off. Open System Settings to allow Prowl to send notifications.")
+          "Notification permission is turned off. Open System Settings to allow Prowl to send notifications."
         )
       }
     }
@@ -870,11 +868,11 @@ struct SettingsFeatureTests {
     }
     await store.receive(\.cliInstallCompleted) {
       $0.alert = AlertState {
-        TextState(String(localized: "Command Line Tool Uninstalled"))
+        TextState("Command Line Tool Uninstalled")
       } actions: {
-        ButtonState(action: .dismiss) { TextState(String(localized: "OK")) }
+        ButtonState(action: .dismiss) { TextState("OK") }
       } message: {
-        TextState(String(localized: "The prowl command line tool has been removed."))
+        TextState("The prowl command line tool has been removed.")
       }
     }
     await store.receive(\.delegate.cliInstallCompleted)

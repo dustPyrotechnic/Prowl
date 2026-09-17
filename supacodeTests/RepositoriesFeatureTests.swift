@@ -1759,7 +1759,7 @@ struct RepositoriesFeatureTests {
     await store.send(.workspaceCreation(.promptCanceled)) {
       $0.workspaceCreationPrompt = nil
     }
-    await store.receive(\.showToast, .warning(String(localized: "Workspace creation canceled")))
+    await store.receive(\.showToast, .warning("Workspace creation canceled"))
   }
 
   @Test func workspaceGitRunnerUsesLoginShellForGitCommands() async throws {
@@ -1858,8 +1858,8 @@ struct RepositoriesFeatureTests {
     await store.receive(\.workspaceCreation.workspaceCreated) {
       $0.workspaceCreationPrompt = nil
     }
-    await store.receive(\.showToast, .success(String(localized: "Workspace created"))) {
-      $0.statusToast = .success(String(localized: "Workspace created"))
+    await store.receive(\.showToast, .success("Workspace created")) {
+      $0.statusToast = .success("Workspace created")
     }
     await store.receive(\.repositoryManagement.openRepositories)
     await store.finish()
@@ -2454,10 +2454,10 @@ struct RepositoriesFeatureTests {
     }
 
     let expectedAlert = AlertState<RepositoriesFeature.Alert> {
-      TextState(String(localized: "Some folders couldn't be opened"))
+      TextState("Some folders couldn't be opened")
     } actions: {
       ButtonState(role: .cancel) {
-        TextState(String(localized: "OK"))
+        TextState("OK")
       }
     } message: {
       TextState("\(blockedRoot): permission denied")
@@ -4611,18 +4611,17 @@ struct RepositoriesFeatureTests {
 
     let archivedDisplay = AppShortcuts.archivedWorktrees.display
     let expectedAlert = AlertState<RepositoriesFeature.Alert> {
-      TextState(String(localized: "Archive worktree?"))
+      TextState("Archive worktree?")
     } actions: {
       ButtonState(role: .destructive, action: .confirmArchiveWorktree(worktree.id, repository.id)) {
-        TextState(String(localized: "Archive (⌘↩)"))
+        TextState("Archive (⌘↩)")
       }
       ButtonState(role: .cancel) {
-        TextState(String(localized: "Cancel"))
+        TextState("Cancel")
       }
     } message: {
       TextState(
-        String(
-          localized: "Find \(worktree.name) later in Menu Bar > Worktrees > Archived Worktrees (\(archivedDisplay)).")
+        "Find \(worktree.name) later in Menu Bar > Worktrees > Archived Worktrees (\(archivedDisplay))."
       )
     }
 
@@ -4647,17 +4646,17 @@ struct RepositoriesFeatureTests {
 
     let archivedDisplay = AppShortcuts.archivedWorktrees.display
     let expectedAlert = AlertState<RepositoriesFeature.Alert> {
-      TextState(String(localized: "Archive 2 worktrees?"))
+      TextState("Archive 2 worktrees?")
     } actions: {
       ButtonState(role: .destructive, action: .confirmArchiveWorktrees(targets)) {
-        TextState(String(localized: "Archive 2 (⌘↩)"))
+        TextState("Archive 2 (⌘↩)")
       }
       ButtonState(role: .cancel) {
-        TextState(String(localized: "Cancel"))
+        TextState("Cancel")
       }
     } message: {
       TextState(
-        String(localized: "Find them later in Menu Bar > Worktrees > Archived Worktrees (\(archivedDisplay)).")
+        "Find them later in Menu Bar > Worktrees > Archived Worktrees (\(archivedDisplay))."
       )
     }
 
@@ -5931,10 +5930,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(featureWorktree.id, .merge)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Merging pull request…"))
+      $0.statusToast = .inProgress("Merging pull request…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request merged"))
+      $0.statusToast = .success("Pull request merged")
     }
     await store.receive(\.worktreeInfoEvent)
     #expect(store.state.worktreeInfoByID[featureWorktree.id]?.pullRequest?.state == "OPEN")
@@ -5985,10 +5984,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(featureWorktree.id, .merge)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Merging pull request…"))
+      $0.statusToast = .inProgress("Merging pull request…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request merged"))
+      $0.statusToast = .success("Pull request merged")
     }
     await store.receive(\.worktreeInfoEvent)
     #expect(mergedStrategies.value == [.squash])
@@ -6038,10 +6037,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(featureWorktree.id, .merge)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Merging pull request…"))
+      $0.statusToast = .inProgress("Merging pull request…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request merged"))
+      $0.statusToast = .success("Pull request merged")
     }
     await store.receive(\.worktreeInfoEvent)
     #expect(mutationRemoteInfos.value == [upstreamRemoteInfo])
@@ -6071,10 +6070,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(fixture.featureWorktree.id, .merge)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Merging pull request…"))
+      $0.statusToast = .inProgress("Merging pull request…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request merged"))
+      $0.statusToast = .success("Pull request merged")
     }
     await store.receive(\.worktreeInfoEvent)
     #expect(remoteInfos.value == [fixture.expectedRemoteInfo])
@@ -6104,10 +6103,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(fixture.featureWorktree.id, .close)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Closing pull request…"))
+      $0.statusToast = .inProgress("Closing pull request…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request closed"))
+      $0.statusToast = .success("Pull request closed")
     }
     await store.receive(\.worktreeInfoEvent)
     #expect(remoteInfos.value == [fixture.expectedRemoteInfo])
@@ -6137,10 +6136,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(fixture.featureWorktree.id, .markReadyForReview)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Marking PR ready…"))
+      $0.statusToast = .inProgress("Marking PR ready…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request marked ready"))
+      $0.statusToast = .success("Pull request marked ready")
     }
     #expect(remoteInfos.value == [fixture.expectedRemoteInfo])
     await store.finish()
@@ -6179,17 +6178,17 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(featureWorktree.id, .merge)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Merging pull request…"))
+      $0.statusToast = .inProgress("Merging pull request…")
     }
     await store.receive(\.dismissToast) {
       $0.statusToast = nil
     }
     await store.receive(\.presentAlert) {
       $0.alert = AlertState<RepositoriesFeature.Alert> {
-        TextState(String(localized: "GitHub repository not resolved"))
+        TextState("GitHub repository not resolved")
       } actions: {
         ButtonState(role: .cancel) {
-          TextState(String(localized: "OK"))
+          TextState("OK")
         }
       } message: {
         TextState(
@@ -6240,10 +6239,10 @@ struct RepositoriesFeatureTests {
 
     await store.send(.githubIntegration(.pullRequestAction(featureWorktree.id, .close)))
     await store.receive(\.showToast) {
-      $0.statusToast = .inProgress(String(localized: "Closing pull request…"))
+      $0.statusToast = .inProgress("Closing pull request…")
     }
     await store.receive(\.showToast) {
-      $0.statusToast = .success(String(localized: "Pull request closed"))
+      $0.statusToast = .success("Pull request closed")
     }
     await store.receive(\.worktreeInfoEvent)
     #expect(closedNumbers.value == [12])

@@ -186,9 +186,9 @@ struct AgentSkillsFeatureTests {
     await store.send(.installLink(skillID: "prowl-cli", targetID: "claude"))
     await store.receive(\.linkChangeCompleted.failure) {
       $0.alert = AlertState {
-        TextState(String(localized: "Agent Skills Error"))
+        TextState("Agent Skills Error")
       } actions: {
-        ButtonState(action: .dismiss) { TextState(String(localized: "OK")) }
+        ButtonState(action: .dismiss) { TextState("OK") }
       } message: {
         TextState(message)
       }
