@@ -807,7 +807,7 @@ final class WorktreeTerminalState {
     }
     let tabId = createTab(
       TabCreation(
-        title: "RUN SCRIPT",
+        title: String(localized: "RUN SCRIPT"),
         icon: "play.fill",
         isTitleLocked: true,
         initialInput: input,

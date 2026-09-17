@@ -362,7 +362,7 @@ struct CustomCommandsEditor: View {
   @ViewBuilder
   private func customCommandShortcutCell(_ command: UserCustomCommand) -> some View {
     let resolvedBinding = resolvedCustomCommandBindings.keybinding(for: customCommandBindingID(for: command.id))
-    let shortcutDisplay = resolvedBinding?.display ?? "Unassigned"
+    let shortcutDisplay = resolvedBinding?.display ?? String(localized: "Unassigned")
     let isRecording = recordingCustomCommandID == command.id
 
     InlineEditableCellButton(
@@ -372,7 +372,7 @@ struct CustomCommandsEditor: View {
       selectCustomCommand(command.id)
       toggleRecording(for: command.id)
     } label: {
-      Text(isRecording ? "Recording…" : shortcutDisplay)
+      Text(isRecording ? String(localized: "Recording…") : shortcutDisplay)
         .font(.body.monospaced())
         .foregroundStyle(isRecording ? Color.orange : (resolvedBinding == nil ? .secondary : .primary))
         .lineLimit(1)
@@ -411,9 +411,9 @@ struct CustomCommandsEditor: View {
       customCommandHeaderCell("", width: customCommandsDragColumnWidth, alignment: .center)
       customCommandHeaderCell("", width: customCommandsEnabledColumnWidth, alignment: .center)
       customCommandHeaderCell("", width: customCommandsIconColumnWidth, alignment: .center)
-      customCommandHeaderCell("Name", width: customCommandsNameColumnWidth)
-      customCommandHeaderCell("Command")
-      customCommandHeaderCell("Shortcut", width: customCommandsShortcutColumnWidth)
+      customCommandHeaderCell(String(localized: "Name"), width: customCommandsNameColumnWidth)
+      customCommandHeaderCell(String(localized: "Command"))
+      customCommandHeaderCell(String(localized: "Shortcut"), width: customCommandsShortcutColumnWidth)
     }
     .padding(.horizontal, 14)
     .padding(.vertical, 8)
@@ -526,7 +526,7 @@ struct CustomCommandsEditor: View {
         let binding = resolvedCustomCommandBindings.keybinding(
           for: customCommandBindingID(for: command.id, source: .global)
         )
-        Text(binding?.display ?? "Unassigned")
+        Text(binding?.display ?? String(localized: "Unassigned"))
           .font(.body.monospaced())
           .foregroundStyle(binding == nil ? .secondary : .primary)
           .lineLimit(1)
@@ -626,7 +626,7 @@ struct CustomCommandsEditor: View {
       .first
       .map(String.init)?
       .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-    return firstLine.isEmpty ? "Click to set command script" : firstLine
+    return firstLine.isEmpty ? String(localized: "Click to set command script") : firstLine
   }
 
   private func iconEditorPopover(
@@ -729,9 +729,13 @@ struct CustomCommandsEditor: View {
   private var commandEditorDescription: String {
     switch source {
     case .repository:
-      return "Choose where this command runs and edit the script used by this repository custom command."
+      return String(
+        localized: "Choose where this command runs and edit the script used by this repository custom command."
+      )
     case .global:
-      return "Choose where this command runs and edit the script used by this global custom command."
+      return String(
+        localized: "Choose where this command runs and edit the script used by this global custom command."
+      )
     }
   }
 
@@ -857,11 +861,11 @@ struct CustomCommandsEditor: View {
   private func scriptDescription(for execution: UserCustomCommandExecution) -> String {
     switch execution {
     case .shellScript:
-      return "Runs in a new terminal tab."
+      return String(localized: "Runs in a new terminal tab.")
     case .terminalInput:
-      return "Sends input to the currently focused terminal."
+      return String(localized: "Sends input to the currently focused terminal.")
     case .split:
-      return "Runs in a new split of the focused terminal."
+      return String(localized: "Runs in a new split of the focused terminal.")
     }
   }
 

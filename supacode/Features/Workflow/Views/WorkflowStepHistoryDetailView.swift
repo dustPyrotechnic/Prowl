@@ -100,7 +100,9 @@ struct WorkflowStepHistoryDetailView: View {
 
   private func timingLine(at date: Date) -> some View {
     let duration = WorkflowHistoryTiming.duration(date.timeIntervalSince(record.run.startedAt))
-    let elapsed = record.run.status.isTerminal ? "Finished in \(duration)" : "Running for \(duration)"
+    let elapsed =
+      record.run.status.isTerminal
+      ? String(localized: "Finished in \(duration)") : String(localized: "Running for \(duration)")
     return Label("\(WorkflowHistoryTiming.timestamp(record.run.startedAt)) · \(elapsed)", systemImage: "clock")
       .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
       .lineLimit(1)
@@ -169,10 +171,10 @@ struct WorkflowStepHistoryDetailView: View {
   private var footer: some View {
     HStack {
       if let directory {
-        WorkflowHistoryIconButton(label: "Reveal run in Finder", symbol: "folder") {
+        WorkflowHistoryIconButton(label: String(localized: "Reveal run in Finder"), symbol: "folder") {
           onIntent(.revealRunFolder(directory))
         }
-        WorkflowHistoryIconButton(label: "Open workflow log", symbol: "doc.text") {
+        WorkflowHistoryIconButton(label: String(localized: "Open workflow log"), symbol: "doc.text") {
           onOutput(.openFile(directory.appending(path: "log.md")))
         }
         Spacer()

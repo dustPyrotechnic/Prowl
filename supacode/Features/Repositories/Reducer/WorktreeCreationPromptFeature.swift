@@ -99,7 +99,7 @@ struct WorktreeCreationPromptFeature {
       case .createButtonTapped:
         let effective = state.effectiveBranchName
         guard !effective.contains(where: \.isWhitespace) else {
-          state.validationMessage = "Branch names can't contain spaces."
+          state.validationMessage = String(localized: "Branch names can't contain spaces.")
           return .none
         }
         let nameOverride = state.worktreeNameOverride.trimmingCharacters(in: .whitespacesAndNewlines)

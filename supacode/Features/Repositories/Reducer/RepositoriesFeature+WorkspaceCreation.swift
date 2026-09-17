@@ -249,7 +249,9 @@ extension RepositoriesFeature {
         refs = []
         let name = repository.name.trimmingCharacters(in: .whitespacesAndNewlines)
         let displayName = name.isEmpty ? repositoryURL.lastPathComponent : name
-        errorMessage = "Could not read branches for \(displayName): \(error.localizedDescription)"
+        errorMessage = String(
+          localized: "Could not read branches for \(displayName): \(error.localizedDescription)"
+        )
         workspaceLog.warning(
           "Branch detection failed for \(repositoryURL.path(percentEncoded: false)): \(error)"
         )

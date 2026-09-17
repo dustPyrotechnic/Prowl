@@ -201,7 +201,7 @@ struct WorkspaceCreationPromptView: View {
 
   private func repositoryHeader(_ repository: ProjectWorkspaceCreationRepository) -> some View {
     HStack(spacing: 10) {
-      Text(repository.name.isEmpty ? "Repository" : repository.name)
+      Text(repository.name.isEmpty ? String(localized: "Repository") : repository.name)
         .fontWeight(.medium)
         .lineLimit(1)
 
@@ -333,7 +333,9 @@ struct WorkspaceCreationPromptView: View {
 
         if repository.checkoutMode != .link {
           WorkspaceBranchRefPickerView(
-            title: repository.checkoutMode == .createBranch ? "Base ref" : "Existing branch",
+            title: repository.checkoutMode == .createBranch
+              ? String(localized: "Base ref")
+              : String(localized: "Existing branch"),
             selection: repository.baseRef,
             options: repository.baseRefOptions,
             isDisabled: store.isCreating || repository.baseRefOptions.isEmpty,
@@ -507,24 +509,23 @@ struct WorkspaceCreationPromptView: View {
     if let currentPath, !currentPath.isEmpty {
       panel.directoryURL = URL(filePath: currentPath).deletingLastPathComponent()
     }
-    panel.message = String(
-      localized: kind == .bareRepository
-        ? "Choose a bare repository folder"
-        : "Choose a repository folder"
-    )
+    panel.message =
+      kind == .bareRepository
+      ? String(localized: "Choose a bare repository folder")
+      : String(localized: "Choose a repository folder")
     return panel
   }
 
   private func sourceKindTitle(_ kind: ProjectWorkspaceRepositorySourceKind) -> String {
     switch kind {
     case .existingPath:
-      return "Opened in Prowl"
+      return String(localized: "Opened in Prowl")
     case .localRepository:
-      return "Picked from Disk"
+      return String(localized: "Picked from Disk")
     case .remote:
-      return "Remote Clone"
+      return String(localized: "Remote Clone")
     case .bareRepository:
-      return "Bare Worktree"
+      return String(localized: "Bare Worktree")
     }
   }
 
@@ -544,13 +545,13 @@ struct WorkspaceCreationPromptView: View {
   private func sourceKindBadgeHelp(_ kind: ProjectWorkspaceRepositorySourceKind) -> String {
     switch kind {
     case .existingPath:
-      return "Added from repositories already opened in Prowl."
+      return String(localized: "Added from repositories already opened in Prowl.")
     case .localRepository:
-      return "Added by choosing a repository folder from disk."
+      return String(localized: "Added by choosing a repository folder from disk.")
     case .remote:
-      return "Added from a remote URL and cloned into the workspace."
+      return String(localized: "Added from a remote URL and cloned into the workspace.")
     case .bareRepository:
-      return "Added from a local bare repository."
+      return String(localized: "Added from a local bare repository.")
     }
   }
 
@@ -566,11 +567,11 @@ struct WorkspaceCreationPromptView: View {
   private func sourceLocationPlaceholder(_ kind: ProjectWorkspaceRepositorySourceKind) -> String {
     switch kind {
     case .existingPath, .localRepository:
-      return "Repository folder"
+      return String(localized: "Repository folder")
     case .remote:
-      return "Remote URL"
+      return String(localized: "Remote URL")
     case .bareRepository:
-      return "Bare repository folder"
+      return String(localized: "Bare repository folder")
     }
   }
 

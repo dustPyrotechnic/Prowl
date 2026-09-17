@@ -224,7 +224,7 @@ extension RepositoriesFeature {
         failures.append(
           LoadFailure(
             rootID: rootID,
-            message: result.errorMessage ?? "Unknown error"
+            message: result.errorMessage ?? String(localized: "Unknown error")
           )
         )
       }

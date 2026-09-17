@@ -315,12 +315,12 @@ struct RepositorySettingsView: View {
         Section {
           ScriptEnvironmentRow(
             name: "PROWL_WORKTREE_PATH",
-            description: "Path to the active worktree."
+            description: String(localized: "Path to the active worktree.")
           )
           ScriptEnvironmentRow(
             name: "PROWL_ROOT_PATH",
             value: store.rootURL.path(percentEncoded: false),
-            description: "Path to the repository root."
+            description: String(localized: "Path to the repository root.")
           )
         } header: {
           VStack(alignment: .leading, spacing: 4) {

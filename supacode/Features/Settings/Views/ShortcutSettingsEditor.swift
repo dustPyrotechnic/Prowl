@@ -335,7 +335,11 @@ struct ShortcutSettingsEditor: View {
     }
     .buttonStyle(.plain)
     .accessibilityLabel("Shortcut for \(commandTitle)")
-    .accessibilityValue(isRecording ? "Recording" : (resolvedBinding?.display ?? "No shortcut assigned"))
+    .accessibilityValue(
+      isRecording
+        ? String(localized: "Recording")
+        : (resolvedBinding?.display ?? String(localized: "No shortcut assigned"))
+    )
     .onHover { hovering in
       if hovering {
         hoveredRecorderCommandID = commandID
@@ -348,7 +352,7 @@ struct ShortcutSettingsEditor: View {
 
   private func shortcutRecorderTitle(resolvedBinding: Keybinding?, isRecording: Bool) -> String {
     if isRecording {
-      return "Recording…"
+      return String(localized: "Recording…")
     }
     return resolvedBinding?.display ?? ""
   }
@@ -403,7 +407,7 @@ struct ShortcutSettingsEditor: View {
       )
     }
 
-    let title = resolvedBinding == nil ? "Disabled" : "Defined"
+    let title = resolvedBinding == nil ? String(localized: "Disabled") : String(localized: "Defined")
     return AnyView(
       Text(title)
         .font(.caption2.monospaced())
@@ -1042,13 +1046,13 @@ private enum ShortcutGroup: String, CaseIterable, Identifiable {
   var title: String {
     switch self {
     case .general:
-      "General"
+      String(localized: "General")
     case .navigation:
-      "Navigation"
+      String(localized: "Navigation")
     case .terminal:
-      "Terminal Tabs & Panes"
+      String(localized: "Terminal Tabs & Panes")
     case .scripts:
-      "Scripts & Panels"
+      String(localized: "Scripts & Panels")
     }
   }
 

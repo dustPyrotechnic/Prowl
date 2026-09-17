@@ -474,19 +474,28 @@ private struct WorkflowStartCard: View {
   }
 
   private func stepHelp(_ step: WorkflowStartPlan.Step) -> String {
-    let verb =
-      switch step.verb {
-      case "message": "Sends instructions to \(step.roleTitle ?? "a role") and waits for its reply."
-      case "launch": "Starts the \(step.roleTitle ?? "launch") agent with its first instructions."
-      case "action": "Runs an action inside Prowl."
-      case "notify": "Sends a Prowl notification."
-      case "close": "Closes the \(step.roleTitle ?? "role")'s pane."
-      default: step.verb
-      }
+    let verb: String
+    switch step.verb {
+    case "message":
+      let role = step.roleTitle ?? String(localized: "a role")
+      verb = String(localized: "Sends instructions to \(role) and waits for its reply.")
+    case "launch":
+      let role = step.roleTitle ?? String(localized: "launch")
+      verb = String(localized: "Starts the \(role) agent with its first instructions.")
+    case "action":
+      verb = String(localized: "Runs an action inside Prowl.")
+    case "notify":
+      verb = String(localized: "Sends a Prowl notification.")
+    case "close":
+      let role = step.roleTitle ?? String(localized: "role")
+      verb = String(localized: "Closes the \(role)'s pane.")
+    default:
+      verb = step.verb
+    }
     switch step.context {
     case .always: return verb
-    case .conditional: return "\(verb) Runs only when its branch is chosen."
-    case .repeated: return "\(verb) Runs once per loop iteration."
+    case .conditional: return String(localized: "\(verb) Runs only when its branch is chosen.")
+    case .repeated: return String(localized: "\(verb) Runs once per loop iteration.")
     }
   }
 
@@ -530,26 +539,30 @@ private struct WorkflowStartCard: View {
   /// "claude in p12" for an agent pane; a bare shell is named by the worktree, not by the
   /// shell's host-and-path title.
   private func paneLabel(_ candidate: WorkflowStartPaneCandidate) -> String {
-    let handle = candidate.handle.map { " in \($0)" } ?? ""
     guard let agent = candidate.agentDisplayName, candidate.agentToken != nil else {
-      return "\(store.context.worktreeName)\(handle) (no agent)"
+      let worktreeName = store.context.worktreeName
+      guard let handle = candidate.handle else { return String(localized: "\(worktreeName) (no agent)") }
+      return String(localized: "\(worktreeName) in \(handle) (no agent)")
     }
-    return "\(agent)\(handle)"
+    guard let handle = candidate.handle else { return agent }
+    return String(localized: "\(agent) in \(handle)")
   }
 
   private func suggestionSummary(_ suggestion: WorkflowProfileSuggestion) -> String {
     var parts: [String] = []
     if let agent = suggestion.agent { parts.append(agent) }
-    if let model = suggestion.model { parts.append("model \(model)") }
-    if let effort = suggestion.reasoningEffort { parts.append("\(effort) effort") }
-    if let mode = suggestion.executionMode { parts.append("\(mode) mode") }
-    return "Suggested by the workflow: " + parts.joined(separator: " · ")
+    if let model = suggestion.model { parts.append(String(localized: "model \(model)")) }
+    if let effort = suggestion.reasoningEffort { parts.append(String(localized: "\(effort) effort")) }
+    if let mode = suggestion.executionMode { parts.append(String(localized: "\(mode) mode")) }
+    return String(localized: "Suggested by the workflow: \(parts.joined(separator: " · "))")
   }
 
   private func consequenceText(_ consequence: WorkflowSkipConsequence?) -> String? {
     switch consequence {
     case .continues(let optional) where !optional.isEmpty:
-      return "The run continues; \(optional.joined(separator: ", ")) proceeds without this delivery."
+      return String(
+        localized: "The run continues; \(optional.joined(separator: ", ")) proceeds without this delivery."
+      )
     case .endsRun, .continues, .noDelivery, nil:
       return nil
     }

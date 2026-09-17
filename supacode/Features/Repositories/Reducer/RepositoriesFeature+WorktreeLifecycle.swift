@@ -110,8 +110,8 @@ extension RepositoriesFeature {
       }
       state.archivingWorktreeIDs.insert(worktreeID)
       state.archiveScriptProgressByWorktreeID[worktreeID] = ArchiveScriptProgress(
-        titleText: "Running archive script",
-        detailText: "Preparing archive script",
+        titleText: String(localized: "Running archive script"),
+        detailText: String(localized: "Preparing archive script"),
         commandText: commandText
       )
       let shellClient = self.shellClient
@@ -119,8 +119,8 @@ extension RepositoriesFeature {
       return .run { send in
         let envURL = URL(fileURLWithPath: "/usr/bin/env")
         var progress = ArchiveScriptProgress(
-          titleText: "Running archive script",
-          detailText: "Running archive script",
+          titleText: String(localized: "Running archive script"),
+          detailText: String(localized: "Running archive script"),
           commandText: commandText
         )
         do {

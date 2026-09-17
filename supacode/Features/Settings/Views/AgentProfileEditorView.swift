@@ -58,16 +58,16 @@ struct AgentProfileEditorView: View {
     Section("Details") {
       if runtimeAdapter?.supportsModelSelection == true {
         suggestedTextRow(
-          title: "Model",
-          prompt: "Runtime default",
+          title: String(localized: "Model"),
+          prompt: String(localized: "Runtime default"),
           text: $store.profile.model,
           suggestions: modelSuggestions
         )
       }
       if runtimeAdapter?.supportsReasoningEffort == true {
         suggestedTextRow(
-          title: "Reasoning Effort",
-          prompt: "Runtime default",
+          title: String(localized: "Reasoning Effort"),
+          prompt: String(localized: "Runtime default"),
           text: $store.profile.reasoningEffort,
           suggestions: effortSuggestions
         )
@@ -117,7 +117,7 @@ struct AgentProfileEditorView: View {
   private var advancedSection: some View {
     Section("Advanced") {
       optionalTextRow(
-        title: "Extra Arguments",
+        title: String(localized: "Extra Arguments"),
         prompt: "--flag value",
         text: Binding(
           get: { store.profile.extraArguments.isEmpty ? nil : store.profile.extraArguments },
@@ -147,7 +147,8 @@ struct AgentProfileEditorView: View {
         .foregroundStyle(.secondary)
         LabeledContent(
           "Profile Home",
-          value: store.homeInitialized ? "Initialized" : "Not initialized yet"
+          value: store.homeInitialized
+            ? String(localized: "Initialized") : String(localized: "Not initialized yet")
         )
         Button("Reveal Profile Files") {
           store.send(.revealProfileFiles)
@@ -230,11 +231,11 @@ struct AgentProfileEditorView: View {
   private func issueDescription(_ issue: AgentProfileEnvironmentPolicy.RowIssue) -> String {
     switch issue {
     case .invalidName:
-      "Not a valid environment variable name — this row is ignored at launch."
+      String(localized: "Not a valid environment variable name — this row is ignored at launch.")
     case .reservedName:
-      "Reserved by Prowl — this row is ignored at launch."
+      String(localized: "Reserved by Prowl — this row is ignored at launch.")
     case .invalidValue:
-      "The value contains an unsupported character — this row is ignored at launch."
+      String(localized: "The value contains an unsupported character — this row is ignored at launch.")
     }
   }
 
@@ -374,7 +375,7 @@ struct AgentProfileEditorView: View {
       for: store.profile,
       homeBaseDirectory: SupacodePaths.agentProfileHomesDirectory
     )
-    return plan?.previewText ?? "Unavailable"
+    return plan?.previewText ?? String(localized: "Unavailable")
   }
 
   private var effortSuggestions: [String] {

@@ -103,7 +103,8 @@ extension RepositoriesFeature {
         failures.map { ($0.rootID, $0.message) },
         uniquingKeysWith: { first, _ in first }
       )
-      let openFailureMessages = invalidRoots.map { "\($0) is not a Git repository." } + openFailures
+      let invalidRootMessages = invalidRoots.map { String(localized: "\($0) is not a Git repository.") }
+      let openFailureMessages = invalidRootMessages + openFailures
       if !openFailureMessages.isEmpty {
         state.alert = messageAlert(
           title: String(localized: "Some folders couldn't be opened"),
