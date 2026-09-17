@@ -4,7 +4,7 @@
 | --- | --- |
 | **Status** | Implemented |
 | **Anchor date** | 2026-09-16 |
-| **Primary PRs** | #814 |
+| **Primary PRs** | #814, #816 |
 | **Related** | [035-protected-terminal-close](../035-protected-terminal-close/000-plan.md), [009-terminal-surface-lifecycle](../009-terminal-surface-lifecycle/000-plan.md), [012-keybinding-system](../012-keybinding-system/000-plan.md), [014-terminal-layout-persistence](../014-terminal-layout-persistence/000-plan.md), [027-split-pane-ux](../027-split-pane-ux/000-plan.md), `docs/reference/keyboard-shortcuts.md`, `docs/components/terminal.md`, `docs/components/cli.md` |
 
 ## Background
@@ -54,8 +54,8 @@ undoes anything nor reaches the terminal program.
   (`closeAllSurfaces`), auto-close on success, run-script replacement, agent-profile
   rollback, remote-mirror replicas, or a surface whose process already exited.
 - Surviving app restart, or any Prowl-side setting for the timeout.
-- Undo while no terminal surface has keyboard focus (for example after closing the
-  only tab of the only worktree). A menu-driven route is a follow-up.
+- ~~Undo while no terminal surface has keyboard focus.~~ Delivered as a follow-up
+  through a window-level key monitor; see [002-empty-worktree-undo.md](002-empty-worktree-undo.md).
 
 ## Design / Approach
 
@@ -163,4 +163,4 @@ after a close they did see. Revisit relaxing #766 after dogfooding.
 
 ## Amendments
 
-None. Implementation details and deviations are in [001-action.md](001-action.md).
+- Updated 2026-09-17: ⌘Z reaches the close stack when no terminal has focus, so the last tab of a worktree is undoable — see [002-empty-worktree-undo.md](002-empty-worktree-undo.md)

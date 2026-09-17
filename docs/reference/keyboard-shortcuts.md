@@ -202,8 +202,14 @@ undo history is app-wide and time-ordered: `⌘Z` restores the latest close even
 happened in another tab or worktree, and Prowl selects that worktree and tab (in
 Canvas, the restored card becomes the primary selection) so the restore is visible.
 A pane launched from an Agent Profile keeps its Profile identity, managed-hook
-signals, and Codex notification forwarding across the restore. When nothing is
-restorable, `⌘Z` reaches the terminal program as a normal key.
+signals, and Codex notification forwarding across the restore. Closing the last
+tab of a worktree is undoable too: with no terminal left to take the key, the
+main window hands it to Ghostty's app-level binding dispatch, so your real
+`undo` / `redo` bindings apply (defaults `⌘Z`, `⌘⇧T`, `⌘⇧Z`; rebinding, unbinding,
+and `performable:` prefixes are honored) and the tab comes back into that worktree
+(and the book back onto the Shelf). A text field that has focus keeps its own undo,
+other windows are not affected, and no other app-level binding fires through this
+route. When nothing is restorable, `⌘Z` reaches the terminal program as a normal key.
 
 Not restorable: closes whose process had already exited, worktree removal, layout
 restore, Run Script replacement, and a pane whose tab was split or rearranged after

@@ -122,8 +122,7 @@ P0/P1 and nothing further on the ordinary close → ⌘Z → redo path.
 
 ## Open questions
 
-- Ghostty itself does not fire `undo` when no terminal surface has focus. After
-  closing the only tab of the only worktree there is nothing to receive ⌘Z, as
-  the plan's non-goal states; a menu-driven route is still open.
+- ~~Ghostty itself does not fire `undo` when no terminal surface has focus.~~
+  Closed by [002-empty-worktree-undo.md](002-empty-worktree-undo.md).
 - `undoCloseTimeout` is read once at manager creation. A Ghostty config reload
   that changes `undo-timeout` takes effect on the next launch.
