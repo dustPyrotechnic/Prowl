@@ -36,12 +36,14 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
 
 ## Steps
 
-1. **Build and audit.**
+1. **Build and audit.** `$SCRATCH` is any temporary directory outside the repository.
    ```bash
    make build-app
    python3 scripts/localization.py audit --json > "$SCRATCH/l10n-audit.json"
    ```
-   The report has six lists. An empty report means nothing to do: say so and stop.
+   The report has six lists and the size of the debt. When every list is empty, steps 2–5
+   have nothing to do: go to step 6. The audit needs a fresh build, because it reads what the
+   compiler extracted. Build again after every change to Swift code.
 
 2. **`broken`** — a translation whose placeholders do not match its source. Fix the value
    with `apply` (step 4). This is the only list that also fails `make check`.
@@ -54,7 +56,8 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
    ```bash
    python3 scripts/localization.py prune
    ```
-   `prune` also drops baseline entries whose literal left the code (`obsolete`).
+   `prune` also drops the baseline entries in `obsolete`: the literal left the code, or every
+   place of it is localized now.
 
 4. **`missing` and `untranslated`** — write the translations to a JSON file and apply it:
    ```json
@@ -78,8 +81,9 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
      see").
    - `apply` rejects a value with wrong placeholders and prints why.
 
-5. **`suspects`** — literals that look like UI copy, are not localized, and are not in the
-   baseline yet. Open each location and decide:
+5. **`suspects`** — literals that look like UI copy, are not localized in that file, and are not
+   in the baseline yet. The same words can be localized in a menu and verbatim in a tooltip, so
+   the report names each place. Open each location and decide:
 
    | It is… | Do |
    | --- | --- |
@@ -99,15 +103,27 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
    ```
    Categories: `identifier`, `product-name`, `log`, `agent-prompt`, `protocol`, `developer`,
    `other`. The latest decision wins, so a wrong exemption can be moved back to `debt`.
-   Rules live in `exemptPaths` and `exemptLinePatterns` of the baseline file; edit those two
-   maps directly (the value is the reason), then run the audit again.
 
-6. **Debt budget.** The audit prints the size of the debt. In each release, localize the debt
-   in files that changed since the previous release tag, up to about 30 literals:
+   - A decision is about the **literal**, not about one place. Exempt a literal only when
+     **every** place is not UI. "Default" in a preview and in a real label is `debt`.
+   - Rules live in three maps of the baseline file. Edit them directly (the value is the
+     reason), then run the audit again:
+     `exemptPaths` (a whole file or folder is never UI), `exemptLinePatterns` (a call pattern
+     is never UI, such as a logger), and `runtimeKeyPaths` (a file whose titles reach the
+     catalog through a run-time lookup, such as `AppShortcuts.swift`; there a literal that is
+     a catalog key counts as localized).
+   - When there are more suspects than the budget in step 6 allows, localize the ones a user
+     sees most (the main window, menus, the Command Palette, alerts) and record the rest as
+     `debt`.
+
+6. **Debt budget.** In each release, localize the debt in files that changed since the previous
+   release tag, up to about 30 literals. Start with what a user sees most.
    ```bash
-   git diff --name-only "$(git describe --tags --abbrev=0)"..HEAD -- supacode
+   python3 scripts/localization.py debt --since "$(git describe --tags --abbrev=0)"
    ```
-   Skip this step when the release is urgent. Do more only when the user asks.
+   After the code is localizable, rebuild, translate the new `missing` strings (step 4), and
+   run `prune`: it removes a debt entry when every place of its literal is localized, so the
+   number goes down. Skip this step when the release is urgent. Do more only when the user asks.
 
 7. **Verify.** Rebuild and audit again until the report is empty, then:
    ```bash
@@ -139,6 +155,9 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
 | Long copy | One multi-line literal with `\` line continuations. `"a " + "b"` is a `String` and is never localized |
 | The title is only known at run time | `LocalizedStringResource(runtimeKey:)`, and mark the catalog entry `manual` |
 | Data, not copy (a branch name, a path) | `Text(verbatim:)` |
+
+SwiftLint's `void_function_in_ternary` can misfire on `flag ? String(localized: "a") :
+String(localized: "b")` inside a `switch` expression. Use `if`/`else` there.
 
 ## Committing
 

@@ -10,11 +10,13 @@
              untranslated  entries without a finished translation
              suspects      string literals that look like UI copy, are not localized, and
                            have not been triaged into the baseline
-             obsolete      baseline entries whose literal left the code
+             obsolete      baseline entries that are done: the literal left the code, or
+                           every place of it is localized now
            It also prints the size of the known debt. Needs a Debug build.
   apply    Add or update translations from a JSON file, validated and in Xcode's format.
   prune    Remove unused catalog entries and obsolete baseline entries.
   triage   Record decisions about suspects in the baseline (exempt or debt).
+  debt     List the debt by file, optionally only in files changed since a git ref.
   format   Rewrite the catalog in the format Xcode writes.
 
 The coverage data comes from the `.stringsdata` files that the Swift compiler writes during a
@@ -49,6 +51,7 @@ EXEMPT_CATEGORIES = ("identifier", "product-name", "log", "agent-prompt", "proto
 PLACEHOLDER = re.compile(r"%(?:(\d+)\$)?[-+ #0]*\d*(?:\.\d+)?(hh|h|ll|l|q|z|t|j)?([@dDiuUxXoOfFeEgGaAcCsS])")
 WORD = re.compile(r"[A-Za-z]{2,}")
 SENTENCE_START = re.compile(r"[A-Z“\"'(%]")
+CONTINUATION = "\x00"
 SINGLE_WORD = re.compile(r"[A-Z][a-z]{2,}(?:…|\.\.\.)?")
 
 
@@ -265,10 +268,9 @@ def read_literal(text: str, start: int) -> tuple[str, int]:
                 parts.append("%@")
                 index = skip_interpolation(text, index + 2)
                 continue
-            if following == "\n":  # line continuation in a multi-line literal
+            if following == "\n":  # line continuation: joined after the indentation is removed
+                parts.append(CONTINUATION + "\n")
                 index += 2
-                while index < len(text) and text[index] in " \t":
-                    index += 1
                 continue
             parts.append({"n": "\n", "t": "\t"}.get(following, following))
             index += 2
@@ -279,7 +281,7 @@ def read_literal(text: str, start: int) -> tuple[str, int]:
     if multiline:
         lines = value.split("\n")[1:]
         indent = len(lines[-1]) if lines and not lines[-1].strip() else 0
-        value = "\n".join(line[indent:] for line in lines[:-1])
+        value = "\n".join(line[indent:] for line in lines[:-1]).replace(CONTINUATION + "\n", "")
     return value, index
 
 
@@ -325,6 +327,7 @@ class Baseline:
         self.data = data
         self.exempt_paths: dict[str, str] = data.setdefault("exemptPaths", {})
         self.exempt_line_patterns: dict[str, str] = data.setdefault("exemptLinePatterns", {})
+        self.runtime_key_paths: dict[str, str] = data.setdefault("runtimeKeyPaths", {})
         self.exempt_literals: dict[str, str] = data.setdefault("exemptLiterals", {})
         self.debt: list[str] = data.setdefault("debt", [])
         self._line_patterns = [re.compile(pattern) for pattern in self.exempt_line_patterns]
@@ -332,15 +335,22 @@ class Baseline:
     def exempts_path(self, path: str) -> bool:
         return any(fnmatch(path, glob) for glob in self.exempt_paths)
 
+    def looks_up_at_run_time(self, path: str) -> bool:
+        """A file whose titles reach the catalog through a run-time lookup, not through a literal."""
+        return any(fnmatch(path, glob) for glob in self.runtime_key_paths)
+
     def exempts_line(self, line: str) -> bool:
         return any(pattern.search(line) for pattern in self._line_patterns)
 
     def knows(self, literal: str) -> bool:
         return literal in self.exempt_literals or literal in self.debt
 
-    def obsolete(self, present: set[str]) -> list[str]:
-        """Entries whose literal left the code. They must go, so the baseline only shrinks."""
-        return [literal for literal in [*self.exempt_literals, *self.debt] if literal not in present]
+    def obsolete(self, still_open: set[str]) -> list[str]:
+        """Entries with no open place: the literal left the code, or every place is localized now.
+
+        They must go, so the baseline only shrinks.
+        """
+        return [literal for literal in [*self.exempt_literals, *self.debt] if literal not in still_open]
 
     def serialize(self) -> str:
         self.data["exemptLiterals"] = dict(sorted(self.exempt_literals.items()))
@@ -365,13 +375,62 @@ def scan_sources(root: Path, baseline: Baseline) -> dict[str, list[str]]:
     return found
 
 
-def unknown_candidates(found: dict[str, list[str]], baseline: Baseline, extracted: set[str]) -> dict[str, list[str]]:
-    localized = {loosen(key) for key in extracted}
-    return {
-        literal: places
-        for literal, places in found.items()
-        if loosen(literal) not in localized and not baseline.knows(literal)
-    }
+def runtime_keys(catalog: dict) -> set[str]:
+    """Keys that the code looks up at run time. Their literals are localized, but not extracted."""
+    return {key for key, entry in catalog["strings"].items() if entry.get("extractionState") == "manual"}
+
+
+def open_places(
+    found: dict[str, list[str]],
+    baseline: Baseline,
+    extracted: dict[str, set[str]],
+    runtime_keys: set[str] = frozenset(),
+) -> dict[str, list[str]]:
+    """The places where each candidate is still not localized.
+
+    The comparison is per file: the same words can be localized in a menu and verbatim in a
+    tooltip elsewhere. In a file that looks titles up at run time, a catalog key is localized.
+    """
+    localized: dict[str, set[str]] = {}
+    for key, files in extracted.items():
+        localized.setdefault(loosen(key), set()).update(files)
+    still_open = {}
+    for literal, places in found.items():
+        files = localized.get(loosen(literal))
+        in_catalog = files is not None or literal in runtime_keys
+        remaining = []
+        for place in places:
+            path = place.rsplit(":", 1)[0]
+            if Path(path).name in (files or ()) or (in_catalog and baseline.looks_up_at_run_time(path)):
+                continue
+            remaining.append(place)
+        if remaining:
+            still_open[literal] = remaining
+    return still_open
+
+
+def unknown_candidates(
+    found: dict[str, list[str]],
+    baseline: Baseline,
+    extracted: dict[str, set[str]],
+    runtime_keys: set[str] = frozenset(),
+) -> dict[str, list[str]]:
+    """Open places of the candidates that nobody has triaged into the baseline yet."""
+    still_open = open_places(found, baseline, extracted, runtime_keys)
+    return {literal: places for literal, places in still_open.items() if not baseline.knows(literal)}
+
+
+def debt_places(
+    still_open: dict[str, list[str]], baseline: Baseline, changed: set[str] | None
+) -> dict[str, list[tuple[int, str]]]:
+    """Group the open places of the debt by file. `changed` limits the result to those files."""
+    by_file: dict[str, list[tuple[int, str]]] = {}
+    for literal in baseline.debt:
+        for place in still_open.get(literal, []):
+            path, line = place.rsplit(":", 1)
+            if changed is None or path in changed:
+                by_file.setdefault(path, []).append((int(line), literal))
+    return {path: sorted(items) for path, items in sorted(by_file.items())}
 
 
 # MARK: - Commands
@@ -412,8 +471,8 @@ def command_audit(arguments) -> int:
         "missing": coverage.missing,
         "unused": coverage.unused,
         "untranslated": translation_issues(catalog),
-        "suspects": unknown_candidates(found, baseline, set(extracted)),
-        "obsolete": baseline.obsolete(set(found)),
+        "suspects": unknown_candidates(found, baseline, extracted, runtime_keys(catalog)),
+        "obsolete": baseline.obsolete(set(open_places(found, baseline, extracted, runtime_keys(catalog)))),
     }
     debt = len(baseline.debt)
     if arguments.json:
@@ -440,8 +499,10 @@ def command_apply(arguments) -> int:
 def command_prune(arguments) -> int:
     catalog = load_json(arguments.catalog)
     baseline = Baseline(load_json(arguments.baseline))
-    removed = prune(catalog, extracted_keys(stringsdata_directory(arguments)))
-    obsolete = baseline.obsolete(set(scan_sources(ROOT, baseline)))
+    extracted = extracted_keys(stringsdata_directory(arguments))
+    still_open = open_places(scan_sources(ROOT, baseline), baseline, extracted, runtime_keys(catalog))
+    removed = prune(catalog, extracted)
+    obsolete = baseline.obsolete(set(still_open))
     for literal in obsolete:
         baseline.exempt_literals.pop(literal, None)
     baseline.debt[:] = [literal for literal in baseline.debt if literal not in obsolete]
@@ -472,6 +533,24 @@ def command_triage(arguments) -> int:
     return 0
 
 
+def command_debt(arguments) -> int:
+    catalog = load_json(arguments.catalog)
+    baseline = Baseline(load_json(arguments.baseline))
+    extracted = extracted_keys(stringsdata_directory(arguments))
+    still_open = open_places(scan_sources(ROOT, baseline), baseline, extracted, runtime_keys(catalog))
+    changed = None
+    if arguments.since:
+        command = ["git", "-C", str(ROOT), "diff", "--name-only", f"{arguments.since}..HEAD", "--", SOURCES]
+        changed = set(subprocess.run(command, check=True, capture_output=True, text=True).stdout.split())
+    by_file = debt_places(still_open, baseline, changed)
+    for path, items in sorted(by_file.items(), key=lambda item: -len(item[1])):
+        print(f"\n## {path} ({len(items)})")
+        for line, literal in items:
+            print(f"  {line}: " + literal.replace("\n", "\\n"))
+    print(f"\n{sum(len(items) for items in by_file.values())} debt place(s) in {len(by_file)} file(s).")
+    return 0
+
+
 def command_format(arguments) -> int:
     arguments.catalog.write_text(serialize(load_json(arguments.catalog)))
     return 0
@@ -494,6 +573,9 @@ def main() -> int:
     triage = commands.add_parser("triage")
     triage.add_argument("decisions", type=Path)
     triage.set_defaults(run=command_triage)
+    debt = commands.add_parser("debt")
+    debt.add_argument("--since", help="only files changed since this git ref, for example the last release tag")
+    debt.set_defaults(run=command_debt)
     commands.add_parser("format").set_defaults(run=command_format)
     arguments = parser.parse_args()
     return arguments.run(arguments)

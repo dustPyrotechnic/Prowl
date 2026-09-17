@@ -8,6 +8,8 @@ from localization import (
     apply_translations,
     build_settings_command,
     candidate_literals,
+    debt_places,
+    open_places,
     extracted_keys,
     extraction_issues,
     placeholders,
@@ -209,6 +211,12 @@ class CandidateLiteralTests(unittest.TestCase):
         text = 'let text = """\n    Host is off. \\\n    Start Host first.\n    """\nlet next = 1\n'
         self.assertEqual(self.scan("supacode/Domain/Thing.swift", text), ["Host is off. Start Host first."])
 
+    def test_keeps_a_space_that_follows_a_line_continuation(self):
+        text = 'Text(\n  """\n  They play sounds\\\n   according to your settings.\n  """\n)\n'
+        self.assertEqual(
+            self.scan("supacode/Domain/Thing.swift", text), ["They play sounds according to your settings."]
+        )
+
     def test_reports_the_line_where_the_literal_starts(self):
         text = 'let a = 1\nlet text = "Unable to create worktree"\n'
         self.assertEqual(candidate_literals("supacode/Domain/Thing.swift", text), [(2, "Unable to create worktree")])
@@ -227,11 +235,36 @@ class BaselineTests(unittest.TestCase):
             "Unable to create worktree": ["supacode/Features/B.swift:2"],
             "Brand new copy": ["supacode/Features/C.swift:3"],
         }
-        self.assertEqual(unknown_candidates(found, baseline, extracted=set()), {"Brand new copy": found["Brand new copy"]})
+        self.assertEqual(unknown_candidates(found, baseline, extracted={}), {"Brand new copy": found["Brand new copy"]})
 
-    def test_ignores_what_the_compiler_extracted(self):
+    def test_ignores_what_the_compiler_extracted_from_the_same_file(self):
         found = {"Open %@": ["supacode/Features/C.swift:3"]}
-        self.assertEqual(unknown_candidates(found, self.baseline(), extracted={"Open %lld"}), {})
+        self.assertEqual(unknown_candidates(found, self.baseline(), extracted={"Open %lld": {"C.swift"}}), {})
+
+    def test_trusts_a_run_time_key_only_where_titles_are_looked_up(self):
+        baseline = self.baseline(runtimeKeyPaths={"supacode/App/AppShortcuts.swift": "Binding.localizedTitle"})
+        found = {"Toggle Canvas": ["supacode/App/AppShortcuts.swift:3", "supacode/Features/Tooltip.swift:8"]}
+        self.assertEqual(
+            unknown_candidates(found, baseline, {}, runtime_keys={"Toggle Canvas"}),
+            {"Toggle Canvas": ["supacode/Features/Tooltip.swift:8"]},
+        )
+
+    def test_trusts_catalog_keys_in_a_file_that_looks_titles_up_at_run_time(self):
+        baseline = self.baseline(runtimeKeyPaths={"supacode/App/AppShortcuts.swift": "Binding.localizedTitle"})
+        found = {
+            "Toggle Left Sidebar": ["supacode/App/AppShortcuts.swift:3"],
+            "Not in the catalog": ["supacode/App/AppShortcuts.swift:4"],
+        }
+        unknown = unknown_candidates(found, baseline, {"Toggle Left Sidebar": {"SidebarCommands.swift"}})
+        self.assertEqual(list(unknown), ["Not in the catalog"])
+
+    def test_reports_a_literal_that_only_another_file_localizes(self):
+        found = {"Toggle Canvas": ["supacode/App/Menu.swift:3", "supacode/Features/Palette.swift:9"]}
+        extracted = {"Toggle Canvas": {"Menu.swift"}}
+        self.assertEqual(
+            unknown_candidates(found, self.baseline(), extracted),
+            {"Toggle Canvas": ["supacode/Features/Palette.swift:9"]},
+        )
 
     def test_exempts_by_path_and_by_line(self):
         baseline = self.baseline(
@@ -251,6 +284,25 @@ class BaselineTests(unittest.TestCase):
     def test_reports_entries_that_left_the_code(self):
         baseline = self.baseline(exemptLiterals={"Gone Product": "product-name"}, debt=["Gone copy", "Still here"])
         self.assertEqual(baseline.obsolete({"Still here"}), ["Gone Product", "Gone copy"])
+
+    def test_lists_debt_in_the_files_a_release_touched(self):
+        baseline = self.baseline(debt=["Expand All", "Cancel Run"], exemptLiterals={"Claude Code": "product-name"})
+        still_open = {
+            "Expand All": ["supacode/Features/Sidebar.swift:3"],
+            "Cancel Run": ["supacode/Features/Workflow.swift:9"],
+            "Claude Code": ["supacode/Features/Sidebar.swift:5"],
+        }
+        self.assertEqual(
+            debt_places(still_open, baseline, changed={"supacode/Features/Sidebar.swift"}),
+            {"supacode/Features/Sidebar.swift": [(3, "Expand All")]},
+        )
+        self.assertEqual(len(debt_places(still_open, baseline, changed=None)), 2)
+
+    def test_debt_is_paid_when_every_place_is_localized(self):
+        baseline = self.baseline(debt=["Expand All", "Collapse All"])
+        found = {"Expand All": ["supacode/Features/Sidebar.swift:3"], "Collapse All": ["supacode/Features/Sidebar.swift:4"]}
+        still_open = open_places(found, baseline, {"Expand All": {"Sidebar.swift"}})
+        self.assertEqual(baseline.obsolete(set(still_open)), ["Expand All"])
 
 
 class BuildSettingsCommandTests(unittest.TestCase):

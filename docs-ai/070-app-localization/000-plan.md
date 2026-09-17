@@ -83,10 +83,16 @@ interpolation and multi-line literals, so a suspect is the same text the compile
 | Part | Meaning |
 | --- | --- |
 | `exemptPaths`, `exemptLinePatterns` | Rules for code that is never UI: the CLI service, agent prompts, logger calls, symbol names. Prefer a rule, because it also covers future code |
+| `runtimeKeyPaths` | Files whose titles reach the catalog through a run-time lookup (`AppShortcuts.swift`, the Command Palette items). There, a literal that is a catalog key counts as localized |
 | `exemptLiterals` | One literal that is not UI, with a category: `identifier`, `product-name`, `log`, `agent-prompt`, `protocol`, `developer`, `other` |
 | `debt` | UI copy that is known but not localizable yet |
 
-The first baseline (2026-09-18) has 651 debt literals. Most are alert text in reducers, labels
+A literal counts as localized only in a file from which the compiler extracted it. The same
+words can be localized in a menu and verbatim in a tooltip; a comparison across all files hid
+about 70 such places. A decision in the baseline is about the literal, not about one place, and
+a debt entry is paid when every place of its literal is localized.
+
+The first baseline (2026-09-18) has about 650 debt literals. Most are alert text in reducers, labels
 that views build as `String`, presentation models, and error descriptions. They show in English.
 Each release localizes the debt in the files it touched, within a budget, so the number only
 goes down. An entry whose literal left the code is reported as obsolete and removed.
@@ -157,7 +163,7 @@ compares a value with itself and does not check the text.
 
 ## Open
 
-- **The debt.** 651 literals on 2026-09-18. The large groups: alert titles and messages in the
+- **The debt.** About 650 literals on 2026-09-18 (`python3 scripts/localization.py debt`). The large groups: alert titles and messages in the
   `RepositoriesFeature+*.swift` reducers, `String` labels in the Workflow and Remote Mirror
   views, presentation models under `supacode/Features/Workflow/Models/`, and error descriptions
   in `supacode/Clients/` and `supacode/Features/RemoteMirror/`. Some Remote Mirror messages
