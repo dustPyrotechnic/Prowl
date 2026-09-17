@@ -180,7 +180,7 @@ private struct WorkflowStartCard: View {
   private static let labelWidth: CGFloat = 150
   private static let controlWidth: CGFloat = 320
 
-  private func sectionHeader(_ title: String, help: String) -> some View {
+  private func sectionHeader(_ title: LocalizedStringKey, help: LocalizedStringKey) -> some View {
     Text(title)
       .font(.subheadline.weight(.semibold))
       .foregroundStyle(.secondary)
@@ -285,7 +285,7 @@ private struct WorkflowStartCard: View {
     var lines = ["\(role.kindLabel) — \(role.kindDescription)"]
     if let steps = role.stepsCaption { lines.append(steps) }
     if required, let placement = role.placementNote { lines.append(placement) }
-    if !required { lines.append("Not started with the current options.") }
+    if !required { lines.append(String(localized: "Not started with the current options.")) }
     return lines.joined(separator: "\n")
   }
 

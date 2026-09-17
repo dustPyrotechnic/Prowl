@@ -101,12 +101,12 @@ struct SidebarCommands: Commands {
   @ViewBuilder
   private var shelfBookMenuButtons: some View {
     ForEach(Array(AppShortcuts.shelfBookSelectionCommandIDs.enumerated()), id: \.element) { index, commandID in
-      let title = "Select Book \(index + 1)"
+      let title: LocalizedStringResource = "Select Book \(index + 1)"
       Button(title) {
         store.send(.repositories(.selectShelfBook(index + 1)))
       }
       .modifier(KeyboardShortcutModifier(shortcut: keyboardShortcut(for: commandID)))
-      .help(helpText(title: LocalizedStringResource(runtimeKey: title), commandID: commandID))
+      .help(helpText(title: title, commandID: commandID))
     }
   }
 

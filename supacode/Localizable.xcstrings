@@ -317,6 +317,16 @@
         }
       }
     },
+    "%lld mirrors" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个镜像"
+          }
+        }
+      }
+    },
     "%lld more fields in full output" : {
       "localizations" : {
         "zh-Hans" : {
@@ -443,6 +453,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "将删除 1 个已完成的运行。仍在进行中的运行会被保留。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "1 mirror" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个镜像"
           }
         }
       }
@@ -959,6 +979,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agent"
+          }
+        }
+      }
+    },
+    "All interfaces (0.0.0.0)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有网络接口（0.0.0.0）"
           }
         }
       }
@@ -1920,6 +1950,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在检查 GitHub CLI…"
+          }
+        }
+      }
+    },
+    "Choices this workflow asks for before it starts." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此工作流在开始前需要你做出的选择。"
           }
         }
       }
@@ -2924,6 +2964,16 @@
         }
       }
     },
+    "Connected · %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接 · %@"
+          }
+        }
+      }
+    },
     "Connecting…" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3470,6 +3520,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自定义色调"
+          }
+        }
+      }
+    },
+    "Custom · %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义 · %@"
           }
         }
       }
@@ -5356,12 +5416,52 @@
         }
       }
     },
+    "Host is off" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机已关闭"
+          }
+        }
+      }
+    },
     "Host is off. Start Host to create a pairing code." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "主机已关闭。启动主机后即可创建配对码。"
+          }
+        }
+      }
+    },
+    "Host listening" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机正在监听"
+          }
+        }
+      }
+    },
+    "Host mirroring" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机正在镜像"
+          }
+        }
+      }
+    },
+    "Host off" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主机已关闭"
           }
         }
       }
@@ -5756,6 +5856,26 @@
         }
       }
     },
+    "Last connected %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次连接：%@"
+          }
+        }
+      }
+    },
+    "Last seen %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次在线：%@"
+          }
+        }
+      }
+    },
     "Later" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5932,6 +6052,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在监听"
+          }
+        }
+      }
+    },
+    "Listening · %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在监听 · %@"
           }
         }
       }
@@ -6416,6 +6546,16 @@
         }
       }
     },
+    "Never connected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从未连接"
+          }
+        }
+      }
+    },
     "New %@ in %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6862,6 +7002,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未运行"
+          }
+        }
+      }
+    },
+    "Not started with the current options." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前选项下不会启动。"
           }
         }
       }
@@ -7347,6 +7497,16 @@
         }
       }
     },
+    "Open on %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 %@ 上打开"
+          }
+        }
+      }
+    },
     "Open on Code Host" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7478,6 +7638,26 @@
         }
       }
     },
+    "Optional Steps" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可选步骤"
+          }
+        }
+      }
+    },
+    "Options" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选项"
+          }
+        }
+      }
+    },
     "Orange" : {
       "localizations" : {
         "zh-Hans" : {
@@ -7575,6 +7755,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已与 %@ 配对"
+          }
+        }
+      }
+    },
+    "Paired · never connected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已配对 · 从未连接"
           }
         }
       }
@@ -9802,6 +9992,16 @@
         }
       }
     },
+    "Select Book %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择第 %lld 本书"
+          }
+        }
+      }
+    },
     "Select Book 1" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11293,6 +11493,26 @@
         }
       }
     },
+    "Steps" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "步骤"
+          }
+        }
+      }
+    },
+    "Steps the run can start without." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以跳过而直接开始运行的步骤。"
+          }
+        }
+      }
+    },
     "Stop Host" : {
       "localizations" : {
         "zh-Hans" : {
@@ -11764,6 +11984,16 @@
         }
       }
     },
+    "This Mac only (127.0.0.1)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅这台 Mac（127.0.0.1）"
+          }
+        }
+      }
+    },
     "This Mac’s address" : {
       "localizations" : {
         "zh-Hans" : {
@@ -12136,6 +12366,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法清除保存的终端布局"
+          }
+        }
+      }
+    },
+    "Unable to copy to the clipboard." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法复制到剪贴板。"
           }
         }
       }
@@ -12651,6 +12891,16 @@
         }
       }
     },
+    "What the run does, in order. Hover a step for details." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此次运行按顺序执行的内容。悬停在步骤上可查看详情。"
+          }
+        }
+      }
+    },
     "When a new version is available, a small badge appears next to the notifications bell. Click it to review, install, and choose future background downloads." : {
       "localizations" : {
         "zh-Hans" : {
@@ -12717,6 +12967,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这台 Mac 的哪些地址接受连接"
+          }
+        }
+      }
+    },
+    "Who takes part in this run. Hover a role for what it does." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参与此次运行的角色。悬停在角色上可查看其作用。"
           }
         }
       }

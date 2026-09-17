@@ -92,6 +92,8 @@ When “profile” and “configuration” meet in one sentence, write 设置 fo
 | Host / Client / device | 主机 / 客户端 / 设备 |
 | pair / pairing code | 配对 / 配对码 |
 | Take Over / Revoke / Forget | 接管 / 撤销 / 忘记 |
+| mirror (n., one connected viewer) | 镜像 (`%lld 个镜像`) |
+| Last seen / Last connected | 上次在线 / 上次连接 |
 
 ## Punctuation and spacing
 

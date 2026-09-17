@@ -633,7 +633,7 @@ private struct ShelfSpineTabSlot: View {
 
 private struct ShelfSpineControlButton: View {
   let systemImage: String
-  let label: String
+  let label: LocalizedStringResource
   let shortcut: String?
   let action: () -> Void
 
@@ -651,6 +651,7 @@ private struct ShelfSpineControlButton: View {
   }
 
   private var helpText: String {
+    let label = String(localized: label)
     guard let shortcut else { return label }
     return "\(label) (\(shortcut))"
   }
