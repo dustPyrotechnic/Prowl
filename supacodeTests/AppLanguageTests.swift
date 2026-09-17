@@ -21,6 +21,32 @@ struct AppLanguageTests {
     #expect(AppLanguage.english.title == "English")
   }
 
+  @Test func chinesePullRequestSummaryPreservesBaseAndHeadRoles() throws {
+    let template = try chinese("%@ wants to merge %@ %@ into %@ from %@")
+    let summary = String(format: template, "alice", "2", "commits", "main", "feature")
+
+    #expect(summary == "alice 想要将 2 commits 从 feature 合并到 main")
+  }
+
+  @Test func chineseSkillRemovalHelpPreservesSkillAndPathRoles() throws {
+    let template = try chinese("Remove the %@ skill link at %@; the bundled skill stays in the app")
+    let help = String(format: template, "reviewer", "/tmp/reviewer")
+
+    #expect(help == "移除 /tmp/reviewer 处的 reviewer 技能链接；内置技能仍保留在应用中")
+  }
+
+  @Test func confirmedWorkflowUIStringsHaveChineseTranslations() throws {
+    let expectedTranslations = [
+      "Delete Run": "删除运行记录",
+      "Workflow run options": "工作流运行选项",
+      "No fields": "无字段",
+    ]
+
+    for (key, expected) in expectedTranslations {
+      #expect(try chinese(key) == expected)
+    }
+  }
+
   @Test func resolvedLanguageIsOnlyEnOrZhHans() {
     #expect(Set(ResolvedAppLanguage.allCases.map(\.rawValue)) == ["en", "zh-Hans"])
   }
@@ -239,6 +265,12 @@ struct AppLanguageTests {
     #expect(
       bridge.platformLanguagesForPrediction() == ["fr"]
     )
+  }
+
+  private func chinese(_ key: String) throws -> String {
+    let path = try #require(Bundle.main.path(forResource: "zh-Hans", ofType: "lproj"))
+    let bundle = try #require(Bundle(path: path))
+    return bundle.localizedString(forKey: key, value: nil, table: nil)
   }
 
   private func makeIsolatedDefaults(

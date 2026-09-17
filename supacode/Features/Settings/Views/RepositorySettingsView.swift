@@ -79,7 +79,8 @@ struct RepositorySettingsView: View {
           } header: {
             Text("Workspace")
           } footer: {
-            let metadataPath = ProjectWorkspace.metadataURL(for: store.rootURL).path(percentEncoded: false)
+            let metadataPath = ProjectWorkspace.metadataURL(for: store.rootURL).path(
+              percentEncoded: false)
             Text(
               "Read-only. Defined in \(metadataPath) — edit that file to change it."
             )
@@ -197,12 +198,14 @@ struct RepositorySettingsView: View {
               Toggle(isOn: observeLineDiffsAutomatically) {
                 VStack(alignment: .leading, spacing: 2) {
                   Text("Observe line diffs automatically")
-                  let message =
-                    "Keeps each workspace's line-change badge up to date in the background. "
-                    + "Turn off for very large repositories to avoid background git diff work."
-                  Text(message)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                  Text(
+                    """
+                    Keeps each workspace's line-change badge up to date in the background. \
+                    Turn off for very large repositories to avoid background git diff work.
+                    """
+                  )
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
                 }
               }
               .help(
@@ -215,12 +218,14 @@ struct RepositorySettingsView: View {
               Toggle(isOn: fetchPullRequestState) {
                 VStack(alignment: .leading, spacing: 2) {
                   Text("Fetch pull request state")
-                  let message =
-                    "Periodically checks pull request status (open, merged, checks) for this repository's branches. "
-                    + "Turn off to skip background GitHub queries."
-                  Text(message)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                  Text(
+                    """
+                    Periodically checks pull request status (open, merged, checks) for this repository's branches. \
+                    Turn off to skip background GitHub queries.
+                    """
+                  )
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
                 }
               }
               .help(
@@ -423,7 +428,8 @@ struct RepositorySettingsView: View {
       }
       .sheet(
         isPresented: Binding(
-          get: { workflowsStore.newWorkflow != nil }, set: { if !$0 { workflowsStore.send(.dismissNewWorkflow) } })
+          get: { workflowsStore.newWorkflow != nil },
+          set: { if !$0 { workflowsStore.send(.dismissNewWorkflow) } })
       ) {
         NewWorkflowSheet(appLocale: appLocale, store: workflowsStore)
       }

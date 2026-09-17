@@ -47,7 +47,8 @@ struct WorkflowHistoryFeatureTests {
 
   @Test func nothingRemovableMeansNoConfirmation() async {
     var state = WorkflowHistoryFeature.State()
-    state.preview = WorkflowHistoryPreview(entries: [Self.entry(bytes: 1, removable: false)], now: Self.now)
+    state.preview = WorkflowHistoryPreview(
+      entries: [Self.entry(bytes: 1, removable: false)], now: Self.now)
     let store = TestStore(initialState: state) { WorkflowHistoryFeature() }
     await store.send(.clearTapped)
   }
@@ -65,14 +66,16 @@ struct WorkflowHistoryFeatureTests {
       WorkflowHistoryFeature()
     } withDependencies: {
       $0[WorkflowHistoryOperations.self].clear = { cleanup }
-      $0[WorkflowHistoryOperations.self].preview = { WorkflowHistoryPreview(entries: [], now: Self.now) }
+      $0[WorkflowHistoryOperations.self].preview = {
+        WorkflowHistoryPreview(entries: [], now: Self.now)
+      }
     }
     await store.send(.clearTapped) { $0.alert = Self.clearAlert(count: 2) }
     await store.send(.alert(.presented(.confirmClear))) {
       $0.alert = nil
       $0.isBusy = true
     }
-    await store.receive(.cleared(cleanup)) { $0.result = "Removed 2 runs." }
+    await store.receive(.cleared(cleanup)) { $0.result = Self.clearedResult(count: 2) }
     await store.receive(\.loaded) {
       $0.isBusy = false
       $0.hasLoaded = true
@@ -93,31 +96,49 @@ struct WorkflowHistoryFeatureTests {
     }
   }
 
-  nonisolated private static func entry(bytes: Int64, removable: Bool = true) -> WorkflowHistoryEntry {
+  nonisolated private static func entry(bytes: Int64, removable: Bool = true)
+    -> WorkflowHistoryEntry
+  {
     WorkflowHistoryEntry(
       id: UUID(), directory: URL(filePath: "/fixture"), name: "Run", root: "/project",
-      state: removable ? "completed" : "running", finishedAt: removable ? now.addingTimeInterval(-86400 * 5) : nil,
+      state: removable ? "completed" : "running",
+      finishedAt: removable ? now.addingTimeInterval(-86400 * 5) : nil,
       bytes: bytes, protection: removable ? nil : "Active or unknown state", removable: removable)
   }
 
   private static func clearAlert(count: Int) -> AlertState<WorkflowHistoryFeature.Alert> {
     AlertState {
-      TextState("Clear Workflow History?")
+      TextState(String(localized: "Clear Workflow History?"))
     } actions: {
-      ButtonState(role: .cancel) { TextState("Cancel") }
-      ButtonState(role: .destructive, action: .confirmClear) { TextState("Clear History") }
+      ButtonState(role: .cancel) { TextState(String(localized: "Cancel")) }
+      ButtonState(role: .destructive, action: .confirmClear) {
+        TextState(String(localized: "Clear History"))
+      }
     } message: {
       let message =
         if count == 1 {
-          "1 finished run will be deleted. Runs that are still active are kept. This cannot be undone."
+          String(
+            localized:
+              "1 finished run will be deleted. Runs that are still active are kept. This cannot be undone."
+          )
         } else {
           String(
-            format:
-              "%lld finished runs will be deleted. Runs that are still active are kept. This cannot be undone.",
+            format: String(
+              localized:
+                "%lld finished runs will be deleted. Runs that are still active are kept. This cannot be undone."
+            ),
             count
           )
         }
       return TextState(message)
+    }
+  }
+
+  private static func clearedResult(count: Int) -> String {
+    if count == 1 {
+      String(localized: "Removed 1 run.")
+    } else {
+      String(format: String(localized: "Removed %lld runs."), count)
     }
   }
 }

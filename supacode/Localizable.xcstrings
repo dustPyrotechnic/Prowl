@@ -156,7 +156,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ 想要将 %@ %@ 从 %@ 合并到 %@"
+            "value": "%1$@ 想要将 %2$@ %3$@ 从 %5$@ 合并到 %4$@"
           }
         }
       }
@@ -7391,7 +7391,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "移除 %@ 处的 %@ 技能链接；内置技能仍保留在应用中"
+            "value": "移除 %2$@ 处的 %1$@ 技能链接；内置技能仍保留在应用中"
           }
         }
       }
@@ -11468,6 +11468,166 @@
           "stringUnit": {
             "state": "translated",
             "value": "将删除 %lld 个已完成的运行。仍在活动的运行会被保留。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "Agent Icon": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent 图标"
+          }
+        }
+      }
+    },
+    "Delete Run": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除运行记录"
+          }
+        }
+      }
+    },
+    "Keeps each workspace's line-change badge up to date in the background. Turn off for very large repositories to avoid background git diff work.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在后台持续更新每个工作区的行变更徽标。对于超大型仓库，可关闭此选项以避免后台执行 git diff。"
+          }
+        }
+      }
+    },
+    "No fields": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无字段"
+          }
+        }
+      }
+    },
+    "Periodically checks pull request status (open, merged, checks) for this repository's branches. Turn off to skip background GitHub queries.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "定期检查此仓库各分支的拉取请求状态（打开、已合并、检查结果）。关闭后将跳过后台 GitHub 查询。"
+          }
+        }
+      }
+    },
+    "Pick a preset or enter any SF Symbol name available in your system.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个预设，或输入系统中可用的任意 SF Symbol 名称。"
+          }
+        }
+      }
+    },
+    "Pick a preset or enter any SF Symbol name. Clearing restores the runtime brand icon.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个预设，或输入任意 SF Symbol 名称。清除后将恢复运行时品牌图标。"
+          }
+        }
+      }
+    },
+    "Pick a preset or enter any SF Symbol name. SVG and SF Symbol icons are tinted with the repo color; bitmap formats keep their own colors.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个预设，或输入任意 SF Symbol 名称。SVG 和 SF Symbol 图标会使用仓库颜色着色；位图格式保留自身颜色。"
+          }
+        }
+      }
+    },
+    "Pick a preset or enter any SF Symbol name. The icon marks this workflow in menus and the palette.": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择一个预设，或输入任意 SF Symbol 名称。此图标用于在菜单和命令面板中标识该工作流。"
+          }
+        }
+      }
+    },
+    "Repository Icon": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库图标"
+          }
+        }
+      }
+    },
+    "Restore the default icon for this tab": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复此标签页的默认图标"
+          }
+        }
+      }
+    },
+    "Restore the runtime brand icon": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复运行时品牌图标"
+          }
+        }
+      }
+    },
+    "Tab Icon": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签页图标"
+          }
+        }
+      }
+    },
+    "Use the default workflow icon": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用默认工作流图标"
+          }
+        }
+      }
+    },
+    "Workflow Icon": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流图标"
+          }
+        }
+      }
+    },
+    "Workflow run options": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流运行选项"
           }
         }
       }

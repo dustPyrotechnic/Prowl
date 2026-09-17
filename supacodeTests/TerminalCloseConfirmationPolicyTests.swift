@@ -36,9 +36,15 @@ struct TerminalCloseConfirmationPolicyTests {
     candidate.hasMarkedText = true
     let decision = TerminalCloseConfirmationPolicy.decision(for: [candidate])
     #expect(decision.reasons == [.recentInput])
-    #expect(
-      TerminalCloseConfirmationPolicy.informativeMessage(for: decision, worktreeName: "wt")
-        .contains("may lose unsubmitted input"))
+    let message = TerminalCloseConfirmationPolicy.informativeMessage(
+      for: decision,
+      worktreeName: "wt"
+    )
+    let paneText = String(localized: "pane")
+    let reasonText = String(localized: "recent input")
+    let template = String(
+      localized: "This will close %lld %@ in \"%@\" with %@. Closing may lose unsubmitted input.")
+    #expect(message == String(format: template, 1, paneText, "wt", reasonText))
   }
 
   @Test func editingKeyClassificationExcludesNavigationAndShortcuts() {
@@ -163,10 +169,10 @@ struct TerminalCloseConfirmationPolicyTests {
       worktreeName: "feature/foo"
     )
 
-    #expect(
-      message
-        == "This will close 1 pane in \"feature/foo\" with active agent work or an unseen agent result."
-    )
+    let paneText = String(localized: "pane")
+    let reasonText = String(localized: "active agent work or an unseen agent result")
+    let template = String(localized: "This will close %lld %@ in \"%@\" with %@.")
+    #expect(message == String(format: template, 1, paneText, "feature/foo", reasonText))
   }
 
   @Test func informativeMessageAggregatesMixedReasons() {
@@ -190,9 +196,10 @@ struct TerminalCloseConfirmationPolicyTests {
       worktreeName: "wt"
     )
 
-    #expect(
-      message
-        == "This will close 2 panes in \"wt\" with active agent work, unseen agent results, or long-running commands."
-    )
+    let paneText = String(localized: "panes")
+    let reasonText = String(
+      localized: "active agent work, unseen agent results, or long-running commands")
+    let template = String(localized: "This will close %lld %@ in \"%@\" with %@.")
+    #expect(message == String(format: template, 2, paneText, "wt", reasonText))
   }
 }

@@ -51,8 +51,10 @@ struct RepositoryAppearancePickerView: View {
         defaultIcon: TabIconSource(systemSymbol: "folder.fill"),
         title: "Repository Icon",
         subtitle:
-          "Pick a preset or enter any SF Symbol name. SVG and SF Symbol icons are tinted "
-          + "with the repo color; bitmap formats keep their own colors.",
+          """
+          Pick a preset or enter any SF Symbol name. SVG and SF Symbol icons are tinted \
+          with the repo color; bitmap formats keep their own colors.
+          """,
         presets: RepositoryIconPresets.presets,
         suggestionsSection: { symbolName in
           AnyView(

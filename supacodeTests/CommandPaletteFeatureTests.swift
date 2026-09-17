@@ -272,7 +272,13 @@ struct CommandPaletteFeatureTests {
     #expect(!ids.contains("custom-command.cmd-empty"))
 
     let buildItem = items.first { $0.id == "custom-command.cmd-build" }
-    #expect(buildItem?.subtitle == "Local custom command · Opens in a new tab")
+    #expect(
+      matchesSupportedLocalization(
+        buildItem?.subtitle,
+        english: "Local custom command · Opens in a new tab",
+        simplifiedChinese: "本地 自定义命令 · 在新标签页中打开"
+      )
+    )
     #expect(buildItem?.defaultSuggestion == false)
     #expect(
       buildItem?.kind
@@ -349,16 +355,25 @@ struct CommandPaletteFeatureTests {
     )
 
     #expect(
-      items.first { $0.id == "custom-command.cmd-shell" }?.subtitle
-        == "Local custom command · Opens in a new tab"
+      matchesSupportedLocalization(
+        items.first { $0.id == "custom-command.cmd-shell" }?.subtitle,
+        english: "Local custom command · Opens in a new tab",
+        simplifiedChinese: "本地 自定义命令 · 在新标签页中打开"
+      )
     )
     #expect(
-      items.first { $0.id == "custom-command.cmd-inline" }?.subtitle
-        == "Local custom command · Runs in the focused terminal"
+      matchesSupportedLocalization(
+        items.first { $0.id == "custom-command.cmd-inline" }?.subtitle,
+        english: "Local custom command · Runs in the focused terminal",
+        simplifiedChinese: "本地 自定义命令 · 在聚焦的终端中运行"
+      )
     )
     #expect(
-      items.first { $0.id == "custom-command.cmd-split" }?.subtitle
-        == "Local custom command · Opens in a new split (down)"
+      matchesSupportedLocalization(
+        items.first { $0.id == "custom-command.cmd-split" }?.subtitle,
+        english: "Local custom command · Opens in a new split (down)",
+        simplifiedChinese: "本地 自定义命令 · 在新的分屏中打开（下方）"
+      )
     )
   }
 
@@ -661,7 +676,8 @@ struct CommandPaletteFeatureTests {
       kind: .worktreeSelect("wt-pref")
     )
 
-    let result = CommandPaletteFeature.filterItems(items: [openSettings, prefBranch], query: "preferences")
+    let result = CommandPaletteFeature.filterItems(
+      items: [openSettings, prefBranch], query: "preferences")
     #expect(result.first?.id == prefBranch.id)
   }
 
@@ -675,7 +691,8 @@ struct CommandPaletteFeatureTests {
       keywords: ["preferences"]
     )
 
-    let result = CommandPaletteFeature.filterItems(items: [openSettings], query: "preferences settings")
+    let result = CommandPaletteFeature.filterItems(
+      items: [openSettings], query: "preferences settings")
     expectNoDifference(result.map(\.id), [openSettings.id])
   }
 
@@ -1170,7 +1187,9 @@ struct CommandPaletteFeatureTests {
     let ordered = CommandPaletteFeature.filterItems(items: items, query: "")
 
     #expect(!ordered.isEmpty, "Should generate command palette items")
-    #expect(ordered.first?.kind == .markPullRequestReady(worktree.id), "Draft PR action should rank first")
+    #expect(
+      ordered.first?.kind == .markPullRequestReady(worktree.id), "Draft PR action should rank first"
+    )
   }
   @Test func commandPaletteFailingActionRanksFirst() {
     let rootPath = "/tmp/repo"
@@ -1221,9 +1240,11 @@ struct CommandPaletteFeatureTests {
 
     #expect(!ordered.isEmpty, "Should generate command palette items")
     if case .copyCiFailureLogs(let wtID) = ordered.first?.kind {
-      #expect(wtID == worktree.id, "CI failure logs action should rank first when check URL missing")
+      #expect(
+        wtID == worktree.id, "CI failure logs action should rank first when check URL missing")
     } else {
-      Issue.record("Expected copyCiFailureLogs as first item, got \(String(describing: ordered.first?.kind))")
+      Issue.record(
+        "Expected copyCiFailureLogs as first item, got \(String(describing: ordered.first?.kind))")
     }
   }
   @Test func commandPaletteMergeActionRanksFirstWhenMergeable() {
@@ -1248,7 +1269,8 @@ struct CommandPaletteFeatureTests {
     if case .mergePullRequest(let wtID) = ordered.first?.kind {
       #expect(wtID == worktree.id, "Merge PR action should rank first when mergeable")
     } else {
-      Issue.record("Expected mergePullRequest as first item, got \(String(describing: ordered.first?.kind))")
+      Issue.record(
+        "Expected mergePullRequest as first item, got \(String(describing: ordered.first?.kind))")
     }
   }
   @Test func commandPaletteShowsCloseActionForOpenPullRequest() {
@@ -1756,6 +1778,14 @@ struct CommandPaletteFeatureTests {
   }
 }
 
+private func matchesSupportedLocalization(
+  _ value: String?,
+  english: String,
+  simplifiedChinese: String
+) -> Bool {
+  value == english || value == simplifiedChinese
+}
+
 private func makeWorktree(
   id: String,
   name: String,
@@ -1827,7 +1857,8 @@ private func testCategory(for kind: CommandPaletteItem.Kind) -> CommandPaletteIt
   case .ghosttyCommand, .launchAgentProfile, .runWorkflow:
     return .terminal
   case .toggleLeftSidebar, .toggleActiveAgentsPanel, .toggleCanvas,
-    .expandCanvasCard, .arrangeCanvasCards, .organizeCanvasCards, .tileCanvasCards, .selectAllCanvasCards,
+    .expandCanvasCard, .arrangeCanvasCards, .organizeCanvasCards, .tileCanvasCards,
+    .selectAllCanvasCards,
     .toggleShelf, .showDiff, .outgoingChanges:
     return .view
   #if DEBUG
@@ -1844,7 +1875,8 @@ private func testDefaultSuggestion(for kind: CommandPaletteItem.Kind) -> Bool {
     .openPullRequest, .markPullRequestReady, .mergePullRequest, .closePullRequest,
     .copyFailingJobURL, .copyCiFailureLogs, .rerunFailedJobs, .openFailingCheckDetails,
     .toggleLeftSidebar, .toggleActiveAgentsPanel, .toggleCanvas,
-    .expandCanvasCard, .arrangeCanvasCards, .organizeCanvasCards, .tileCanvasCards, .selectAllCanvasCards,
+    .expandCanvasCard, .arrangeCanvasCards, .organizeCanvasCards, .tileCanvasCards,
+    .selectAllCanvasCards,
     .toggleShelf, .showDiff, .outgoingChanges,
     .revealInFinder, .copyPath, .revealInSidebar,
     .runScript, .stopRunScript, .togglePinWorktree, .renameBranch,
