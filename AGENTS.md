@@ -11,7 +11,8 @@ make install-release             # Build Release, sign locally, install to /Appl
 make format-changed              # Run swift-format on changed Swift files only
 make format                      # Run full-tree swift-format cleanup
 make lint                        # Run swiftlint only
-make check                       # Run changed-file format, swift-format lint, and swiftlint
+make check                       # Run changed-file format, swift-format lint, swiftlint, and the string catalog check
+make check-localization-coverage # Build, then compare the string catalog with the strings the compiler extracted
 make test                        # Run all tests
 make benchmark-build             # Benchmark CI-like clean/warm-CAS build and test time
 make bench                       # Run performance benchmarks with -O; append absolute medians to ~/Library/Logs/Prowl/measurements/bench/

@@ -553,7 +553,14 @@ lint: # Lint code with swiftlint
 check-workflow-naming: # Check maintained workflow source and references for retired names
 	python3 scripts/check_workflow_naming.py
 
-check: format-changed format-lint lint test-scripts check-workflow-naming # Format changed Swift files, then run linters and checks
+.PHONY: check-localization check-localization-coverage
+check-localization: # Check the string catalog for missing or unfinished translations (no build needed)
+	python3 scripts/check_localization.py
+
+check-localization-coverage: build-app # Compare the string catalog with the strings the compiler extracted from the app
+	python3 scripts/check_localization.py --from-build
+
+check: format-changed format-lint lint test-scripts check-workflow-naming check-localization # Format changed Swift files, then run linters and checks
 
 log-stream: # Stream logs from the app via log stream
 	log stream --predicate 'subsystem == "com.onevcat.prowl"' --style compact --color always

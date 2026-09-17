@@ -267,6 +267,18 @@ struct AppLanguageTests {
     )
   }
 
+  // A shortcut title is a run-time key: the compiler cannot extract it, so
+  // `make check-localization-coverage` does not see a missing entry.
+  @Test func everyShortcutTitleHasSimplifiedChineseEntry() throws {
+    let path = try #require(Bundle.main.path(forResource: "zh-Hans", ofType: "lproj"))
+    let bundle = try #require(Bundle(path: path))
+    let sentinel = "\u{1}"
+    let missing = AppShortcuts.bindings.map(\.title).filter {
+      bundle.localizedString(forKey: $0, value: sentinel, table: nil) == sentinel
+    }
+    #expect(missing.isEmpty, "Add zh-Hans entries with extraction state manual: \(missing)")
+  }
+
   private func chinese(_ key: String) throws -> String {
     let path = try #require(Bundle.main.path(forResource: "zh-Hans", ofType: "lproj"))
     let bundle = try #require(Bundle(path: path))
