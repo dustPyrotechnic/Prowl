@@ -74,8 +74,10 @@ struct WorkflowStepHistoryDetailView: View {
       Button("Delete Run", role: .destructive) { onDelete() }
     } message: {
       Text(
-        "The record, prompts, deliveries, and action outputs of “\(record.run.workflowName)” are removed "
-          + "from Workflow History. This cannot be undone.")
+        """
+        The record, prompts, deliveries, and action outputs of “\(record.run.workflowName)” are removed \
+        from Workflow History. This cannot be undone.
+        """)
     }
   }
 

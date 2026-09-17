@@ -217,8 +217,10 @@ struct WorkflowSettingsDetailView: View {
         Text(preferredProfileName(role))
       }
       .help(
-        "Preferred profile for this launch role. Choose Automatically lets Prowl resolve "
-          + "a qualifying profile when the workflow starts."
+        """
+        Preferred profile for this launch role. Choose Automatically lets Prowl resolve \
+        a qualifying profile when the workflow starts.
+        """
       )
     }
   }
@@ -236,8 +238,10 @@ struct WorkflowSettingsDetailView: View {
         Text("Run Directly When Possible").tag(Optional(WorkflowBindModeOverride.Mode.auto))
       }
       .help(
-        "Controls whether Prowl presents the start sheet after resolving profiles, required role choices, "
-          + "and validation results."
+        """
+        Controls whether Prowl presents the start sheet after resolving profiles, required role choices, \
+        and validation results.
+        """
       )
 
       Text(runSetupDescription(row))

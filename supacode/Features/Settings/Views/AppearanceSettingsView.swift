@@ -117,8 +117,10 @@ struct AppearanceSettingsView: View {
           )
           .help("Use a project's own app icon or logo as the repository icon when adding it.")
           Text(
-            "Detection runs locally when a repository is added. It never replaces an icon "
-              + "you picked, and turning it off leaves already detected icons unchanged."
+            """
+            Detection runs locally when a repository is added. It never replaces an icon \
+            you picked, and turning it off leaves already detected icons unchanged.
+            """
           )
           .foregroundStyle(.secondary)
           .font(.callout)
@@ -166,8 +168,10 @@ struct AppearanceSettingsView: View {
             }
           }
           .help(
-            "Applies to worktrees without repository overrides. "
-              + "Automatic prefers an app matching the project type, e.g. Xcode for Swift projects."
+            """
+            Applies to worktrees without repository overrides. \
+            Automatic prefers an app matching the project type, e.g. Xcode for Swift projects.
+            """
           )
         }
         Section("Diff Tool") {
@@ -193,8 +197,10 @@ struct AppearanceSettingsView: View {
             )
             .textFieldStyle(.roundedBorder)
             .help(
-              "Runs in the worktree directory. Supports {leftPath}, {rightPath}, "
-                + "{worktreePath}, {repoPath}, and {branch}."
+              """
+              Runs in the worktree directory. Supports {leftPath}, {rightPath}, \
+              {worktreePath}, {repoPath}, and {branch}.
+              """
             )
           }
         }

@@ -105,8 +105,10 @@ struct CommandLineToolSettingsView: View {
         }
 
         Text(
-          "prowl reaches the running app through this local Unix socket. "
-            + "Set PROWL_CLI_SOCKET for both Prowl and prowl to use a different path."
+          """
+          prowl reaches the running app through this local Unix socket. \
+          Set PROWL_CLI_SOCKET for both Prowl and prowl to use a different path.
+          """
         )
         .foregroundStyle(.secondary)
         .font(.callout)

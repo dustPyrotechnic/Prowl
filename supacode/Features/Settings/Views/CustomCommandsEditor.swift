@@ -225,8 +225,11 @@ struct CustomCommandsEditor: View {
       }
     } message: { conflict in
       Text(
-        "“\(conflict.newCommandTitle)” and “\(conflict.existingCommandTitle)” both use \(conflict.shortcutDisplay)."
-          + "\n\nChoose Replace to keep the new shortcut and clear the conflicting command."
+        """
+        “\(conflict.newCommandTitle)” and “\(conflict.existingCommandTitle)” both use \(conflict.shortcutDisplay).
+
+        Choose Replace to keep the new shortcut and clear the conflicting command.
+        """
       )
     }
   }
@@ -1104,7 +1107,9 @@ struct CustomCommandsEditor: View {
         charactersIgnoringModifiers: event.charactersIgnoringModifiers
       )
     else {
-      invalidMessageByCommandID[commandID] = "Unsupported key. Use letters, numbers, or punctuation."
+      invalidMessageByCommandID[commandID] = String(
+        localized: "Unsupported key. Use letters, numbers, or punctuation."
+      )
       return
     }
 
@@ -1116,14 +1121,15 @@ struct CustomCommandsEditor: View {
     )
 
     guard !modifiers.isEmpty else {
-      invalidMessageByCommandID[commandID] = "Shortcut must include at least one modifier key."
+      invalidMessageByCommandID[commandID] = String(localized: "Shortcut must include at least one modifier key.")
       return
     }
 
     let binding = Keybinding(key: keyToken, modifiers: modifiers)
     guard let shortcut = binding.userCustomShortcut else {
-      invalidMessageByCommandID[commandID] =
-        "Custom command shortcuts support letters, numbers, and punctuation only."
+      invalidMessageByCommandID[commandID] = String(
+        localized: "Custom command shortcuts support letters, numbers, and punctuation only."
+      )
       return
     }
 

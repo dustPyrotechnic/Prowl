@@ -209,8 +209,10 @@ struct RepositorySettingsView: View {
                 }
               }
               .help(
-                "Refresh workspace line-change badges automatically. "
-                  + "Disable to skip background git diff for large repositories."
+                """
+                Refresh workspace line-change badges automatically. \
+                Disable to skip background git diff for large repositories.
+                """
               )
             }
 
@@ -229,8 +231,10 @@ struct RepositorySettingsView: View {
                 }
               }
               .help(
-                "Fetch pull request status for this repository's branches. "
-                  + "Disable to skip background GitHub queries and save API rate limit."
+                """
+                Fetch pull request status for this repository's branches. \
+                Disable to skip background GitHub queries and save API rate limit.
+                """
               )
 
               Picker(selection: settings.githubAccountOverride) {
@@ -294,11 +298,13 @@ struct RepositorySettingsView: View {
         } header: {
           VStack(alignment: .leading, spacing: 4) {
             Text("Agents")
-            let message =
-              "Recommended first in the Agents menu for this repository. "
-              + "Without a designation, the last profile launched here is recommended."
-            Text(message)
-              .foregroundStyle(.secondary)
+            Text(
+              """
+              Recommended first in the Agents menu for this repository. \
+              Without a designation, the last profile launched here is recommended.
+              """
+            )
+            .foregroundStyle(.secondary)
           }
         }
 
@@ -391,12 +397,14 @@ struct RepositorySettingsView: View {
           } header: {
             VStack(alignment: .leading, spacing: 4) {
               Text("Custom Commands")
-              let message =
-                "Repository and global terminal actions. "
-                + "Enabled commands appear in repository order, then global order. "
-                + "Edit global commands in Settings → Commands."
-              Text(message)
-                .foregroundStyle(.secondary)
+              Text(
+                """
+                Repository and global terminal actions. \
+                Enabled commands appear in repository order, then global order. \
+                Edit global commands in Settings → Commands.
+                """
+              )
+              .foregroundStyle(.secondary)
             }
           }
         }

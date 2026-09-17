@@ -103,8 +103,10 @@ struct NewWorkflowSheet: View {
       Text("Starter")
     } footer: {
       Text(
-        "Create opens the example in your text editor. Edit its instructions to make it your own, "
-          + "then return here to run it. For help writing a workflow, use Create with Agent.")
+        """
+        Create opens the example in your text editor. Edit its instructions to make it your own, \
+        then return here to run it. For help writing a workflow, use Create with Agent.
+        """)
     }
   }
 
@@ -201,7 +203,7 @@ extension WorkflowStarterTemplate.Kind {
     }
   }
 
-  var summary: String {
+  var summary: LocalizedStringKey {
     switch self {
     case .singleAgent:
       "A prompt template. Prowl sends one instruction to the agent in the current pane and collects its answer."
@@ -210,13 +212,15 @@ extension WorkflowStarterTemplate.Kind {
     }
   }
 
-  var starterDescription: String {
+  var starterDescription: LocalizedStringKey {
     switch self {
     case .singleAgent:
       "The starter asks the current agent for today's date in a chosen style."
     case .multiAgent:
-      "The starter plays rock-paper-scissors: the current agent picks a move, "
-        + "a second agent answers with the winning one."
+      """
+      The starter plays rock-paper-scissors: the current agent picks a move, \
+      a second agent answers with the winning one.
+      """
     }
   }
 }

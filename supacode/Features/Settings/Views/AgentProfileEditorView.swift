@@ -87,8 +87,10 @@ struct AgentProfileEditorView: View {
       case .unrestricted:
         Text(
           store.profile.executionMode == .unrestricted
-            ? "Requests the runtime's least-restricted mode. "
-              + "It may execute commands and modify files without prompting."
+            ? """
+            Requests the runtime's least-restricted mode. \
+            It may execute commands and modify files without prompting.
+            """
             : "Extra arguments request the runtime's least-restricted mode."
         )
         .font(.caption)
@@ -135,9 +137,11 @@ struct AgentProfileEditorView: View {
       }
       if runtimeAdapter?.supportsAccountIsolation == true, store.profile.bindsDedicatedHome {
         Text(
-          "This profile gets its own runtime home: separate login and usage, "
-            + "but also separate skills, global instructions, and session history. "
-            + "The first launch signs in through the agent itself."
+          """
+          This profile gets its own runtime home: separate login and usage, \
+          but also separate skills, global instructions, and session history. \
+          The first launch signs in through the agent itself.
+          """
         )
         .font(.caption)
         .foregroundStyle(.secondary)
@@ -237,8 +241,10 @@ struct AgentProfileEditorView: View {
   private var launchPreviewSection: some View {
     Section("Launch Preview") {
       Text(
-        "Prowl types this command into the new pane. "
-          + "Override values travel in hidden PROWL_ENV variables, never in the command text."
+        """
+        Prowl types this command into the new pane. \
+        Override values travel in hidden PROWL_ENV variables, never in the command text.
+        """
       )
       .font(.caption)
       .foregroundStyle(.secondary)

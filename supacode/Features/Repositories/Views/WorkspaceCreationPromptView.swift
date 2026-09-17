@@ -574,12 +574,14 @@ struct WorkspaceCreationPromptView: View {
     }
   }
 
-  private func sourceLocationHelpText(_ kind: ProjectWorkspaceRepositorySourceKind) -> String {
+  private func sourceLocationHelpText(_ kind: ProjectWorkspaceRepositorySourceKind) -> LocalizedStringKey {
     switch kind {
     case .existingPath:
       return
-        "Existing opened repository path. Link keeps using this checkout; "
-        + "branch actions create workspace worktrees from it."
+        """
+        Existing opened repository path. Link keeps using this checkout; \
+        branch actions create workspace worktrees from it.
+        """
     case .localRepository:
       return
         "Local repository folder on disk. It can be linked as-is or used as the source for a workspace worktree."
@@ -590,7 +592,7 @@ struct WorkspaceCreationPromptView: View {
     }
   }
 
-  private func branchActionHelpText(_ repository: ProjectWorkspaceCreationRepository) -> String {
+  private func branchActionHelpText(_ repository: ProjectWorkspaceCreationRepository) -> LocalizedStringKey {
     switch repository.checkoutMode {
     case .link:
       return
@@ -601,15 +603,17 @@ struct WorkspaceCreationPromptView: View {
     case .useExistingRef:
       if repository.resettableLocalBranchName != nil {
         return
-          "Use Existing checks out the selected branch. "
-          + "If a matching local branch already exists, choose whether to keep or reset it."
+          """
+          Use Existing checks out the selected branch. \
+          If a matching local branch already exists, choose whether to keep or reset it.
+          """
       }
       return
         "Use Existing checks out the selected local branch or creates a local tracking branch from a remote ref."
     }
   }
 
-  private func helpText(_ text: String) -> some View {
+  private func helpText(_ text: LocalizedStringKey) -> some View {
     Text(text)
       .font(.footnote)
       .foregroundStyle(.secondary)

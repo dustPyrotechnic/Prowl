@@ -25,8 +25,10 @@ struct AgentSkillsSectionView: View {
       VStack(alignment: .leading, spacing: 4) {
         Text("Agent Skills")
         Text(
-          "Link the skills bundled in this app into your agents' skill folders, so every agent "
-            + "reads the version that matches the installed app. Same status as prowl skills list."
+          """
+          Link the skills bundled in this app into your agents' skill folders, so every agent \
+          reads the version that matches the installed app. Same status as prowl skills list.
+          """
         )
         .foregroundStyle(.secondary)
       }
@@ -54,9 +56,11 @@ struct AgentSkillsSectionView: View {
     } else {
       if store.noTargetsDetected {
         Text(
-          "No agent skill folder was found in your home directory. Run Claude Code, Codex, or another "
-            + "agent once so it creates its folder, or create one from a terminal with "
-            + "prowl skills install --target claude|codex|agents."
+          """
+          No agent skill folder was found in your home directory. Run Claude Code, Codex, or another \
+          agent once so it creates its folder, or create one from a terminal with \
+          prowl skills install --target claude|codex|agents.
+          """
         )
         .foregroundStyle(.secondary)
         .font(.callout)

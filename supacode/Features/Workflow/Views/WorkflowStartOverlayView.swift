@@ -241,8 +241,10 @@ private struct WorkflowStartCard: View {
         if required, let launch {
           if !store.state.candidates(for: launch).contains(where: { $0.unavailableReason == nil }) {
             Text(
-              "No profile can run this role. Check its agent requirements and Settings → Agents → Profiles, "
-                + "then reopen this setup."
+              """
+              No profile can run this role. Check its agent requirements and Settings → Agents → Profiles, \
+              then reopen this setup.
+              """
             )
             .font(.footnote)
             .foregroundStyle(.orange)

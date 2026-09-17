@@ -74,8 +74,10 @@ private struct WorkflowHistorySummarySection: View {
       Text("Run History")
     } footer: {
       Text(
-        "Runs are listed in the toolbar's Workflow History. Records are stored in your home directory, "
-          + "outside project folders, and finished runs expire automatically.")
+        """
+        Runs are listed in the toolbar's Workflow History. Records are stored in your home directory, \
+        outside project folders, and finished runs expire automatically.
+        """)
     }
     .task { store.send(.refresh) }
     .alert($store.scope(state: \.alert, action: \.alert))

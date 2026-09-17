@@ -359,8 +359,10 @@ private struct MirrorPairingView: View {
       } else {
         // Sheets propose no height; without fixedSize multi-line text collapses to one truncated line.
         Text(
-          "On the other device, open Remote Mirror → Client → Connect to a New Host. "
-            + "Enter one of these addresses with the port, then the code below."
+          """
+          On the other device, open Remote Mirror → Client → Connect to a New Host. \
+          Enter one of these addresses with the port, then the code below.
+          """
         )
         .foregroundStyle(.secondary)
         .fixedSize(horizontal: false, vertical: true)
