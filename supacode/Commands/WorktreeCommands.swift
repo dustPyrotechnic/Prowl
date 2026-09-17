@@ -113,7 +113,11 @@ struct WorktreeCommands: Commands {
         }
       }
       .modifier(KeyboardShortcutModifier(shortcut: keyboardShortcut(for: AppShortcuts.CommandID.openPullRequest)))
-      .help(helpText(title: codeHostLabel, commandID: AppShortcuts.CommandID.openPullRequest))
+      .help(
+        helpText(
+          title: LocalizedStringResource(runtimeKey: codeHostLabel),
+          commandID: AppShortcuts.CommandID.openPullRequest)
+      )
       .disabled(codeHostWorktreeID == nil)
       Button("New Worktree", systemImage: "plus") {
         store.send(.repositories(.worktreeCreation(.createRandomWorktree)))
@@ -184,8 +188,8 @@ struct WorktreeCommands: Commands {
     store.resolvedKeybindings.display(for: commandID)
   }
 
-  private func helpText(title: String, commandID: String) -> String {
-    let localizedTitle = String(localized: String.LocalizationValue(title))
+  private func helpText(title: LocalizedStringResource, commandID: String) -> String {
+    let localizedTitle = String(localized: title)
     if let shortcut = shortcutDisplay(for: commandID) {
       return "\(localizedTitle) (\(shortcut))"
     }

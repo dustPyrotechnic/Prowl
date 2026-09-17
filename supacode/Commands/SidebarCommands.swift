@@ -106,7 +106,7 @@ struct SidebarCommands: Commands {
         store.send(.repositories(.selectShelfBook(index + 1)))
       }
       .modifier(KeyboardShortcutModifier(shortcut: keyboardShortcut(for: commandID)))
-      .help(helpText(title: title, commandID: commandID))
+      .help(helpText(title: LocalizedStringResource(runtimeKey: title), commandID: commandID))
     }
   }
 
@@ -114,8 +114,8 @@ struct SidebarCommands: Commands {
     store.resolvedKeybindings.keyboardShortcut(for: commandID)
   }
 
-  private func helpText(title: String, commandID: String) -> String {
-    let localizedTitle = String(localized: String.LocalizationValue(title))
+  private func helpText(title: LocalizedStringResource, commandID: String) -> String {
+    let localizedTitle = String(localized: title)
     if let shortcut = store.resolvedKeybindings.display(for: commandID) {
       return "\(localizedTitle) (\(shortcut))"
     }

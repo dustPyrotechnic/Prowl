@@ -273,7 +273,8 @@ struct SidebarListView: View {
       isDisabled
       ? "\(title) — add a repository first"
       : shortcutCommandID.map {
-        AppShortcuts.helpText(title: title, commandID: $0, in: resolvedKeybindings)
+        AppShortcuts.helpText(
+          title: LocalizedStringResource(runtimeKey: title), commandID: $0, in: resolvedKeybindings)
       } ?? title
     return Button {
       store.send(.setTopSegment(segment))

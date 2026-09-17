@@ -1754,8 +1754,8 @@ struct SupacodeApp: App {
     )
   }
 
-  private func helpText(title: String, commandID: String) -> String {
-    let localizedTitle = String(localized: String.LocalizationValue(title))
+  private func helpText(title: LocalizedStringResource, commandID: String) -> String {
+    let localizedTitle = String(localized: title)
     if let shortcut = store.resolvedKeybindings.display(for: commandID) {
       return "\(localizedTitle) (\(shortcut))"
     }

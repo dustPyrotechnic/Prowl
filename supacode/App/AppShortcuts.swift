@@ -899,11 +899,11 @@ enum AppShortcuts {
   }
 
   static func helpText(
-    title: String,
+    title: LocalizedStringResource,
     commandID: String,
     in resolvedKeybindings: ResolvedKeybindingMap
   ) -> String {
-    let localizedTitle = String(localized: String.LocalizationValue(title))
+    let localizedTitle = String(localized: title)
     if let shortcut = display(for: commandID, in: resolvedKeybindings) {
       return "\(localizedTitle) (\(shortcut))"
     }
@@ -1064,5 +1064,13 @@ extension UserCustomShortcut {
     let normalized = key.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     guard normalized.count == 1 else { return nil }
     return normalized
+  }
+}
+
+extension LocalizedStringResource {
+  /// A key that is only known at run time. The compiler cannot extract such a key, so its
+  /// catalog entry must have the extraction state "manual".
+  init(runtimeKey: String) {
+    self.init(String.LocalizationValue(runtimeKey))
   }
 }
