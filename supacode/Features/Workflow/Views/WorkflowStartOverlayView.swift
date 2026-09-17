@@ -495,7 +495,10 @@ private struct WorkflowStartCard: View {
       sectionHeader("Optional Steps", help: "Steps the run can start without.")
       ForEach(store.visibleSkipOptions, id: \.stepID) { option in
         Toggle("Skip \(option.title ?? option.stepID)", isOn: skipBinding(stepID: option.stepID))
-          .help(consequenceText(store.state.skipConsequence(for: option.stepID)) ?? "Start the run without this step.")
+          .help(
+            consequenceText(store.state.skipConsequence(for: option.stepID))
+              ?? String(localized: "Start the run without this step.")
+          )
       }
     }
   }
