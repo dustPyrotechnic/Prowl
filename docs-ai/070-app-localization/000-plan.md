@@ -2,10 +2,10 @@
 
 | | |
 | --- | --- |
-| **Status** | Planned (catalog, checks, glossary, and the language setting are in place; `001-action.md` follows when #811 merges) |
+| **Status** | Planned (catalog, tooling, glossary, release sync, and the language setting are in place; `001-action.md` follows when #811 merges) |
 | **Anchor date** | 2026-09-18 |
 | **Primary PRs** | #811 |
-| **Related** | [glossary.md](glossary.md), `docs/components/settings.md`, `docs/reference/settings-fields.md` |
+| **Related** | [glossary.md](glossary.md), `.claude/skills/sync-l10n/SKILL.md`, `docs/components/settings.md`, `docs/reference/settings-fields.md` |
 
 ## Background
 
@@ -27,11 +27,16 @@ UI showed mixed languages. More problems came from how Swift decides what is loc
 
 ## Goals
 
-- Every string the app shows comes from `supacode/Localizable.xcstrings`, with a finished `zh-Hans`
-  translation.
-- A change that adds UI copy without a translation fails a check, locally and in CI.
+- Every release ships a finished `zh-Hans` translation of all the copy the compiler can see.
+- Everyday work is not blocked by translations. A developer writes localizable English copy and
+  moves on; the catch-up happens once per release.
+- The catalog does not rot: entries that no code uses are removed at every release.
+- UI copy that is not localizable yet is visible as a number that only goes down, and every
+  new suspicious literal gets a recorded decision.
 - Translations use one agreed vocabulary ([glossary.md](glossary.md)).
 - Tests do not depend on the language of the machine.
+- The process survives years of growth: the file format matches Xcode, decisions are rules
+  where possible, and a second language needs no new tooling.
 
 ### Non-goals
 
@@ -41,29 +46,63 @@ UI showed mixed languages. More problems came from how Swift decides what is loc
 
 ## Design / Approach
 
+### Everyday work is free; the release sync is strict
+
+| When | What runs | It fails on |
+| --- | --- | --- |
+| Every change (`make check`, CI) | `scripts/localization.py check` — no build | A broken catalog only: a translation whose placeholders do not match its source |
+| Release prep (the `sync-l10n` skill, called from the `release` skill) | `make audit-localization`, then `apply`, `prune`, `triage` | Anything in the audit report, until it is resolved |
+
+A missing translation is **not** an everyday failure. The UI shows the English source for a new
+string until the next release sync, which happens on `main` before the version bump, as
+`sync-docs` does for the manual. The sync is work for an agent: it reads the audit report,
+translates with the glossary, and asks the user only about literals whose purpose is not clear.
+
 ### The compiler is the source of truth for coverage
 
 During a Debug build the Swift compiler writes one `.stringsdata` file per source file, next to
 the object files. Each file lists the localizable strings the compiler found. This is the same
-data Xcode uses to sync a catalog, so a comparison with it is exact. A scan of the source text
-with regular expressions is not: it cannot tell `String` from `LocalizedStringKey`.
-
-`scripts/check_localization.py` has two modes:
-
-| Mode | Command | Needs a build | Reports |
-| --- | --- | --- | --- |
-| Catalog | `make check-localization` (part of `make check`) | No | An entry without a finished translation, a stale entry, placeholders that do not match the source |
-| Coverage | `make check-localization-coverage` | Yes | A string the code uses but the catalog does not have; an entry that no code uses |
+data Xcode uses to sync a catalog, so a comparison with it is exact: `missing` (the code uses
+it, the catalog does not have it) and `unused` (the reverse). A scan of the source text alone
+cannot do this, because it cannot tell `String` from `LocalizedStringKey`.
 
 The required languages are the languages that appear in the catalog, so a new language is
-enforced from its first entry. CI runs the catalog mode next to `make lint` and the coverage mode
-after the app tests, which build the app (`.github/workflows/test.yml`). The script follows
-`PROWL_DERIVED_DATA_PATH`, as `make test-app` does.
+enforced from its first entry. The script follows `PROWL_DERIVED_DATA_PATH`, as `make test-app`
+does.
+
+### Copy the compiler cannot see: suspects, the baseline, and debt
+
+A plain `String` that reaches the UI looks the same as a log line, so no static check can find
+unlocalized copy exactly. The audit therefore reports **suspects**: string literals that read
+like copy (a sentence anywhere, or one capitalized word in a view file), that the compiler did
+not extract, and that nobody has decided about yet. A small lexer reads Swift literals, with
+interpolation and multi-line literals, so a suspect is the same text the compiler would key.
+
+`scripts/localization_baseline.json` holds the decisions:
+
+| Part | Meaning |
+| --- | --- |
+| `exemptPaths`, `exemptLinePatterns` | Rules for code that is never UI: the CLI service, agent prompts, logger calls, symbol names. Prefer a rule, because it also covers future code |
+| `exemptLiterals` | One literal that is not UI, with a category: `identifier`, `product-name`, `log`, `agent-prompt`, `protocol`, `developer`, `other` |
+| `debt` | UI copy that is known but not localizable yet |
+
+The first baseline (2026-09-18) has 651 debt literals. Most are alert text in reducers, labels
+that views build as `String`, presentation models, and error descriptions. They show in English.
+Each release localizes the debt in the files it touched, within a budget, so the number only
+goes down. An entry whose literal left the code is reported as obsolete and removed.
+
+### The catalog has the format Xcode writes
+
+`json.dumps(catalog, ensure_ascii=False, indent=2, separators=(",", " : "), sort_keys=True)` with
+no final newline is byte-identical to the output of `xcstringstool`. The script writes this
+format, so an Xcode build that syncs the catalog and the script do not fight over the file.
+Edit the catalog through the script (`apply`, `prune`, `format`), not by hand. An explicit `en`
+localization overrides the key as the English text; remove it when the key changes.
 
 ### Keys the compiler cannot see
 
 A key that is built at run time must have `"extractionState": "manual"` in the catalog, or the
-coverage mode reports it as unused. The shortcut titles in `AppShortcuts.bindings` and the Command
+audit reports it as unused. The shortcut titles in `AppShortcuts.bindings` and the Command
 Palette titles are such keys. `AppLanguageTests` checks that each shortcut title has a `zh-Hans`
 entry. `LocalizedStringResource(runtimeKey:)` (in `supacode/App/AppShortcuts.swift`) marks the
 call sites.
@@ -103,18 +142,13 @@ The `supacode` scheme runs tests with `language = "en"` and `region = "US"`. Tes
 literal English copy. Do not call `String(localized:)` on both sides of an assertion: that
 compares a value with itself and does not check the text.
 
-### Editing the catalog with a script
-
-The catalog is plain JSON. `json.dumps(catalog, ensure_ascii=False, indent=2) + "\n"` reproduces
-the file byte for byte, so a scripted edit gives a minimal diff. An explicit `en` localization
-overrides the key as the English text; remove it when the key changes.
-
 ## Alternatives & decisions
 
 | Decision | Chosen | Rejected, and why |
 | --- | --- | --- |
+| When translations are required | At release, by the `sync-l10n` skill | A CI gate on every change (built first, removed 2026-09-18): every PR that adds copy must also edit the catalog, which costs most while the UI changes fast, for users who read English anyway. No enforcement at all: the catalog drifts from the code, which is how #811 started |
+| How to find unlocalized `String` copy | Heuristic suspects plus a baseline of decisions | An exact static check: not possible, the type information is not there. A pseudo-localization UI test (`-NSDoubleLocalizedStrings`): finds only the screens it visits and is too heavy for CI; usable as a manual spot check |
 | Coverage check input | Compiler `.stringsdata` | A regular-expression scan of the source: many false reports. `xcstringstool sync`: its stale marking was not understood well enough to trust |
-| Where the fast check runs | `make check` and CI lint stage | Only in CI: the feedback comes too late |
 | Test language | Pinned in the scheme | `String(localized:)` on both sides of each assertion: the tests pass but verify nothing |
 | Feature names | Translated (书架, 画布, Agent 灵动岛, 远程镜像) | English names: mixed text such as “Shelf 书脊” |
 | `worktree` | Not translated | 工作树: `worktree` is a git term that users type and search for |
@@ -123,9 +157,14 @@ overrides the key as the English text; remove it when the key changes.
 
 ## Open
 
-- **Verbatim `String` copy.** Some user-facing text is still built as plain `String` and is not
-  localized: alert titles and messages in `RepositoriesFeature+WorktreeCreation.swift`, titles and
-  placeholders in `WorkspaceCreationPromptView.swift`, error descriptions in `supacode/Clients/`,
-  and user-facing messages from `WorkflowRunMachine.swift`. The coverage check cannot see them.
+- **The debt.** 651 literals on 2026-09-18. The large groups: alert titles and messages in the
+  `RepositoriesFeature+*.swift` reducers, `String` labels in the Workflow and Remote Mirror
+  views, presentation models under `supacode/Features/Workflow/Models/`, and error descriptions
+  in `supacode/Clients/` and `supacode/Features/RemoteMirror/`. Some Remote Mirror messages
+  travel between machines; decide per message whether the sender or the receiver localizes it.
+- **`AppLoadingView.swift`** has 21 playful loading lines. Whether and how to translate them is
+  a copywriting decision.
+- **Xcode's key order.** The format was verified against `xcstringstool`. An Xcode IDE build
+  that rewrites the catalog was not observed yet; if it orders keys differently, follow Xcode.
 
 ## Amendments
