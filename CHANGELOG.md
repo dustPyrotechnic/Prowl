@@ -1,11 +1,22 @@
 # Changelog
 
-
 ## Unreleased
 
 ### New
 
 - Prowl now supports System Default, 简体中文, and English application languages in Settings → General. The selection takes effect on the next launch; Prowl-owned menus, alerts, toasts, settings options, command palette titles, and shortcut help localize to Simplified Chinese while CLI output, command IDs, user data, and third-party output remain unchanged.
+
+## [2026.9.17](https://github.com/onevcat/Prowl/releases/tag/v2026.9.17)
+
+### New
+
+- Undo closed panes and tabs with ⌘Z or ⌘⇧T within five seconds by default, restoring running programs, scrollback, and split positions—even after closing a worktree’s last tab. Press ⌘⇧Z to close them again; the restore window follows Ghostty’s `undo-timeout` setting.
+- Start the built-in Review Loop workflow to open a selectable reviewer beside your current session. It defaults to 2–4 rounds, checks previous findings and searches for new issues each round, and saves results in workflow history with unresolved work clearly marked.
+
+### Fixed
+
+- Claude’s status no longer incorrectly switches from Working to Idle when you browse transcript history. Activity detection also better accounts for ongoing child tasks and background shell jobs.
+- On macOS 27, clicking inside an active Canvas terminal or Command-clicking a link no longer unexpectedly changes card selection.
 
 ## [2026.9.12](https://github.com/onevcat/Prowl/releases/tag/v2026.9.12)
 
