@@ -279,6 +279,19 @@ struct AppLanguageTests {
     #expect(missing.isEmpty, "Add zh-Hans entries with extraction state manual: \(missing)")
   }
 
+  // "Done" and "Blocked" have other meanings elsewhere (a button, a pull request
+  // that cannot merge), so the agent states use their own keys.
+  @Test func agentStateLabelsHaveTheirOwnCatalogEntries() throws {
+    #expect(AgentDisplayState.working.label == "Working")
+    #expect(AgentDisplayState.blocked.label == "Blocked")
+    #expect(AgentDisplayState.done.label == "Done")
+    #expect(AgentDisplayState.idle.label == "Idle")
+    #expect(try chinese("agentState.working") == "工作中")
+    #expect(try chinese("agentState.blocked") == "需处理")
+    #expect(try chinese("agentState.done") == "已完成")
+    #expect(try chinese("agentState.idle") == "空闲")
+  }
+
   private func chinese(_ key: String) throws -> String {
     let path = try #require(Bundle.main.path(forResource: "zh-Hans", ofType: "lproj"))
     let bundle = try #require(Bundle(path: path))
