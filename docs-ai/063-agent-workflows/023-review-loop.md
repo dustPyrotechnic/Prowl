@@ -15,7 +15,10 @@ or model restriction is imposed.
 
 Each round includes a reviewer report and the main agent's assessment. Main verifies
 each finding, uses regression-first fixes where practical, and records reasons for
-rejection. The next review checks both the current diff and those dispositions.
+rejection. The next review has two parts of equal weight: it re-verifies carried-over
+findings against those dispositions, and it performs a fresh review of the current diff
+with new IDs for new findings. Every report records inspected and uninspected areas so
+later rounds can cover the gaps.
 Main owns commits, pushes, and existing PR updates by default, subject to the task's
 restrictions. Reviewer tests are allowed; main may explicitly delegate other work.
 
@@ -95,3 +98,16 @@ exercised by the disposable fixtures, which have no remote or PR.
 
 The isolated acceptance instances were closed after verification; completion receipts
 and screenshots remain in the local acceptance directory. Personal sessions were not restarted.
+
+## Follow-up: fresh review in later rounds (2026-09-17)
+
+In real use, later rounds concentrated on re-verifying round-1 findings and rarely
+searched for new problems. The `next_review` prompt anchored on the previous review:
+its title said "updated changes", its first instruction was to verify fixes, "keep
+stable IDs" implied a fixed finding set, and the single `## Findings` section had no
+slot that required a fresh pass. The prompt now splits the round into carried-over
+verification and a fresh review of equal weight, requires `### Carried Over` and
+`### New` subsections, gives new IDs to new findings, and treats fix code as new code.
+Round 1 must list inspected and uninspected areas so later rounds can cover the gaps.
+Section validation only rejects missing sections, so the subsections need no schema
+or runner change.

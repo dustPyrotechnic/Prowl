@@ -82,7 +82,11 @@ its scope, plan, and verification brief. Local changes and existing PRs are both
 supported. `focus` adds an optional single-line review instruction.
 
 Each round includes a reviewer report and main's disposition. Review focuses on
-material correctness, plan gaps, architecture, and realistic UX regressions. Main
+material correctness, plan gaps, architecture, and realistic UX regressions. Every
+report records which files or areas the reviewer inspected. From round 2 on, the
+reviewer both re-verifies carried-over findings against main's disposition and
+performs a fresh review of the current diff, including code added by fixes and areas
+earlier rounds did not inspect; new findings get new IDs. Main
 verifies findings, fixes worthwhile problems with regression tests where practical,
 and explains rejected or deferred findings. Main owns commits, pushes, and existing
 PR updates unless it explicitly delegates them; task restrictions still apply.
