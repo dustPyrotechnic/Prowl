@@ -3,7 +3,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from check_localization import catalog_issues, extracted_keys, extraction_issues, placeholders
+from check_localization import (
+    build_settings_command,
+    catalog_issues,
+    extracted_keys,
+    extraction_issues,
+    placeholders,
+)
 
 
 def unit(value, state="translated"):
@@ -98,6 +104,16 @@ class ExtractionIssueTests(unittest.TestCase):
     def test_allows_manual_entry_without_use(self):
         strings = {"Open": entry("打开", extractionState="manual")}
         self.assertEqual(extraction_issues(catalog(strings), {}), [])
+
+
+class BuildSettingsCommandTests(unittest.TestCase):
+    def test_uses_the_default_derived_data(self):
+        self.assertNotIn("-derivedDataPath", build_settings_command({}))
+
+    def test_follows_the_derived_data_path_of_make_test(self):
+        command = build_settings_command({"PROWL_DERIVED_DATA_PATH": "/tmp/dd"})
+        index = command.index("-derivedDataPath")
+        self.assertEqual(command[index + 1], "/tmp/dd")
 
 
 class ExtractedKeyTests(unittest.TestCase):

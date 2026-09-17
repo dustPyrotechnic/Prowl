@@ -29,6 +29,7 @@ jobs:
           submodules: recursive
       - uses: ./.github/actions/setup-macos
       - run: make lint
+      - run: make check-localization
       - name: Stage debug app resources
         run: make embed-cli-debug embed-docs embed-skills
       - name: Build app and run tests in parallel
@@ -85,6 +86,9 @@ jobs:
             python3 scripts/summarize-xcode-build.py build/test-results/*.build.json
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$failed"
+      - name: Check string catalog coverage
+        # The app tests built the app, so the compiler output that lists every localizable string exists.
+        run: python3 scripts/check_localization.py --from-build
       - name: Collect mirror diagnostics
         if: always()
         shell: bash

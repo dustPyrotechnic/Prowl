@@ -16,6 +16,7 @@ have the extraction state "manual".
 from pathlib import Path
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -115,10 +116,19 @@ def extraction_issues(catalog: dict, extracted: dict[str, set[str]]) -> list[str
     return issues
 
 
-def build_objects_directory() -> Path:
-    """Ask Xcode where the Debug build of the app target writes its per-file output."""
+def build_settings_command(environment: dict[str, str]) -> list[str]:
     command = ["xcodebuild", "-project", str(ROOT / "supacode.xcodeproj"), "-scheme", TARGET]
     command += ["-configuration", "Debug", "-showBuildSettings", "-json"]
+    # `make test-app` builds into this directory when the variable is set (CI does that).
+    derived_data = environment.get("PROWL_DERIVED_DATA_PATH")
+    if derived_data:
+        command += ["-derivedDataPath", derived_data]
+    return command
+
+
+def build_objects_directory() -> Path:
+    """Ask Xcode where the Debug build of the app target writes its per-file output."""
+    command = build_settings_command(dict(os.environ))
     output = subprocess.run(command, check=True, capture_output=True, text=True).stdout
     for target in json.loads(output):
         if target["target"] == TARGET:
