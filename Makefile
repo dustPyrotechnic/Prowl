@@ -553,12 +553,12 @@ lint: # Lint code with swiftlint
 check-workflow-naming: # Check maintained workflow source and references for retired names
 	python3 scripts/check_workflow_naming.py
 
-.PHONY: check-localization check-localization-coverage
-check-localization: # Check the string catalog for missing or unfinished translations (no build needed)
-	python3 scripts/check_localization.py
+.PHONY: check-localization audit-localization
+check-localization: # Check that the string catalog is not broken (no build needed; missing translations are fine)
+	python3 scripts/localization.py check
 
-check-localization-coverage: build-app # Compare the string catalog with the strings the compiler extracted from the app
-	python3 scripts/check_localization.py --from-build
+audit-localization: build-app # Release check: missing, unused, and untranslated strings, and unlocalized UI copy (see the sync-l10n skill)
+	python3 scripts/localization.py audit
 
 check: format-changed format-lint lint test-scripts check-workflow-naming check-localization # Format changed Swift files, then run linters and checks
 
