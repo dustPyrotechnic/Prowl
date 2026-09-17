@@ -349,6 +349,8 @@ class Baseline:
         self.runtime_key_paths: dict[str, str] = data.setdefault("runtimeKeyPaths", {})
         self.exempt_literals: dict[str, str] = data.setdefault("exemptLiterals", {})
         self.debt: list[str] = data.setdefault("debt", [])
+        # Why a debt entry cannot be localized yet, so a later sync does not investigate it again.
+        self.debt_notes: dict[str, str] = data.setdefault("debtNotes", {})
         self._line_patterns = [re.compile(pattern) for pattern in self.exempt_line_patterns]
 
     def exempts_path(self, path: str) -> bool:
@@ -371,8 +373,15 @@ class Baseline:
         """
         return [literal for literal in [*self.exempt_literals, *self.debt] if literal not in still_open]
 
+    def remove(self, literals: list[str]) -> None:
+        for literal in literals:
+            self.exempt_literals.pop(literal, None)
+            self.debt_notes.pop(literal, None)
+        self.debt[:] = [literal for literal in self.debt if literal not in literals]
+
     def serialize(self) -> str:
         self.data["exemptLiterals"] = dict(sorted(self.exempt_literals.items()))
+        self.data["debtNotes"] = dict(sorted(self.debt_notes.items()))
         self.data["debt"] = sorted(set(self.debt))
         return json.dumps(self.data, ensure_ascii=False, indent=2) + "\n"
 
@@ -530,9 +539,7 @@ def command_prune(arguments) -> int:
     still_open = open_places(scan_sources(ROOT, baseline), baseline, extracted, runtime_keys(catalog))
     removed = prune(catalog, extracted)
     obsolete = baseline.obsolete(set(still_open))
-    for literal in obsolete:
-        baseline.exempt_literals.pop(literal, None)
-    baseline.debt[:] = [literal for literal in baseline.debt if literal not in obsolete]
+    baseline.remove(obsolete)
     arguments.catalog.write_text(serialize(catalog))
     arguments.baseline.write_text(baseline.serialize())
     print_issues("Removed catalog entries", [f'"{key}"' for key in removed])
@@ -541,16 +548,22 @@ def command_prune(arguments) -> int:
 
 
 def record_decisions(baseline: Baseline, decisions: dict) -> None:
-    """Record `{"exempt": {literal: category}, "debt": [literal]}`. The latest decision wins."""
+    """Record `{"exempt": {literal: category}, "debt": [literal], "notes": {literal: reason}}`.
+
+    The latest decision wins. A note says why a debt entry cannot be localized yet.
+    """
     for literal, category in decisions.get("exempt", {}).items():
         if category not in EXEMPT_CATEGORIES:
             raise SystemExit(f'error: "{literal}": category must be one of {", ".join(EXEMPT_CATEGORIES)}')
+        baseline.remove([literal])
         baseline.exempt_literals[literal] = category
-        baseline.debt[:] = [item for item in baseline.debt if item != literal]
     for literal in decisions.get("debt", []):
         baseline.exempt_literals.pop(literal, None)
         if literal not in baseline.debt:
             baseline.debt.append(literal)
+    for literal, note in decisions.get("notes", {}).items():
+        if literal in baseline.debt:
+            baseline.debt_notes[literal] = note
 
 
 def command_triage(arguments) -> int:
@@ -576,6 +589,8 @@ def command_debt(arguments) -> int:
             elsewhere = places_elsewhere(still_open, literal, changed) if changed is not None else []
             note = f"  (also at {', '.join(elsewhere)})" if elsewhere else ""
             print(f"  {line}: " + literal.replace("\n", "\\n") + note)
+            if literal in baseline.debt_notes:
+                print(f"      blocked: {baseline.debt_notes[literal]}")
     print(f"\n{sum(len(items) for items in by_file.values())} debt place(s) in {len(by_file)} file(s).")
     return 0
 
