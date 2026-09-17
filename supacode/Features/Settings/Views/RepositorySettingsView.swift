@@ -99,7 +99,8 @@ struct RepositorySettingsView: View {
               } label: {
                 HStack {
                   Text(
-                    store.settings.worktreeBaseRef ?? "Automatic (\(store.defaultWorktreeBaseRef))"
+                    store.settings.worktreeBaseRef
+                      ?? String(localized: "Automatic (\(store.defaultWorktreeBaseRef))")
                   )
                   .foregroundStyle(.primary)
                   Spacer()
@@ -115,7 +116,7 @@ struct RepositorySettingsView: View {
                 BranchPickerPopover(
                   searchText: $branchSearchText,
                   options: baseRefOptions,
-                  automaticLabel: "Automatic (\(store.defaultWorktreeBaseRef))",
+                  automaticLabel: String(localized: "Automatic (\(store.defaultWorktreeBaseRef))"),
                   selection: store.settings.worktreeBaseRef,
                   onSelect: { ref in
                     store.settings.worktreeBaseRef = ref

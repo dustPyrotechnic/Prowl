@@ -35,7 +35,8 @@ struct WorktreeCreationPromptFeature {
     }
 
     var automaticBaseRefLabel: String {
-      automaticBaseRef.isEmpty ? "Automatic" : "Automatic (\(automaticBaseRef))"
+      automaticBaseRef.isEmpty
+        ? String(localized: "Automatic") : String(localized: "Automatic (\(automaticBaseRef))")
     }
 
     /// Default leaf folder name shown as the name-override placeholder.

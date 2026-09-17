@@ -130,7 +130,7 @@ nonisolated struct UserCustomCommand: Codable, Equatable, Sendable, Identifiable
 
   static func `default`(index: Int) -> UserCustomCommand {
     UserCustomCommand(
-      title: "Command \(index + 1)",
+      title: String(localized: "Command \(index + 1)"),
       systemImage: "terminal",
       command: "",
       execution: .shellScript,

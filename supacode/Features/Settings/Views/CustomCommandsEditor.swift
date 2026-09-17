@@ -611,11 +611,11 @@ struct CustomCommandsEditor: View {
   private func inlineCommandTitle(for execution: UserCustomCommandExecution) -> String {
     switch execution {
     case .shellScript:
-      return "New Tab"
+      return String(localized: "New Tab")
     case .terminalInput:
-      return "In Place"
+      return String(localized: "In Place")
     case .split:
-      return "New Split"
+      return String(localized: "New Split")
     }
   }
 
@@ -1155,7 +1155,7 @@ struct CustomCommandsEditor: View {
     }
 
     let newTitle =
-      commands.first(where: { $0.id == commandID })?.resolvedTitle ?? "Command"
+      commands.first(where: { $0.id == commandID })?.resolvedTitle ?? String(localized: "Command")
 
     pendingShortcutConflict = CustomCommandShortcutConflict(
       newCommandID: commandID,

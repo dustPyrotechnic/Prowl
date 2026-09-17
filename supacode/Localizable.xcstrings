@@ -1873,6 +1873,16 @@
         }
       }
     },
+    "Another Prowl instance is already listening on this socket. Quit it, or give this instance its own path with PROWL_CLI_SOCKET." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另一个 Prowl 实例已在监听这个套接字。请退出它，或通过 PROWL_CLI_SOCKET 为当前实例指定单独的路径。"
+          }
+        }
+      }
+    },
     "Another device took over this pane. The last frame is retained." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2260,6 +2270,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自动"
+          }
+        }
+      }
+    },
+    "Automatic (%@)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动（%@）"
           }
         }
       }
@@ -4190,6 +4210,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "命令"
+          }
+        }
+      }
+    },
+    "Command %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令 %lld"
           }
         }
       }
@@ -9281,7 +9311,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "为已验证的 Agent 命名的启动预设，可从工具栏的 Agent 菜单和命令面板中使用。没有其他推荐时，默认推荐第一个已启用的配置。"
+            "value" : "面向已验证 Agent 的具名启动预设，可从工具栏的 Agent 菜单和命令面板中使用。没有其他推荐时，默认推荐第一个已启用的配置。"
           }
         }
       }
@@ -11640,6 +11670,36 @@
         }
       }
     },
+    "Prowl could not bind the socket. Remove a stale file at this path and relaunch." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 无法绑定该套接字。请移除此路径上残留的文件，然后重新启动。"
+          }
+        }
+      }
+    },
+    "Prowl could not create the socket's folder." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 无法创建套接字所在的文件夹。"
+          }
+        }
+      }
+    },
+    "Prowl could not create the socket." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 无法创建套接字。"
+          }
+        }
+      }
+    },
     "Prowl could not determine a code host URL for this repository." : {
       "localizations" : {
         "zh-Hans" : {
@@ -11740,6 +11800,16 @@
         }
       }
     },
+    "Prowl could not lock the socket for this instance. Check the folder's permissions." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 无法为当前实例锁定该套接字。请检查文件夹的权限。"
+          }
+        }
+      }
+    },
     "Prowl could not parse the pull request URL (%@)." : {
       "localizations" : {
         "zh-Hans" : {
@@ -11760,12 +11830,42 @@
         }
       }
     },
+    "Prowl could not restrict the socket to your user. Check the folder's permissions." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 无法将该套接字限制为仅你的用户可用。请检查文件夹的权限。"
+          }
+        }
+      }
+    },
+    "Prowl could not start listening on the socket." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 无法开始监听该套接字。"
+          }
+        }
+      }
+    },
     "Prowl is configured to use %@ on %@, but gh could not switch to that account. Run `gh auth switch --hostname %@ --user %@` and try again." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prowl 已配置为在 %2$@ 上使用 %1$@，但 gh 无法切换到该账户。请运行 `gh auth switch --hostname %3$@ --user %4$@` 后重试。"
+          }
+        }
+      }
+    },
+    "Prowl is not listening for the prowl command right now." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prowl 目前没有在监听 prowl 命令。"
           }
         }
       }
@@ -16630,6 +16730,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所选 worktree 已不可用。"
+          }
+        }
+      }
+    },
+    "The socket path is too long for macOS. Set PROWL_CLI_SOCKET to a shorter path." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "套接字路径对 macOS 来说过长。请将 PROWL_CLI_SOCKET 设为更短的路径。"
+          }
+        }
+      }
+    },
+    "The socket stopped responding." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "套接字已停止响应。"
           }
         }
       }

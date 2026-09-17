@@ -151,9 +151,9 @@ struct CommandLineToolSettingsView: View {
 
   private var connectionStatusText: String {
     switch store.cliServiceStatus {
-    case .listening: "Listening"
-    case .failed: "Not listening"
-    case .stopped: "Not running"
+    case .listening: String(localized: "Listening")
+    case .failed: String(localized: "Not listening")
+    case .stopped: String(localized: "Not running")
     }
   }
 }
