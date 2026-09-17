@@ -6,7 +6,7 @@ import Foundation
 /// records just enough ownership metadata to hand the key back when the user
 /// returns to "system".
 ///
-/// Ownership rules (docs/plans/2026-09-10-language-settings.md):
+/// Ownership rules:
 /// - The first switch from system to an explicit language records the
 ///   original non-managed value — including "the key did not exist" — before
 ///   writing the derived value.
