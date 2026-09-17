@@ -35,7 +35,7 @@ struct AppearanceSettingsView: View {
         }
         .help("Choose the app language. The change applies the next time Prowl starts.")
         .onAppear {
-          store.send(.refreshSystemPreferredLanguages)
+          store.send(.refreshAppLanguage)
         }
         Section("Appearance") {
           HStack {

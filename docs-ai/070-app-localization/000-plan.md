@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Planned (catalog, checks, and glossary are in place; the language setting design is open) |
+| **Status** | Planned (catalog, checks, glossary, and the language setting are in place; `001-action.md` follows when #811 merges) |
 | **Anchor date** | 2026-09-18 |
 | **Primary PRs** | #811 |
 | **Related** | [glossary.md](glossary.md), `docs/components/settings.md`, `docs/reference/settings-fields.md` |
@@ -78,6 +78,25 @@ Prefer to let the compiler see the literal:
   `String(localized: "agentState.done", defaultValue: "Done")`, and give the entry an explicit
   `en` value.
 
+### The language setting has one source
+
+Settings → General → Language offers Follow System, 简体中文, and English. `AppLanguageStore`
+(`supacode/Features/Settings/BusinessLogic/AppLanguageStore.swift`) reads and writes the
+per-app `AppleLanguages` default, the key that Foundation consults at launch. macOS writes the
+same key from System Settings → Language & Region → Applications. Follow System removes the key.
+
+Prowl keeps no copy of the choice in `settings.json`. The picker and System Settings therefore
+always show one value, and the last change wins. `SettingsFeature` reads the value again when the
+app becomes active and when the General page appears, because System Settings can change it
+while Prowl runs.
+
+A value that Prowl did not write is negotiated with `Bundle.preferredLocalizations`, as the
+platform does: `zh-Hans-CN` reads as 简体中文, and a language without a localization reads as
+English, because that is what the app shows. Foundation negotiates the language once per
+process, so a change applies at the next launch. `SettingsFeature.State.languageChangePending`
+compares the predicted language of the next launch with `ResolvedAppLanguage.effective()` to
+show the restart hint only when the visible language changes.
+
 ### Tests
 
 The `supacode` scheme runs tests with `language = "en"` and `region = "US"`. Tests assert on
@@ -100,15 +119,10 @@ overrides the key as the English text; remove it when the key changes.
 | Feature names | Translated (书架, 画布, Agent 灵动岛, 远程镜像) | English names: mixed text such as “Shelf 书脊” |
 | `worktree` | Not translated | 工作树: `worktree` is a git term that users type and search for |
 | Workflow `bundle` | Not translated (`Bundle`) | 捆绑包 reads badly; the DSL, the CLI, and the docs say bundle |
+| Where the language choice lives | Per-app `AppleLanguages` only | A second copy in `settings.json` with ownership bookkeeping (the first design in #811): it silently reverted a choice made in System Settings, and needed about 170 lines to decide which side owned the key |
 
 ## Open
 
-- **Language setting.** The PR stores `appLanguage` in `settings.json` and mirrors it into the
-  app-domain `AppleLanguages` default with ownership bookkeeping (`AppLanguageBridge`). macOS
-  writes the same key from System Settings → Language & Region → Applications. The agreed behavior
-  is: follow the system by default, let the user switch at the system level, and respect an
-  explicit choice in the app. Whether the picker should read and write `AppleLanguages` directly,
-  with no second copy, is not decided.
 - **Verbatim `String` copy.** Some user-facing text is still built as plain `String` and is not
   localized: alert titles and messages in `RepositoriesFeature+WorktreeCreation.swift`, titles and
   placeholders in `WorkspaceCreationPromptView.swift`, error descriptions in `supacode/Clients/`,

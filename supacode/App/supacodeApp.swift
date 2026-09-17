@@ -64,7 +64,7 @@ final class SupacodeAppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationDidBecomeActive(_ notification: Notification) {
-    appStore?.send(.settings(.refreshSystemPreferredLanguages))
+    appStore?.send(.settings(.refreshAppLanguage))
     let app = NSApplication.shared
     let hasVisibleMainWindow = MainWindowSurface.hasVisibleMainWindow(in: app.windows)
     WindowLifecycleDiagnostics.logWithWindows(
@@ -201,14 +201,7 @@ struct SupacodeApp: App {
     UserDefaults.standard.set(200, forKey: "NSInitialToolTipDelay")
     @Shared(.settingsFile) var settingsFile
     let initialSettings = settingsFile.global
-    let effectiveLanguageAtLaunch = AppLanguageBootstrap.apply(preference: initialSettings.appLanguage)
-    let systemPreferredLanguages: [String] = {
-      guard let domainName = Bundle.main.bundleIdentifier else {
-        return Locale.preferredLanguages
-      }
-      return AppLanguageBridge(defaults: .standard, domainName: domainName)
-        .platformLanguagesForPrediction()
-    }()
+    let appLanguageClient = AppLanguageClient.liveValue
 
     let initialResolvedKeybindings = KeybindingResolver.resolve(
       schema: .appResolverSchema(),
@@ -243,8 +236,9 @@ struct SupacodeApp: App {
     var initialAppState = AppFeature.State(
       settings: SettingsFeature.State(
         settings: initialSettings,
-        effectiveLanguageAtLaunch: effectiveLanguageAtLaunch,
-        systemPreferredLanguages: systemPreferredLanguages
+        appLanguage: appLanguageClient.current(),
+        effectiveLanguageAtLaunch: ResolvedAppLanguage.effective(),
+        systemPreferredLanguages: appLanguageClient.systemLanguages()
       )
     )
     if let cliOpenPath = Self.cliLaunchOpenPath() {

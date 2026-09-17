@@ -31,14 +31,14 @@ nonisolated enum AskAgentHelpPrompt {
     let defaults = UserDefaults.standard
     let preferredLanguages = Locale.preferredLanguages
     let argumentLanguages =
-      defaults.volatileDomain(forName: UserDefaults.argumentDomain)[AppLanguageBridge.appleLanguagesKey]
+      defaults.volatileDomain(forName: UserDefaults.argumentDomain)[AppLanguageStore.appleLanguagesKey]
       as? [String]
     let globalLanguages =
-      defaults.persistentDomain(forName: UserDefaults.globalDomain)?[AppLanguageBridge.appleLanguagesKey]
+      defaults.persistentDomain(forName: UserDefaults.globalDomain)?[AppLanguageStore.appleLanguagesKey]
       as? [String] ?? []
 
     let appLanguages = Bundle.main.bundleIdentifier.flatMap { domainName in
-      defaults.persistentDomain(forName: domainName)?[AppLanguageBridge.appleLanguagesKey]
+      defaults.persistentDomain(forName: domainName)?[AppLanguageStore.appleLanguagesKey]
         as? [String]
     }
 

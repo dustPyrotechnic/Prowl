@@ -8,16 +8,14 @@ struct SettingsFeature {
   @ObservableState
   struct State: Equatable {
     var appearanceMode: AppearanceMode
+    /// The language choice. It mirrors the per-app `AppleLanguages` default, which
+    /// System Settings can also change, so `refreshAppLanguage` reads it again.
     var appLanguage: AppLanguage
-    /// Immutable snapshot of the language actually negotiated for this
-    /// launch, captured before any localized UI is built. `.settingsLoaded`
-    /// must never overwrite it — pending-change hints compare the saved
-    /// preference's resolution against this snapshot.
+    /// Immutable snapshot of the language this launch runs in, captured before any
+    /// localized UI is built. The pending-change hint compares the next launch with it.
     var effectiveLanguageAtLaunch: ResolvedAppLanguage
-    /// System preferred languages with any Prowl-managed `AppleLanguages`
-    /// override already removed by the caller; refreshed via
-    /// `updateSystemPreferredLanguages` and used only to predict the next
-    /// launch's language.
+    /// The system languages without the per-app override. Used only to predict the
+    /// language of the next launch when the choice is "Follow System".
     var systemPreferredLanguages: [String] = []
     /// Localizations the app ships, in fallback order.
     var supportedAppLanguages: [String] = ResolvedAppLanguage.allCases.map(\.rawValue)
@@ -92,12 +90,13 @@ struct SettingsFeature {
 
     init(
       settings: GlobalSettings = .default,
+      appLanguage: AppLanguage = .system,
       effectiveLanguageAtLaunch: ResolvedAppLanguage = .english,
       systemPreferredLanguages: [String] = []
     ) {
       let normalizedDefaultEditorID = OpenWorktreeAction.normalizedDefaultEditorID(settings.defaultEditorID)
       appearanceMode = settings.appearanceMode
-      appLanguage = settings.appLanguage
+      self.appLanguage = appLanguage
       self.effectiveLanguageAtLaunch = effectiveLanguageAtLaunch
       self.systemPreferredLanguages = systemPreferredLanguages
 
@@ -167,7 +166,6 @@ struct SettingsFeature {
     var globalSettings: GlobalSettings {
       var settings = GlobalSettings(
         appearanceMode: appearanceMode,
-        appLanguage: appLanguage,
         defaultEditorID: defaultEditorID,
         confirmBeforeQuit: confirmBeforeQuit,
         updatesAutomaticallyCheckForUpdates: updatesAutomaticallyCheckForUpdates,
@@ -227,9 +225,7 @@ struct SettingsFeature {
     case task
     case settingsLoaded(GlobalSettings)
     case setAppLanguage(AppLanguage)
-    case appLanguagePersistFailed(previous: AppLanguage)
-    case updateSystemPreferredLanguages([String])
-    case refreshSystemPreferredLanguages
+    case refreshAppLanguage
 
     case setSelection(SettingsSection?)
     case setSystemNotificationsEnabled(Bool)
@@ -288,7 +284,7 @@ struct SettingsFeature {
   @Dependency(TerminalLayoutPersistenceClient.self) private var terminalLayoutPersistence
   @Dependency(CLIInstallClient.self) private var cliInstallClient
   @Dependency(CLIServiceStatusClient.self) private var cliServiceStatusClient
-  @Dependency(AppLanguageBridgeClient.self) private var appLanguageBridge
+  @Dependency(AppLanguageClient.self) private var appLanguageClient
 
   var body: some Reducer<State, Action> {
     BindingReducer()
@@ -316,7 +312,6 @@ struct SettingsFeature {
           $settingsFile.withLock { $0.global = normalizedSettings }
         }
         state.appearanceMode = normalizedSettings.appearanceMode
-        state.appLanguage = normalizedSettings.appLanguage
         state.defaultEditorID = normalizedSettings.defaultEditorID
         state.confirmBeforeQuit = normalizedSettings.confirmBeforeQuit
         state.updatesAutomaticallyCheckForUpdates = normalizedSettings.updatesAutomaticallyCheckForUpdates
@@ -366,53 +361,23 @@ struct SettingsFeature {
         state.canvasDefaultLayout = normalizedSettings.canvasDefaultLayout
         state.detectRepositoryIconsAutomatically = normalizedSettings.detectRepositoryIconsAutomatically
         state.syncGlobalDefaults(from: normalizedSettings)
-        return .merge(
-          // Cold start repairs the derived AppleLanguages bridge from the
-          // fully decoded config, the source of truth.
-          .run { [appLanguageBridge] _ in
-            appLanguageBridge.synchronize(normalizedSettings.appLanguage)
-          },
-          .send(.delegate(.settingsChanged(normalizedSettings)))
-        )
+        return .send(.delegate(.settingsChanged(normalizedSettings)))
 
       case .setAppLanguage(let language):
-        let previous = state.appLanguage
-        guard language != previous else { return .none }
+        guard language != state.appLanguage else { return .none }
         state.appLanguage = language
-        let settings = state.globalSettings
-        return .run { [analyticsClient, appLanguageBridge] send in
-          @Shared(.settingsFile) var settingsFile
-          $settingsFile.withLock { $0.global = settings }
-          do {
-            // `withLock` only reports save failure through `saveError`; the
-            // explicit save is what lets us honor the ordering contract —
-            // the derived bridge never updates unless the config save
-            // succeeded first.
-            try await $settingsFile.save()
-          } catch {
-            await send(.appLanguagePersistFailed(previous: previous))
-            return
-          }
-          appLanguageBridge.synchronize(language)
-          if settings.analyticsEnabled {
+        let analyticsEnabled = state.analyticsEnabled
+        return .run { [analyticsClient, appLanguageClient] _ in
+          appLanguageClient.set(language)
+          if analyticsEnabled {
             analyticsClient.capture("settings_changed", nil)
           }
-          await send(.delegate(.settingsChanged(settings)))
         }
 
-      case .appLanguagePersistFailed(let previous):
-        state.appLanguage = previous
-        @Shared(.settingsFile) var settingsFile
-        $settingsFile.withLock { $0.global.appLanguage = previous }
+      case .refreshAppLanguage:
+        state.appLanguage = appLanguageClient.current()
+        state.systemPreferredLanguages = appLanguageClient.systemLanguages()
         return .none
-
-      case .updateSystemPreferredLanguages(let languages):
-        state.systemPreferredLanguages = languages
-        return .none
-
-      case .refreshSystemPreferredLanguages:
-        let languages = appLanguageBridge.platformLanguages()
-        return .send(.updateSystemPreferredLanguages(languages))
 
       case .binding(\.notificationSound):
         let sound = state.notificationSound

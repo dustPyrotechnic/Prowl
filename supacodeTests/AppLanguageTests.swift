@@ -51,9 +51,8 @@ struct AppLanguageTests {
     #expect(Set(ResolvedAppLanguage.allCases.map(\.rawValue)) == ["en", "zh-Hans"])
   }
 
-  @Test func bootstrapSnapshotIsASupportedLanguage() {
-    let snapshot = AppLanguageBootstrap.snapshotEffectiveLanguage()
-    #expect(ResolvedAppLanguage.allCases.contains(snapshot))
+  @Test func effectiveLanguageIsASupportedLanguage() {
+    #expect(ResolvedAppLanguage.allCases.contains(ResolvedAppLanguage.effective()))
   }
 
   // MARK: - Resolution
@@ -121,150 +120,71 @@ struct AppLanguageTests {
     )
   }
 
-  @Test func commandLineOverrideBeatsExplicitPreference() {
-    #expect(
-      AppLanguageResolver.resolve(
-        preference: .zhHans,
-        platformLanguages: ["zh-Hans"],
-        supportedLanguages: supportedLanguages,
-        commandLineOverride: ["en"]
-      ) == .english
-    )
-    #expect(
-      AppLanguageResolver.resolve(
-        preference: .english,
-        platformLanguages: ["en"],
-        supportedLanguages: supportedLanguages,
-        commandLineOverride: ["zh-Hans"]
-      ) == .zhHans
-    )
-  }
+  // MARK: - Store
 
-  @Test func commandLineOverrideWithoutMatchFallsBackToEnglish() {
-    #expect(
-      AppLanguageResolver.resolve(
-        preference: .system,
-        platformLanguages: ["zh-Hans"],
-        supportedLanguages: supportedLanguages,
-        commandLineOverride: ["fr-FR"]
-      ) == .english
-    )
-  }
-
-  // MARK: - Bridge ownership
-
-  @Test func firstExplicitSelectionRecordsMissingOriginalAndRestoresByRemovingKey() {
+  // Prowl keeps no copy of the choice. The per-app `AppleLanguages` default is the only
+  // source, and macOS writes the same key from System Settings.
+  @Test func absentKeyMeansFollowSystem() {
     let (defaults, suite) = makeIsolatedDefaults()
     defer { UserDefaults().removePersistentDomain(forName: suite) }
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+    let store = AppLanguageStore(defaults: defaults, domainName: suite)
 
-    bridge.synchronize(preference: .zhHans)
-    #expect(bridge.currentAppleLanguages == ["zh-Hans"])
-
-    // The key did not exist before Prowl took over, so restoring "system"
-    // removes it rather than resurrecting a phantom value.
-    bridge.synchronize(preference: .system)
-    #expect(bridge.currentAppleLanguages == nil)
+    #expect(store.appleLanguages == nil)
+    #expect(store.language == .system)
   }
 
-  @Test func existingExternalOverrideIsRestoredOnReturnToSystem() {
+  @Test func explicitChoiceWritesOneLanguageAndSystemRemovesTheKey() {
     let (defaults, suite) = makeIsolatedDefaults()
     defer { UserDefaults().removePersistentDomain(forName: suite) }
-    defaults.set(["ja"], forKey: "AppleLanguages")
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+    let store = AppLanguageStore(defaults: defaults, domainName: suite)
 
-    bridge.synchronize(preference: .english)
-    #expect(bridge.currentAppleLanguages == ["en"])
+    store.setLanguage(.zhHans)
+    #expect(store.appleLanguages == ["zh-Hans"])
+    #expect(store.language == .zhHans)
 
-    bridge.synchronize(preference: .system)
-    #expect(bridge.currentAppleLanguages == ["ja"])
+    store.setLanguage(.english)
+    #expect(store.appleLanguages == ["en"])
+    #expect(store.language == .english)
+
+    store.setLanguage(.system)
+    #expect(store.appleLanguages == nil)
+    #expect(store.language == .system)
   }
 
-  @Test func externalModificationInSystemModeIsPreservedAndRecordCleared() {
+  @Test func choiceMadeInSystemSettingsIsReadBack() {
     let (defaults, suite) = makeIsolatedDefaults()
     defer { UserDefaults().removePersistentDomain(forName: suite) }
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+    let store = AppLanguageStore(defaults: defaults, domainName: suite)
 
-    bridge.synchronize(preference: .zhHans)
-    #expect(bridge.currentAppleLanguages == ["zh-Hans"])
+    // System Settings writes regional identifiers and a fallback list.
+    defaults.set(["zh-Hans-CN", "en-CN"], forKey: AppLanguageStore.appleLanguagesKey)
+    #expect(store.language == .zhHans)
 
-    // The user changes the per-app language through System Settings while
-    // Prowl's record still points at its own write.
-    defaults.set(["fr"], forKey: "AppleLanguages")
-    bridge.synchronize(preference: .system)
-
-    // The external value wins; the stale record must be dropped so a later
-    // explicit selection treats "fr" as the value to restore.
-    #expect(bridge.currentAppleLanguages == ["fr"])
-    bridge.synchronize(preference: .english)
-    #expect(bridge.currentAppleLanguages == ["en"])
-    bridge.synchronize(preference: .system)
-    #expect(bridge.currentAppleLanguages == ["fr"])
+    defaults.set(["en-GB"], forKey: AppLanguageStore.appleLanguagesKey)
+    #expect(store.language == .english)
   }
 
-  @Test func externalModificationInExplicitModeBecomesNewRestoreTarget() {
+  @Test func languageWithoutLocalizationReadsAsEnglish() {
     let (defaults, suite) = makeIsolatedDefaults()
     defer { UserDefaults().removePersistentDomain(forName: suite) }
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+    let store = AppLanguageStore(defaults: defaults, domainName: suite)
 
-    bridge.synchronize(preference: .zhHans)
-    defaults.set(["fr"], forKey: "AppleLanguages")
+    // The picker shows the language the app displays, and that is the English fallback.
+    defaults.set(["ja-JP"], forKey: AppLanguageStore.appleLanguagesKey)
+    #expect(store.language == .english)
 
-    bridge.synchronize(preference: .english)
-    #expect(bridge.currentAppleLanguages == ["en"])
-
-    bridge.synchronize(preference: .system)
-    #expect(bridge.currentAppleLanguages == ["fr"])
+    defaults.set(["zh-Hant-TW"], forKey: AppLanguageStore.appleLanguagesKey)
+    #expect(store.language == .english)
   }
 
-  @Test func systemWithoutRecordNeverClaimsExistingKey() {
+  @Test func followSystemRemovesAValueThatSystemSettingsWrote() {
     let (defaults, suite) = makeIsolatedDefaults()
     defer { UserDefaults().removePersistentDomain(forName: suite) }
-    // A per-app override set outside Prowl, with no Prowl ownership record.
-    defaults.set(["de"], forKey: "AppleLanguages")
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
+    let store = AppLanguageStore(defaults: defaults, domainName: suite)
+    defaults.set(["zh-Hans-CN"], forKey: AppLanguageStore.appleLanguagesKey)
 
-    bridge.synchronize(preference: .system)
-    #expect(bridge.currentAppleLanguages == ["de"])
-  }
-
-  @Test func switchingBetweenExplicitLanguagesKeepsOriginalRestoreTarget() {
-    let (defaults, suite) = makeIsolatedDefaults()
-    defer { UserDefaults().removePersistentDomain(forName: suite) }
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
-
-    bridge.synchronize(preference: .zhHans)
-    bridge.synchronize(preference: .english)
-    #expect(bridge.currentAppleLanguages == ["en"])
-
-    // The original value was "absent" — Prowl's own zh-Hans write must not
-    // become the restore target just because it is the current value.
-    bridge.synchronize(preference: .system)
-    #expect(bridge.currentAppleLanguages == nil)
-  }
-
-  @Test func predictionStripsProwlDerivedPrefixFromPreferredLanguages() {
-    let (defaults, suite) = makeIsolatedDefaults()
-    defer { UserDefaults().removePersistentDomain(forName: suite) }
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
-    bridge.synchronize(preference: .zhHans)
-
-    // After synchronize, we own the key. Prediction should return the saved
-    // original (empty, since we started fresh), falling back to global.
-    let predicted = bridge.platformLanguagesForPrediction()
-    #expect(!predicted.contains("zh-Hans"), "Should strip Prowl-derived prefix")
-  }
-
-  @Test func predictionKeepsExternalOverrideAsSystemInput() {
-    let (defaults, suite) = makeIsolatedDefaults()
-    defer { UserDefaults().removePersistentDomain(forName: suite) }
-    defaults.set(["fr"], forKey: "AppleLanguages")
-    let bridge = AppLanguageBridge(defaults: defaults, domainName: suite)
-
-    // We don't own the key; the external ["fr"] should be returned as-is
-    #expect(
-      bridge.platformLanguagesForPrediction() == ["fr"]
-    )
+    store.setLanguage(.system)
+    #expect(store.appleLanguages == nil)
   }
 
   // A shortcut title is a run-time key: the compiler cannot extract it, so

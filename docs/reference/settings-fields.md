@@ -25,7 +25,6 @@ JSON is pretty-printed with sorted keys. Legacy `~/.supacode` is migrated to
 | Field | Type | Default | Effect |
 |-------|------|---------|--------|
 | `appearanceMode` | enum (`system`/`light`/`dark`) | `dark` | App appearance. |
-| `appLanguage` | enum (`system`/`zh-Hans`/`en`) | `system` | Application UI language. Changes are saved immediately and take effect on the next launch; `system` follows the macOS per-app language, then system language. Unknown stored values fall back to `system`. |
 | `defaultEditorID` | String | `auto` | Default app to open worktrees (overridable per repo); `auto` prefers an app matching the detected project type. |
 | `confirmBeforeQuit` | Bool | `true` | Confirm before quitting Prowl. |
 | `updatesAutomaticallyCheckForUpdates` | Bool | `true` | Background update checks. |
@@ -131,3 +130,7 @@ the role). Prefer the page over editing them by hand. See
   = explicit override.
 - Editing the JSON while Prowl is running may be overwritten on save — prefer the
   Settings UI, or change settings while the app is closed.
+- The application language is **not** in `settings.json`. Settings → General → Language reads
+  and writes the per-app `AppleLanguages` default (`defaults read com.onevcat.prowl
+  AppleLanguages`), the same key as System Settings → Language & Region → Applications. No key
+  means "follow the system". A change takes effect on the next launch.

@@ -1,8 +1,8 @@
 import Foundation
 
-/// The persisted language preference. Raw values are stable storage
-/// identifiers for `settings.json` — never store display text.
-enum AppLanguage: String, CaseIterable, Identifiable, Codable, Sendable {
+/// The language choice shown in Settings. Prowl keeps no copy of it: the per-app
+/// `AppleLanguages` default is the only source (see `AppLanguageStore`).
+nonisolated enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
   case system
   case zhHans = "zh-Hans"
   case english = "en"
@@ -23,55 +23,76 @@ enum AppLanguage: String, CaseIterable, Identifiable, Codable, Sendable {
       return "English"
     }
   }
+
+  /// Reads the choice from a per-app `AppleLanguages` value. macOS writes the same key from
+  /// System Settings → Language & Region → Applications, with regional identifiers and a
+  /// fallback list, so the value is negotiated the way the platform does it. A language
+  /// Prowl has no localization for reads as English, because that is what the app shows.
+  init(appleLanguages: [String]?) {
+    guard let appleLanguages, !appleLanguages.isEmpty else {
+      self = .system
+      return
+    }
+    let resolved = AppLanguageResolver.match(
+      preferences: appleLanguages,
+      supported: ResolvedAppLanguage.allCases.map(\.rawValue)
+    )
+    self = resolved == .zhHans ? .zhHans : .english
+  }
+
+  /// The per-app `AppleLanguages` value for this choice. `nil` removes the key, so the app
+  /// follows the system language again.
+  var appleLanguages: [String]? {
+    self == .system ? nil : [rawValue]
+  }
 }
 
-/// The outcome of resolving a preference against the platform's language
-/// list — the set of languages Prowl actually ships localizations for.
-enum ResolvedAppLanguage: String, CaseIterable, Codable, Sendable {
+/// The languages Prowl ships localizations for.
+nonisolated enum ResolvedAppLanguage: String, CaseIterable, Sendable {
   case english = "en"
   case zhHans = "zh-Hans"
+
+  /// The language this process runs in. Foundation negotiates it once at launch, so a later
+  /// change of the choice does not affect it.
+  static func effective(bundle: Bundle = .main) -> ResolvedAppLanguage {
+    AppLanguageResolver.match(
+      preferences: bundle.preferredLocalizations,
+      supported: allCases.map(\.rawValue)
+    ) ?? .english
+  }
 }
 
-enum AppLanguageResolver {
-  /// Resolves the effective language with a fixed priority: command-line
-  /// override (this launch only) > explicit preference > platform language
-  /// negotiation > English fallback. Matching is delegated to the platform
-  /// (`Bundle.preferredLocalizations(from:forPreferences:)`) rather than
+nonisolated enum AppLanguageResolver {
+  /// Predicts the language of the next normal launch: an explicit choice wins, and
+  /// "Follow System" negotiates the system languages. Matching is delegated to the
+  /// platform (`Bundle.preferredLocalizations(from:forPreferences:)`) rather than
   /// hand-rolled "any zh prefix means Simplified" rules.
   ///
   /// - Parameters:
-  ///   - preference: The persisted preference from `GlobalSettings.appLanguage`.
-  ///   - platformLanguages: Preferred languages with any Prowl-managed
-  ///     `AppleLanguages` override already removed by the caller.
+  ///   - preference: The current choice.
+  ///   - platformLanguages: The system languages, without the per-app override.
   ///   - supportedLanguages: Localizations the app ships, in fallback order.
-  ///   - commandLineOverride: Optional `-AppleLanguages` argument value; it
-  ///     participates in resolution but is never written back to settings.
-  /// - Returns: The language the app UI should use.
   static func resolve(
     preference: AppLanguage,
     platformLanguages: [String],
-    supportedLanguages: [String],
-    commandLineOverride: [String]? = nil
+    supportedLanguages: [String]
   ) -> ResolvedAppLanguage {
-    let supported =
-      supportedLanguages.isEmpty
-      ? ResolvedAppLanguage.allCases.map(\.rawValue)
-      : supportedLanguages
-    if let commandLineOverride, !commandLineOverride.isEmpty {
-      return match(preferences: commandLineOverride, supported: supported) ?? .english
-    }
     switch preference {
     case .zhHans:
       return .zhHans
     case .english:
       return .english
     case .system:
+      let supported =
+        supportedLanguages.isEmpty
+        ? ResolvedAppLanguage.allCases.map(\.rawValue)
+        : supportedLanguages
       guard !platformLanguages.isEmpty else { return .english }
       return match(preferences: platformLanguages, supported: supported) ?? .english
     }
   }
 
-  private static func match(preferences: [String], supported: [String]) -> ResolvedAppLanguage? {
+  static func match(preferences: [String], supported: [String]) -> ResolvedAppLanguage? {
     guard let matched = Bundle.preferredLocalizations(from: supported, forPreferences: preferences).first
     else {
       return nil

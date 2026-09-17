@@ -1,6 +1,5 @@
 nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
   var appearanceMode: AppearanceMode
-  var appLanguage: AppLanguage
   var defaultEditorID: String
   var confirmBeforeQuit: Bool
   var updatesAutomaticallyCheckForUpdates: Bool
@@ -52,7 +51,6 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
 
   static let `default` = GlobalSettings(
     appearanceMode: .dark,
-    appLanguage: .system,
     defaultEditorID: OpenWorktreeAction.automaticSettingsID,
     confirmBeforeQuit: true,
     updatesAutomaticallyCheckForUpdates: true,
@@ -101,7 +99,6 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
 
   init(
     appearanceMode: AppearanceMode,
-    appLanguage: AppLanguage = .system,
     defaultEditorID: String,
     confirmBeforeQuit: Bool,
     updatesAutomaticallyCheckForUpdates: Bool,
@@ -149,7 +146,6 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
     shelfSpineTintFollowsRepositoryColor: Bool = true
   ) {
     self.appearanceMode = appearanceMode
-    self.appLanguage = appLanguage
     self.defaultEditorID = defaultEditorID
     self.confirmBeforeQuit = confirmBeforeQuit
     self.updatesAutomaticallyCheckForUpdates = updatesAutomaticallyCheckForUpdates
@@ -200,7 +196,6 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(appearanceMode, forKey: .appearanceMode)
-    try container.encode(appLanguage, forKey: .appLanguage)
     try container.encode(defaultEditorID, forKey: .defaultEditorID)
     try container.encode(confirmBeforeQuit, forKey: .confirmBeforeQuit)
     try container.encode(updatesAutomaticallyCheckForUpdates, forKey: .updatesAutomaticallyCheckForUpdates)
@@ -253,7 +248,6 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
 
   private enum CodingKeys: String, CodingKey {
     case appearanceMode
-    case appLanguage
     case defaultEditorID
     case confirmBeforeQuit
     case updatesAutomaticallyCheckForUpdates
@@ -310,7 +304,7 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    (appearanceMode, appLanguage) = try Self.decodeAppearanceAndLanguage(from: container)
+    appearanceMode = try container.decode(AppearanceMode.self, forKey: .appearanceMode)
     defaultEditorID =
       try container.decodeIfPresent(String.self, forKey: .defaultEditorID)
       ?? Self.default.defaultEditorID
@@ -539,27 +533,6 @@ nonisolated struct GlobalSettings: Codable, Equatable, Sendable {
       return legacyBool ? .archive : nil
     }
     return Self.default.mergedWorktreeAction
-  }
-
-  private static func decodeAppearanceAndLanguage(
-    from container: KeyedDecodingContainer<CodingKeys>
-  ) throws -> (AppearanceMode, AppLanguage) {
-    (
-      try container.decode(AppearanceMode.self, forKey: .appearanceMode),
-      decodeAppLanguage(from: container)
-    )
-  }
-
-  /// An unknown language code (hand-edited file, downgrade from a newer
-  /// build) falls back to `.system` without failing the whole decode —
-  /// same `try?` isolation as `decodeNotificationSound`.
-  private static func decodeAppLanguage(
-    from container: KeyedDecodingContainer<CodingKeys>
-  ) -> AppLanguage {
-    if let language = try? container.decodeIfPresent(AppLanguage.self, forKey: .appLanguage) {
-      return language
-    }
-    return Self.default.appLanguage
   }
 
   /// The toolbar-visibility and Dock-notification preferences, decoded as a
