@@ -69,7 +69,7 @@ for `build-app` + `audit`.
 
 2. **`suspects`** — literals that look like UI copy, are not localized in that file, and are not
    in the baseline yet. The same words can be localized in a menu and verbatim in a tooltip, so
-   the report names each place. Open each place and decide:
+   the report names each place (`path:line`). Open each place and decide:
 
    | It is… | Do |
    | --- | --- |
@@ -101,7 +101,10 @@ for `build-app` + `audit`.
    ```bash
    python3 scripts/localization.py triage "$SCRATCH/l10n-triage.json"
    ```
-   Either key can be left out. Categories: `identifier`, `product-name`, `log`, `agent-prompt`,
+   Every key can be left out. `"notes": {"<literal>": "<reason>"}` records why a debt entry
+   cannot be localized yet (for example "the same value also goes to the prowl CLI JSON");
+   `debt` prints it as `blocked:`, so the next sync does not investigate the entry again. Skip
+   blocked entries in the debt budget. Categories: `identifier`, `product-name`, `log`, `agent-prompt`,
    `protocol`, `developer`, `other`. The latest decision wins, so a wrong exemption can be moved
    back to `debt`.
 

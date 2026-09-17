@@ -213,6 +213,10 @@ class CandidateLiteralTests(unittest.TestCase):
         text = 'return "Cannot reach \\(endpoint). Check the network."\n'
         self.assertEqual(self.scan("supacode/Domain/Thing.swift", text), ["Cannot reach %@. Check the network."])
 
+    def test_finds_one_word_with_a_value_anywhere(self):
+        text = 'let label = "Automatic (\\(ref))"\nlet header = "Bearer \\(token)"\nlet key = "prefix-\\(id)"\n'
+        self.assertEqual(self.scan("supacode/Domain/Thing.swift", text), ["Automatic (%@)", "Bearer %@"])
+
     def test_skips_file_names_and_identifiers(self):
         text = 'let a = "Cargo.toml"\nlet b = "PROWL_LAUNCH_HOOK_TOKEN"\nlet c = "\\(home)/.local/bin/gh"\n'
         self.assertEqual(self.scan("supacode/Domain/Thing.swift", text), [])
@@ -258,6 +262,14 @@ class BaselineTests(unittest.TestCase):
         found = {"Open %@": ["supacode/Features/C.swift:3"]}
         extracted = {"Open %lld": {"supacode/Features/C.swift:3"}}
         self.assertEqual(unknown_candidates(found, self.baseline(), extracted), {})
+
+    def test_reports_a_verbatim_copy_in_the_same_file(self):
+        found = {"Listening": ["supacode/Features/Status.swift:140", "supacode/Features/Status.swift:154"]}
+        extracted = {"Listening": {"supacode/Features/Status.swift:140"}}
+        self.assertEqual(
+            unknown_candidates(found, self.baseline(), extracted),
+            {"Listening": ["supacode/Features/Status.swift:154"]},
+        )
 
     def test_does_not_confuse_two_files_with_the_same_name(self):
         found = {"Open %@": ["supacode/Features/A/Row.swift:3"]}

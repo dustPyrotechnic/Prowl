@@ -331,7 +331,9 @@ def candidate_literals(path: str, text: str) -> list[tuple[int, str]]:
         # A sentence has a space between words; a file name or an identifier does not.
         sentence = len(words) >= 2 and SENTENCE_START.match(literal) and re.search(r"[A-Za-z@] +[A-Za-z%“\"'(]", literal)
         word = is_view_file(path) and SINGLE_WORD.fullmatch(literal)
-        if sentence or word:
+        # "Automatic (%@)": one capitalized word that frames a value.
+        labelled_value = "%@" in literal and SINGLE_WORD.fullmatch(re.sub(r"%@|[\s():·—–-]", "", literal))
+        if sentence or word or labelled_value:
             candidates.append((number, literal))
     return candidates
 
@@ -416,20 +418,22 @@ def open_places(
 ) -> dict[str, list[str]]:
     """The places where each candidate is still not localized.
 
-    The comparison is per file: the same words can be localized in a menu and verbatim in a
-    tooltip elsewhere. In a file that looks titles up at run time, a catalog key is localized.
+    The comparison is per place (`path:line`): the same words can be localized in a label and
+    verbatim in a tooltip of the same file. The compiler and the lexer report the same line for
+    a literal. In a file that looks titles up at run time, a catalog key is localized.
     """
     localized: dict[str, set[str]] = {}
     for key, places in extracted.items():
-        localized.setdefault(loosen(key), set()).update(place_path(place) for place in places)
+        localized.setdefault(loosen(key), set()).update(places)
     still_open = {}
     for literal, places in found.items():
-        files = localized.get(loosen(literal))
-        in_catalog = files is not None or literal in runtime_keys
+        extracted_places = localized.get(loosen(literal))
+        in_catalog = extracted_places is not None or literal in runtime_keys
         remaining = []
         for place in places:
-            path = place_path(place)
-            if path in (files or ()) or (in_catalog and baseline.looks_up_at_run_time(path)):
+            if place in (extracted_places or ()):
+                continue
+            if in_catalog and baseline.looks_up_at_run_time(place_path(place)):
                 continue
             remaining.append(place)
         if remaining:

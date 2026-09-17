@@ -74,8 +74,9 @@ does.
 
 A plain `String` that reaches the UI looks the same as a log line, so no static check can find
 unlocalized copy exactly. The audit therefore reports **suspects**: string literals that read
-like copy (a sentence anywhere, or one capitalized word in a view file), that the compiler did
-not extract, and that nobody has decided about yet. A small lexer reads Swift literals, with
+like copy (a sentence anywhere, one capitalized word that frames a value such as
+`Automatic (%@)`, or one capitalized word in a view file), that the compiler did not extract, and
+that nobody has decided about yet. A small lexer reads Swift literals, with
 interpolation and multi-line literals, so a suspect is the same text the compiler would key.
 
 `scripts/localization_baseline.json` holds the decisions:
@@ -86,16 +87,21 @@ interpolation and multi-line literals, so a suspect is the same text the compile
 | `runtimeKeyPaths` | Files whose titles reach the catalog through a run-time lookup (`AppShortcuts.swift`, the Command Palette items). There, a literal that is a catalog key counts as localized |
 | `exemptLiterals` | One literal that is not UI, with a category: `identifier`, `product-name`, `log`, `agent-prompt`, `protocol`, `developer`, `other` |
 | `debt` | UI copy that is known but not localizable yet |
+| `debtNotes` | Why a debt entry cannot be localized yet, so a later sync does not investigate it again |
 
-A literal counts as localized only in a file from which the compiler extracted it. The same
-words can be localized in a menu and verbatim in a tooltip; a comparison across all files hid
-about 70 such places. A decision in the baseline is about the literal, not about one place, and
-a debt entry is paid when every place of its literal is localized.
+A literal counts as localized only at a place (`path:line`) where the compiler extracted it. The
+compiler and the lexer report the same line for a literal: 2002 places matched exactly in a
+check on 2026-09-18. The same words can be localized in a label and verbatim in a tooltip of the
+same file; a comparison across all files hid about 70 such places, and a comparison per file hid
+15 more. A decision in the baseline is about the literal, not about one place, and a debt entry
+is paid when every place of its literal is localized.
 
-The first baseline (2026-09-18) has about 650 debt literals. Most are alert text in reducers, labels
-that views build as `String`, presentation models, and error descriptions. They show in English.
-Each release localizes the debt in the files it touched, within a budget, so the number only
-goes down. An entry whose literal left the code is reported as obsolete and removed.
+The first baseline (2026-09-18) had about 650 debt literals: alert text in reducers, labels that
+views build as `String`, presentation models, and error descriptions. One pass on the same day
+made about 500 of them localizable. About 65 stay, each with a note: the same value also goes to
+the prowl CLI, a log file, or the workflow run records, so the UI copy must be split from the
+protocol text first. Each release localizes new debt in the files it touched, within a budget, so
+the number only goes down. An entry with no open place is reported as obsolete and removed.
 
 ### The catalog has the format Xcode writes
 
@@ -168,13 +174,12 @@ compares a value with itself and does not check the text.
 
 ## Open
 
-- **The debt.** About 650 literals on 2026-09-18 (`python3 scripts/localization.py debt`). The large groups: alert titles and messages in the
-  `RepositoriesFeature+*.swift` reducers, `String` labels in the Workflow and Remote Mirror
-  views, presentation models under `supacode/Features/Workflow/Models/`, and error descriptions
-  in `supacode/Clients/` and `supacode/Features/RemoteMirror/`. Some Remote Mirror messages
-  travel between machines; decide per message whether the sender or the receiver localizes it.
-- **`AppLoadingView.swift`** has 21 playful loading lines. Whether and how to translate them is
-  a copywriting decision.
+- **The debt.** About 65 literals (`python3 scripts/localization.py debt` lists them with the
+  reason). They are UI copy whose value also goes somewhere that must stay in English:
+  `WorkflowRunMachine` attention messages (also `log.md`, `state.json`, and the
+  `prowl workflow status` JSON), workflow step titles (also the run records), and
+  `LifecycleCommandWarning` messages of the managed hooks (also the prowl CLI JSON). To localize
+  them, give the UI its own copy per reason and keep the English text for the protocol.
 - **Xcode's key order.** The format was verified against `xcstringstool`. An Xcode IDE build
   that rewrites the catalog was not observed yet; if it orders keys differently, follow Xcode.
 
