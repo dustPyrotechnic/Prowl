@@ -131,9 +131,9 @@ struct NotificationsSettingsView: View {
     case .available:
       return nil
     case .notificationsDenied:
-      return "Allow notifications for Prowl in System Settings to show the Dock badge."
+      return String(localized: "Allow notifications for Prowl in System Settings to show the Dock badge.")
     case .badgeDisabled:
-      return "Turn on “Badge app icon” for Prowl in System Settings > Notifications."
+      return String(localized: "Turn on “Badge app icon” for Prowl in System Settings > Notifications.")
     }
   }
 }

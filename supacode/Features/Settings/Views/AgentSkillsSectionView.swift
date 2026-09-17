@@ -202,11 +202,15 @@ struct AgentSkillsSectionView: View {
 
   private func statusText(_ status: SymlinkInstallStatus) -> String {
     switch status {
-    case .installed: "Installed"
-    case .notInstalled: "Not installed"
+    case .installed: String(localized: "Installed")
+    case .notInstalled: String(localized: "Not installed")
     case .installedDifferentSource(_, let destination):
-      destination == nil ? "Real file or directory" : "Linked elsewhere"
-    case .broken: "Broken link"
+      if destination == nil {
+        String(localized: "Real file or directory")
+      } else {
+        String(localized: "Linked elsewhere")
+      }
+    case .broken: String(localized: "Broken link")
     }
   }
 
@@ -218,7 +222,7 @@ struct AgentSkillsSectionView: View {
       nil
     case .installedDifferentSource(_, let destination):
       destination.map { ("→ \(abbreviated($0))", true) }
-        ?? ("Not a symlink — Prowl never deletes it. Remove it manually to link here.", false)
+        ?? (String(localized: "Not a symlink — Prowl never deletes it. Remove it manually to link here."), false)
     case .broken(_, let destination):
       ("→ \(abbreviated(destination))", true)
     }

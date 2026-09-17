@@ -158,7 +158,9 @@ struct NewWorkflowSheet: View {
       Button("Create") { store.send(.createWorkflowTapped) }
         .keyboardShortcut(.defaultAction)
         .disabled(problem != nil)
-        .help(problem ?? "Write the starter bundle and open it in your default YAML editor (Return)")
+        .help(
+          problem ?? String(localized: "Write the starter bundle and open it in your default YAML editor (Return)")
+        )
     }
     .padding(12)
   }
@@ -172,7 +174,7 @@ struct NewWorkflowSheet: View {
     let folder = (store.workflowDirectory.path(percentEncoded: false) as NSString).abbreviatingWithTildeInPath
     let id = store.newWorkflow?.id ?? ""
     let file = id.isEmpty ? "<id>.pwlworkflow" : "\(id).pwlworkflow"
-    return "Creates \(folder)/\(file)/workflow.yaml"
+    return String(localized: "Creates \(folder)/\(file)/workflow.yaml")
   }
 
   private var nameBinding: Binding<String> {
@@ -191,8 +193,8 @@ struct NewWorkflowSheet: View {
 extension WorkflowStarterTemplate.Kind {
   var title: String {
     switch self {
-    case .singleAgent: "Single agent"
-    case .multiAgent: "Multi-agent"
+    case .singleAgent: String(localized: "Single agent")
+    case .multiAgent: String(localized: "Multi-agent")
     }
   }
 

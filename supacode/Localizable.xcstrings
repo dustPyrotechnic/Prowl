@@ -187,6 +187,16 @@
         }
       }
     },
+    "%@ — add a repository first" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@——请先添加仓库"
+          }
+        }
+      }
+    },
     "%@%@" : {
       "shouldTranslate" : false
     },
@@ -969,6 +979,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "允许不受限制的执行？"
+          }
+        }
+      }
+    },
+    "Allow notifications for Prowl in System Settings to show the Dock badge." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在系统设置中允许 Prowl 发送通知，以显示程序坞标记。"
           }
         }
       }
@@ -1804,6 +1824,16 @@
         }
       }
     },
+    "Change Tab Icon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改标签页图标"
+          }
+        }
+      }
+    },
     "Change Tab Icon..." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2224,6 +2254,16 @@
         }
       }
     },
+    "Click Add to add one." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击“添加”以添加一个。"
+          }
+        }
+      }
+    },
     "Click a worktree to open it." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2544,6 +2584,16 @@
         }
       }
     },
+    "Close pull request" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭拉取请求"
+          }
+        }
+      }
+    },
     "Close this review (Escape)" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2620,6 +2670,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "折叠"
+          }
+        }
+      }
+    },
+    "Collapse All" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部折叠"
           }
         }
       }
@@ -2974,6 +3034,16 @@
         }
       }
     },
+    "Copy CI failure logs" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制 CI 失败日志"
+          }
+        }
+      }
+    },
     "Copy Defaults" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3284,6 +3354,16 @@
         }
       }
     },
+    "Creates %@/%@/workflow.yaml" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将创建 %@/%@/workflow.yaml"
+          }
+        }
+      }
+    },
     "Creation" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3550,6 +3630,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "删除"
+          }
+        }
+      }
+    },
+    "Delete %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除 %@"
           }
         }
       }
@@ -4435,6 +4525,26 @@
         }
       }
     },
+    "Expand Active" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "展开活跃项"
+          }
+        }
+      }
+    },
+    "Expand All" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部展开"
+          }
+        }
+      }
+    },
     "Expand card" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4451,6 +4561,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "展开或折叠步骤详情"
+          }
+        }
+      }
+    },
+    "Expand repositories with open tabs" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "展开有打开标签页的仓库"
           }
         }
       }
@@ -5776,6 +5896,16 @@
         }
       }
     },
+    "Linked elsewhere" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已链接到别处"
+          }
+        }
+      }
+    },
     "Linked repositories stay untouched; only the symlinks inside the workspace folder are removed." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5966,6 +6096,16 @@
         }
       }
     },
+    "Mark pull request ready for review" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将拉取请求标记为可审查"
+          }
+        }
+      }
+    },
     "Marking PR ready…" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6012,6 +6152,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可合并 - %@"
+          }
+        }
+      }
+    },
+    "Merge pull request" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合并拉取请求"
           }
         }
       }
@@ -6182,6 +6332,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移到废纸篓"
+          }
+        }
+      }
+    },
+    "Multi-agent" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多 Agent"
           }
         }
       }
@@ -6646,6 +6806,16 @@
         }
       }
     },
+    "Not a symlink — Prowl never deletes it. Remove it manually to link here." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是符号链接——Prowl 不会删除它。请手动移除后再链接到此处。"
+          }
+        }
+      }
+    },
     "Not authenticated" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6956,6 +7126,16 @@
         }
       }
     },
+    "Open Repo Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开仓库设置"
+          }
+        }
+      }
+    },
     "Open Repository" : {
       "localizations" : {
         "zh-Hans" : {
@@ -7123,6 +7303,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用以下应用打开差异"
+          }
+        }
+      }
+    },
+    "Open failing check details" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开失败检查详情"
           }
         }
       }
@@ -7610,6 +7800,16 @@
         }
       }
     },
+    "Press %@ or click Add to add one." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按 %@ 或点击“添加”以添加一个。"
+          }
+        }
+      }
+    },
     "Press a key with modifiers (⌘ ⇧ ⌥ ⌃)." : {
       "localizations" : {
         "zh-Hans" : {
@@ -7991,6 +8191,16 @@
         }
       }
     },
+    "Re-run failed jobs" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新运行失败的作业"
+          }
+        }
+      }
+    },
     "Re-running failed jobs…" : {
       "localizations" : {
         "zh-Hans" : {
@@ -8027,6 +8237,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "只读。在 %@ 中定义——要更改请编辑该文件。"
+          }
+        }
+      }
+    },
+    "Real file or directory" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真实文件或目录"
           }
         }
       }
@@ -9261,6 +9481,16 @@
         }
       }
     },
+    "Run Custom Command: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "运行自定义命令：%@"
+          }
+        }
+      }
+    },
     "Run Directly When Possible" : {
       "localizations" : {
         "zh-Hans" : {
@@ -9537,6 +9767,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜索分支"
+          }
+        }
+      }
+    },
+    "Search for actions or branches..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索操作或分支…"
           }
         }
       }
@@ -10443,6 +10683,16 @@
         }
       }
     },
+    "Show committed changes relative to the branch's base" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相对于分支的基准显示已提交的更改"
+          }
+        }
+      }
+    },
     "Show committed changes relative to this repository's base" : {
       "localizations" : {
         "zh-Hans" : {
@@ -10719,6 +10969,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模拟进行中的 Toast"
+          }
+        }
+      }
+    },
+    "Single agent" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单 Agent"
           }
         }
       }
@@ -11840,6 +12100,16 @@
         }
       }
     },
+    "Turn on “Badge app icon” for Prowl in System Settings > Notifications." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在“系统设置 > 通知”中为 Prowl 打开“App 图标标记”。"
+          }
+        }
+      }
+    },
     "URL:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -11896,6 +12166,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法删除 worktree"
+          }
+        }
+      }
+    },
+    "Unable to load %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法加载 %@"
           }
         }
       }
@@ -12677,6 +12957,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Worktree"
+          }
+        }
+      }
+    },
+    "Write the starter bundle and open it in your default YAML editor (Return)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写入起始 Bundle，并在默认 YAML 编辑器中打开（Return）"
           }
         }
       }
