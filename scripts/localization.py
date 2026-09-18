@@ -18,7 +18,8 @@
   apply    Add or update translations from a JSON file, validated and in Xcode's format.
   prune    Remove unused catalog entries and obsolete baseline entries.
   triage   Record decisions about suspects in the baseline (exempt or debt).
-  debt     List the debt by file, optionally only in files changed since a git ref.
+  debt     List the debt by file, optionally only in files changed since a git ref;
+           --blocked lists the copy that must stay in English for now, with the reason.
   format   Rewrite the catalog in the format Xcode writes.
 
 The coverage data comes from the `.stringsdata` files that the Swift compiler writes during a
@@ -350,9 +351,10 @@ class Baseline:
         self.exempt_line_patterns: dict[str, str] = data.setdefault("exemptLinePatterns", {})
         self.runtime_key_paths: dict[str, str] = data.setdefault("runtimeKeyPaths", {})
         self.exempt_literals: dict[str, str] = data.setdefault("exemptLiterals", {})
+        # UI copy whose value also goes to a CLI response, a log, a file, or another machine.
+        # Not debt: it needs a design change (separate UI copy) before it can be localized.
+        self.blocked: dict[str, str] = data.setdefault("blocked", {})
         self.debt: list[str] = data.setdefault("debt", [])
-        # Why a debt entry cannot be localized yet, so a later sync does not investigate it again.
-        self.debt_notes: dict[str, str] = data.setdefault("debtNotes", {})
         self._line_patterns = [re.compile(pattern) for pattern in self.exempt_line_patterns]
 
     def exempts_path(self, path: str) -> bool:
@@ -366,24 +368,25 @@ class Baseline:
         return any(pattern.search(line) for pattern in self._line_patterns)
 
     def knows(self, literal: str) -> bool:
-        return literal in self.exempt_literals or literal in self.debt
+        return literal in self.exempt_literals or literal in self.blocked or literal in self.debt
 
     def obsolete(self, still_open: set[str]) -> list[str]:
         """Entries with no open place: the literal left the code, or every place is localized now.
 
         They must go, so the baseline only shrinks.
         """
-        return [literal for literal in [*self.exempt_literals, *self.debt] if literal not in still_open]
+        known = [*self.exempt_literals, *self.blocked, *self.debt]
+        return [literal for literal in known if literal not in still_open]
 
     def remove(self, literals: list[str]) -> None:
         for literal in literals:
             self.exempt_literals.pop(literal, None)
-            self.debt_notes.pop(literal, None)
+            self.blocked.pop(literal, None)
         self.debt[:] = [literal for literal in self.debt if literal not in literals]
 
     def serialize(self) -> str:
         self.data["exemptLiterals"] = dict(sorted(self.exempt_literals.items()))
-        self.data["debtNotes"] = dict(sorted(self.debt_notes.items()))
+        self.data["blocked"] = dict(sorted(self.blocked.items()))
         self.data["debt"] = sorted(set(self.debt))
         return json.dumps(self.data, ensure_ascii=False, indent=2) + "\n"
 
@@ -513,7 +516,7 @@ def command_audit(arguments) -> int:
     }
     debt = len(baseline.debt)
     if arguments.json:
-        print(json.dumps({**report, "debt": debt}, ensure_ascii=False, indent=2))
+        print(json.dumps({**report, "debt": debt, "blocked": len(baseline.blocked)}, ensure_ascii=False, indent=2))
     else:
         print_issues("Broken translations", report["broken"])
         print_issues("Missing from the catalog", [f'"{k}" ({", ".join(v)})' for k, v in report["missing"].items()])
@@ -522,6 +525,7 @@ def command_audit(arguments) -> int:
         print_issues("Suspects to triage", [f'"{k}" ({v[0]})' for k, v in report["suspects"].items()])
         print_issues("Obsolete baseline entries", [f'"{literal}"' for literal in report["obsolete"]])
         print(f"\nKnown debt: {debt} literal(s) of UI copy that are not localized yet.")
+        print(f"Blocked: {len(baseline.blocked)} literal(s) that share their value with protocol text (`debt --blocked`).")
     return 1 if any(report.values()) else 0
 
 
@@ -552,22 +556,22 @@ def command_prune(arguments) -> int:
 
 
 def record_decisions(baseline: Baseline, decisions: dict) -> None:
-    """Record `{"exempt": {literal: category}, "debt": [literal], "notes": {literal: reason}}`.
+    """Record `{"exempt": {literal: category}, "blocked": {literal: reason}, "debt": [literal]}`.
 
-    The latest decision wins. A note says why a debt entry cannot be localized yet.
+    The latest decision wins. A blocked entry is UI copy that shares its value with text that
+    must stay in English; the reason says what the value is also used for.
     """
     for literal, category in decisions.get("exempt", {}).items():
         if category not in EXEMPT_CATEGORIES:
             raise SystemExit(f'error: "{literal}": category must be one of {", ".join(EXEMPT_CATEGORIES)}')
         baseline.remove([literal])
         baseline.exempt_literals[literal] = category
+    for literal, reason in decisions.get("blocked", {}).items():
+        baseline.remove([literal])
+        baseline.blocked[literal] = reason
     for literal in decisions.get("debt", []):
-        baseline.exempt_literals.pop(literal, None)
-        if literal not in baseline.debt:
-            baseline.debt.append(literal)
-    for literal, note in decisions.get("notes", {}).items():
-        if literal in baseline.debt:
-            baseline.debt_notes[literal] = note
+        baseline.remove([literal])
+        baseline.debt.append(literal)
 
 
 def command_triage(arguments) -> int:
@@ -586,6 +590,12 @@ def command_debt(arguments) -> int:
     if arguments.since:
         command = ["git", "-C", str(ROOT), "diff", "--name-only", f"{arguments.since}..HEAD", "--", SOURCES]
         changed = set(subprocess.run(command, check=True, capture_output=True, text=True).stdout.split())
+    if arguments.blocked:
+        for literal, reason in sorted(baseline.blocked.items()):
+            places = ", ".join(still_open.get(literal, []))
+            print(f"{literal}\n    {reason}\n    {places}")
+        print(f"\n{len(baseline.blocked)} blocked literal(s).")
+        return 0
     by_file = debt_places(still_open, baseline, changed)
     for path, items in sorted(by_file.items(), key=lambda item: -len(item[1])):
         print(f"\n## {path} ({len(items)})")
@@ -593,8 +603,6 @@ def command_debt(arguments) -> int:
             elsewhere = places_elsewhere(still_open, literal, changed) if changed is not None else []
             note = f"  (also at {', '.join(elsewhere)})" if elsewhere else ""
             print(f"  {line}: " + literal.replace("\n", "\\n") + note)
-            if literal in baseline.debt_notes:
-                print(f"      blocked: {baseline.debt_notes[literal]}")
     print(f"\n{sum(len(items) for items in by_file.values())} debt place(s) in {len(by_file)} file(s).")
     return 0
 
@@ -623,6 +631,7 @@ def main() -> int:
     triage.set_defaults(run=command_triage)
     debt = commands.add_parser("debt")
     debt.add_argument("--since", help="only files changed since this git ref, for example the last release tag")
+    debt.add_argument("--blocked", action="store_true", help="list the blocked copy with its reasons instead")
     debt.set_defaults(run=command_debt)
     commands.add_parser("format").set_defaults(run=command_format)
     arguments = parser.parse_args()

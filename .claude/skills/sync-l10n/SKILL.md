@@ -33,7 +33,8 @@ validates placeholders and keeps the catalog in the exact format Xcode writes.
 - **Ask when the meaning is not clear.** A wrong exemption hides UI copy for good. Collect the
   unclear suspects and ask the user once, with the location and your best guess for each.
 - **The debt is allowed to exist.** Burn it down within the budget in step 3. Do not start a
-  large refactor inside a release.
+  large refactor inside a release. Copy that is `blocked` is not debt: leave it until someone
+  separates the UI copy from the protocol text.
 
 ## Steps
 
@@ -75,6 +76,7 @@ for `build-app` + `audit`.
    | --- | --- |
    | UI copy, and the fix is local | Make it localizable in code (patterns below). It shows up as `missing` after the rebuild |
    | UI copy, but the fix is not local | Record it as `debt` |
+   | UI copy whose value also goes to a CLI response, a log, a file, or another machine | Record it as `blocked` with the reason. It is not debt: it needs its own UI copy first |
    | Not UI: a log line, an identifier, a product name, text for an agent, a CLI or wire-protocol message, developer-only text | Exempt it with that category — or add a rule when the whole file or pattern is not UI |
    | Not clear | Ask the user, all unclear items in one batch |
 
@@ -95,16 +97,15 @@ for `build-app` + `audit`.
    ```json
    {
      "exempt": {"Claude Code": "product-name", "PANE_BUSY: …": "protocol"},
+     "blocked": {"Launching %@ failed: %@": "also written to log.md and the prowl workflow status JSON"},
      "debt": ["Unable to create worktree"]
    }
    ```
    ```bash
    python3 scripts/localization.py triage "$SCRATCH/l10n-triage.json"
    ```
-   Every key can be left out. `"notes": {"<literal>": "<reason>"}` records why a debt entry
-   cannot be localized yet (for example "the same value also goes to the prowl CLI JSON");
-   `debt` prints it as `blocked:`, so the next sync does not investigate the entry again. Skip
-   blocked entries in the debt budget. Categories: `identifier`, `product-name`, `log`, `agent-prompt`,
+   Every key can be left out. `debt --blocked` lists the blocked copy with its reasons, so the
+   next sync does not investigate it again; the debt budget never touches it. Categories: `identifier`, `product-name`, `log`, `agent-prompt`,
    `protocol`, `developer`, `other`. The latest decision wins, so a wrong exemption can be moved
    back to `debt`.
 

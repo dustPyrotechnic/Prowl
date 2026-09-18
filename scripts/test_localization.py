@@ -245,7 +245,7 @@ class CandidateLiteralTests(unittest.TestCase):
 
 class BaselineTests(unittest.TestCase):
     def baseline(self, **fields):
-        data = {"exemptPaths": {}, "exemptLinePatterns": {}, "exemptLiterals": {}, "debt": []}
+        data = {"exemptPaths": {}, "exemptLinePatterns": {}, "exemptLiterals": {}, "blocked": {}, "debt": []}
         data.update(fields)
         return Baseline(data)
 
@@ -316,17 +316,20 @@ class BaselineTests(unittest.TestCase):
         self.assertEqual(baseline.exempt_literals, {"Claude Code": "product-name"})
         self.assertEqual(baseline.debt, ["RUN SCRIPT"])
 
-    def test_keeps_the_reason_why_a_debt_entry_is_blocked(self):
-        baseline = self.baseline()
-        record_decisions(baseline, {"debt": ["Launching %@ failed: %@"], "notes": {"Launching %@ failed: %@": "also in log.md"}})
-        self.assertEqual(baseline.debt_notes, {"Launching %@ failed: %@": "also in log.md"})
-        record_decisions(baseline, {"exempt": {"Launching %@ failed: %@": "log"}})
-        self.assertEqual(baseline.debt_notes, {})
+    def test_blocked_copy_is_not_debt(self):
+        baseline = self.baseline(debt=["Launching %@ failed: %@"])
+        record_decisions(baseline, {"blocked": {"Launching %@ failed: %@": "also in log.md"}})
+        self.assertEqual(baseline.debt, [])
+        self.assertEqual(baseline.blocked, {"Launching %@ failed: %@": "also in log.md"})
+        self.assertTrue(baseline.knows("Launching %@ failed: %@"))
+        record_decisions(baseline, {"debt": ["Launching %@ failed: %@"]})
+        self.assertEqual((baseline.debt, baseline.blocked), (["Launching %@ failed: %@"], {}))
 
-    def test_drops_the_note_of_an_entry_that_is_gone(self):
-        baseline = self.baseline(debt=["Gone copy"], debtNotes={"Gone copy": "reason"})
+    def test_drops_a_blocked_entry_that_is_gone(self):
+        baseline = self.baseline(blocked={"Gone copy": "reason"})
+        self.assertEqual(baseline.obsolete(set()), ["Gone copy"])
         baseline.remove(["Gone copy"])
-        self.assertEqual((baseline.debt, baseline.debt_notes), ([], {}))
+        self.assertEqual(baseline.blocked, {})
 
     def test_reports_entries_that_left_the_code(self):
         baseline = self.baseline(exemptLiterals={"Gone Product": "product-name"}, debt=["Gone copy", "Still here"])

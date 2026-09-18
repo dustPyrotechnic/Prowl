@@ -86,8 +86,8 @@ interpolation and multi-line literals, so a suspect is the same text the compile
 | `exemptPaths`, `exemptLinePatterns` | Rules for code that is never UI: the CLI service, agent prompts, logger calls, symbol names. Prefer a rule, because it also covers future code |
 | `runtimeKeyPaths` | Files whose titles reach the catalog through a run-time lookup (`AppShortcuts.swift`, the Command Palette items). There, a literal that is a catalog key counts as localized |
 | `exemptLiterals` | One literal that is not UI, with a category: `identifier`, `product-name`, `log`, `agent-prompt`, `protocol`, `developer`, `other` |
-| `debt` | UI copy that is known but not localizable yet |
-| `debtNotes` | Why a debt entry cannot be localized yet, so a later sync does not investigate it again |
+| `blocked` | UI copy whose value also goes to a CLI response, a log, a file, or another machine, with the reason. It is not debt: it needs its own UI copy before it can be localized |
+| `debt` | UI copy that can be localized but is not yet |
 
 A literal counts as localized only at a place (`path:line`) where the compiler extracted it. The
 compiler and the lexer report the same line for a literal: 2002 places matched exactly in a
@@ -98,10 +98,11 @@ is paid when every place of its literal is localized.
 
 The first baseline (2026-09-18) had about 650 debt literals: alert text in reducers, labels that
 views build as `String`, presentation models, and error descriptions. One pass on the same day
-made about 500 of them localizable. About 65 stay, each with a note: the same value also goes to
-the prowl CLI, a log file, or the workflow run records, so the UI copy must be split from the
-protocol text first. Each release localizes new debt in the files it touched, within a budget, so
-the number only goes down. An entry with no open place is reported as obsolete and removed.
+made about 500 of them localizable. The 65 that remain are `blocked`, not debt: the same value
+also goes to the prowl CLI, a log file, or the workflow run records, so the UI copy must be split
+from the protocol text first. The debt is zero. Each release localizes new debt in the files it
+touched, within a budget, so the number only goes down. An entry with no open place is reported as
+obsolete and removed.
 
 ### The catalog has the format Xcode writes
 
@@ -174,8 +175,8 @@ compares a value with itself and does not check the text.
 
 ## Open
 
-- **The debt.** About 65 literals (`python3 scripts/localization.py debt` lists them with the
-  reason). They are UI copy whose value also goes somewhere that must stay in English:
+- **Blocked copy.** 65 literals (`python3 scripts/localization.py debt --blocked` lists them with
+  the reason). They are UI copy whose value also goes somewhere that must stay in English:
   `WorkflowRunMachine` attention messages (also `log.md`, `state.json`, and the
   `prowl workflow status` JSON), workflow step titles (also the run records), and
   `LifecycleCommandWarning` messages of the managed hooks (also the prowl CLI JSON). To localize
